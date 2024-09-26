@@ -1,7 +1,3 @@
 <template>
-<img :src="vite_icon" alt="">
+<router-view/>
 </template>
-
-<script setup lang="ts">
-import vite_icon from '@/assets/vue.svg'
-</script>
