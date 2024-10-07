@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: easy_check_spring_boot
+  datasource:
+    url: jdbc:mysql://localhost:3306/easy_check?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+
+server:
+  port: 5200
