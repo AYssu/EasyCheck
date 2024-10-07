@@ -72,7 +72,7 @@
           <el-checkbox v-model="register_form.agree">同意协议</el-checkbox>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="to_login">注册</el-button>
+          <el-button type="primary" @click="to_register">注册</el-button>
           <el-button @click="()=>{
               register_dialog_show = false;
               login_dialog_show = true;
@@ -88,6 +88,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {ElMessage} from "element-plus";
+import {user_register_services} from "@/api/user.ts";
 
 // 显示登录弹窗的变量
 const login_dialog_show = ref(false);
@@ -146,6 +147,7 @@ const to_login = () => {
   }
 };
 
+
 // 注册方法
 const to_register = () => {
   // 执行跳转到注册页面的逻辑
@@ -154,7 +156,17 @@ const to_register = () => {
     ElMessage.error('请先同意协议');
     return;
   }
+
+  const register_request:any = user_register_services(register_form.value);
+  if (register_request.data.code === 200)
+    ElMessage.success('注册成功');
+  else
+    ElMessage.error('注册失败');
+
 };
+
+
+
 </script>
 
 <style lang="scss" scoped>
