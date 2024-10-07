@@ -3,3 +3,13 @@
 
 
 
+使用到的项目包:
+
+前端:
+
+1. 路由管理: [`Vue Router`](https://router.vuejs.org/zh/installation.html)
+2. 状态管理: `Pinin`
+3. 状态持久化插件: `pinia-plugin-persistedstate`
+4. 图形化组件库: [`element-plus`]([安装 | Element Plus (element-plus.org)](https://element-plus.org/zh-CN/guide/installation.html))
+5. CSS辅助工具: [`Sass`](https://www.sass.hk/)
+6. 

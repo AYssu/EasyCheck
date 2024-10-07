@@ -4,15 +4,17 @@
       <el-header>易验证-EasyCheck</el-header>
       <el-main>
         <div class="main">
-          <el-text>
-            欢迎使用易验证，一个基于vue3+element-plus+vite的web应用。
-          </el-text>
-          <el-row>
-            <el-col :span="24">
-              <el-button type="primary" @click="login_dialog_show=true">登录</el-button>
-              <el-button type="primary" @click="to_register">注册</el-button>
-            </el-col>
-          </el-row>
+         <div>
+           <el-text>
+             欢迎使用易验证，一个基于vue3+element-plus+vite的web应用。
+           </el-text>
+           <el-row>
+             <el-col :span="24">
+               <el-button type="primary" @click="login_dialog_show=true">登录</el-button>
+               <el-button type="primary" @click="register_dialog_show=true">注册</el-button>
+             </el-col>
+           </el-row>
+         </div>
         </div>
       </el-main>
       <el-footer>
@@ -22,18 +24,18 @@
         </div>
       </el-footer>
     </el-container>
-    <el-dialog v-model="login_dialog_show" :show-close="false" :close-on-press-escape="true" width="40%">
+    <el-dialog v-model="login_dialog_show" :close-on-press-escape="true" :show-close="false" width="40%">
       <template #header>
         <div class="input_dialog_head">
           <el-text size="large">用户登录</el-text>
         </div>
       </template>
-      <el-form ref="loginForm" :model="login_form"  :rules="login_rules" label-width="60px" >
+      <el-form ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px">
         <el-form-item label="账号" prop="username">
-          <el-input v-model="login_form.username" type="text" placeholder="请输入账号" clearable></el-input>
+          <el-input v-model="login_form.username" clearable placeholder="请输入账号" type="text"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="login_form.password" type="password" placeholder="请输入密码" show-password></el-input>
+          <el-input v-model="login_form.password" placeholder="请输入密码" show-password type="password"></el-input>
         </el-form-item>
         <el-form-item>
           <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
@@ -43,26 +45,27 @@
           <el-button @click="()=>{
             login_dialog_show = false;
             register_dialog_show = true;
-          }">没有账号？前往注册</el-button>
+          }">没有账号？前往注册
+          </el-button>
         </el-form-item>
       </el-form>
 
     </el-dialog>
-    <el-dialog v-model="register_dialog_show" :show-close="false" :close-on-press-escape="true" width="40%">
+    <el-dialog v-model="register_dialog_show" :close-on-press-escape="true" :show-close="false" width="40%">
       <template #header>
         <div class="input_dialog_head">
           <el-text size="large">用户注册</el-text>
         </div>
       </template>
-      <el-form ref="loginForm" :model="register_form"  :rules="register_rules" label-width="60px" >
+      <el-form ref="loginForm" :model="register_form" :rules="register_rules" label-width="60px">
         <el-form-item label="账号" prop="username">
-          <el-input v-model="register_form.username" type="text" placeholder="请输入账号" clearable></el-input>
+          <el-input v-model="register_form.username" clearable placeholder="请输入账号" type="text"></el-input>
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="register_form.email" type="text" placeholder="请输入邮箱" clearable></el-input>
+          <el-input v-model="register_form.email" clearable placeholder="请输入邮箱" type="text"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="register_form.password" type="password" placeholder="请输入密码" show-password></el-input>
+          <el-input v-model="register_form.password" placeholder="请输入密码" show-password type="password"></el-input>
         </el-form-item>
 
         <el-form-item>
@@ -71,10 +74,10 @@
         <el-form-item>
           <el-button type="primary" @click="to_login">注册</el-button>
           <el-button @click="()=>{
-            register_dialog_show = false;
+              register_dialog_show = false;
               login_dialog_show = true;
-
-          }">已有账号？前往登录</el-button>
+          }">已有账号？前往登录
+          </el-button>
         </el-form-item>
       </el-form>
 
@@ -82,8 +85,9 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref} from 'vue';
+<script lang="ts" setup>
+import {ref} from 'vue';
+import {ElMessage} from "element-plus";
 
 // 显示登录弹窗的变量
 const login_dialog_show = ref(false);
@@ -105,48 +109,55 @@ const register_form = ref({
 })
 
 // 表单验证规则
-
 const login_rules = ref({
   username: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 2, max: 10, message: '账号长度在 2 到 10 个字符', trigger: 'blur' }
+    {required: true, message: '请输入账号', trigger: 'blur'},
+    {min: 2, max: 10, message: '账号长度在 2 到 10 个字符', trigger: 'blur'}
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 18, message: '密码长度在 6 到 18 个字符', trigger: 'blur' }
+    {required: true, message: '请输入密码', trigger: 'blur'},
+    {min: 6, max: 18, message: '密码长度在 6 到 18 个字符', trigger: 'blur'}
   ],
 });
 
 // 注册表单校验规则
 const register_rules = ref({
   username: [
-    { required: true, message: '请输入账号', trigger: 'blur' },
-    { min: 2, max: 10, message: '账号长度在 2 到 10 个字符', trigger: 'blur' }
+    {required: true, message: '请输入账号', trigger: 'blur'},
+    {min: 2, max: 10, message: '账号长度在 2 到 10 个字符', trigger: 'blur'}
   ],
   email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+    {required: true, message: '请输入邮箱', trigger: 'blur'},
+    {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 18, message: '密码长度在 6 到 18 个字符', trigger: 'blur' }
+    {required: true, message: '请输入密码', trigger: 'blur'},
+    {min: 6, max: 18, message: '密码长度在 6 到 18 个字符', trigger: 'blur'}
   ],
 });
 
 
 // 登录方法
 const to_login = () => {
-  console.log('点击登录');
+  if (!login_form.value.agree)
+  {
+    ElMessage.error('请先同意协议');
+    return;
+  }
 };
 
 // 注册方法
 const to_register = () => {
   // 执行跳转到注册页面的逻辑
-  console.log('点击注册');
+  if (!register_form.value.agree)
+  {
+    ElMessage.error('请先同意协议');
+    return;
+  }
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 #main {
   display: flex;
   height: 100vh; /* Full height of the viewport */
