@@ -18,6 +18,15 @@ const routes = [
         name: 'home',
         component: () => import('@/view/HomeView.vue'),
         title: 'home',
+        redirect: {name: 'table'},
+        children: [
+            {
+                path: '/home/table',
+                name: 'table',
+                component: () => import('@/view/data_table/indexView.vue'),
+                title: 'table',
+            }
+        ]
     }
 ]
 

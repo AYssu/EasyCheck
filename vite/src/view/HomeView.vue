@@ -74,11 +74,7 @@
       <el-container>
         <el-main>
           <el-scrollbar>
-            <el-table :data="tableData">
-              <el-table-column prop="date" label="Date" width="140" />
-              <el-table-column prop="name" label="Name" width="120" />
-              <el-table-column prop="address" label="Address" />
-            </el-table>
+            <router-view></router-view>
           </el-scrollbar>
         </el-main>
       </el-container>
