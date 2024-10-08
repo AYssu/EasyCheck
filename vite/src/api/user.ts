@@ -12,3 +12,15 @@ import request from '@/utils/request.ts'
 export const user_register_services = (params: any) => {
     return request.post('/user/register', params)
 }
+
+/*
+ * 用户登录
+ * @params params
+ * username  用户名
+ * password 用户密码
+ * agree 同意协议
+ * @return Promise
+ */
+export const user_login_services = (params: any) => {
+    return request.post('/user/login', params)
+}

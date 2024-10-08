@@ -1,8 +1,5 @@
-package com.easycheck.springboot.entity;
+package com.easycheck.springboot.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,15 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("easy_user")
-public class EasyUser {
-
-    @TableId(type = IdType.AUTO)
-    private Integer userId;// 主键 用户id
+public class UserLoginVO {
+    private String token;// 登录成功返回token
     private String userName;// 用户名
     private String userEmail;// 邮箱
     private String userPhone;// 手机号
-    private String userPassword;// 密码
     private String userAvatarUrl;// 头像
     private Integer level;// 等级
     private String signature;// 签名
