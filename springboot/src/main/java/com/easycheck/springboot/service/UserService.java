@@ -1,5 +1,6 @@
 package com.easycheck.springboot.service;
 
+import com.easycheck.springboot.dto.UserLoginDTO;
 import com.easycheck.springboot.dto.UserRegisterDTO;
 import com.easycheck.springboot.entity.EasyUser;
 
@@ -33,4 +34,12 @@ public interface UserService {
     * @return
      */
     EasyUser get_user_by_email(String email);
+
+    /*
+    * 用户登录
+    * @param userLoginDTO
+    * @param userIpAddress
+    * @return
+     */
+    String login(UserLoginDTO userLoginDTO, String userIpAddress);
 }

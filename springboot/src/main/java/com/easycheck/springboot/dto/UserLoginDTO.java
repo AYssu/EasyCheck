@@ -10,20 +10,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRegisterDTO {
-
+public class UserLoginDTO {
     /**
-     * 用户账号，用户注册使用的账号
+     * 用户账号，用户登录使用的账号
      */
     @NotBlank(message = "账号不能为空")
     @Pattern(regexp = "^.{2,10}$", message = "账号长度在 2 到 10 个字符")
     private String username;
-
-    /**
-     * 用户邮箱，用户绑定的邮箱
-     */
-    @Email(message = "请输入正确的邮箱地址")
-    private String email;
 
     /**
      * 用户密码，用户登录使用的密码

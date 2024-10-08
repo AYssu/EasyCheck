@@ -88,12 +88,14 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {ElMessage} from "element-plus";
-import {user_register_services} from "@/api/user.ts";
+import {user_login_services, user_register_services} from "@/api/user.ts";
 
 // 显示登录弹窗的变量
 const login_dialog_show = ref(false);
 const register_dialog_show = ref(false);
 
+import {user_token} from "@/stores/token.ts";
+const user_token_data = user_token();
 // 登录表单
 const login_form = ref({
   username: '',
@@ -139,17 +141,28 @@ const register_rules = ref({
 
 
 // 登录方法
-const to_login = () => {
+const to_login = async () => {
   if (!login_form.value.agree)
   {
     ElMessage.error('请先同意协议');
     return;
   }
+
+  const login_request:any = await user_login_services(login_form.value);
+
+  if (login_request.data.code===200)
+  {
+    ElMessage.success(login_request.data.message)
+    //
+    user_token_data.remove_token();
+  }else {
+    ElMessage.error(login_request.data.message)
+  }
 };
 
 
 // 注册方法
-const to_register = () => {
+const to_register = async () => {
   // 执行跳转到注册页面的逻辑
   if (!register_form.value.agree)
   {
@@ -157,11 +170,20 @@ const to_register = () => {
     return;
   }
 
-  const register_request:any = user_register_services(register_form.value);
+  const register_request:any = await user_register_services(register_form.value);
+
   if (register_request.data.code === 200)
-    ElMessage.success('注册成功');
+  {
+    ElMessage.success(register_request.data.message);
+    register_dialog_show.value = false;
+    login_form.value.username = register_form.value.username;
+    login_form.value.password = register_form.value.password;
+    login_form.value.agree = true;
+
+    login_dialog_show.value = true;
+  }
   else
-    ElMessage.error('注册失败');
+    ElMessage.error(register_request.data.message);
 
 };
 
