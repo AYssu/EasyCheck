@@ -12,3 +12,36 @@
 3. 状态持久化插件: [`pinia-plugin-persistedstate`](https://www.npmjs.com/package/pinia-plugin-persistedstate)
 4. 图形化组件库: [`element-plus`](https://element-plus.org/zh-CN/guide/installation.html)
 5. CSS辅助工具: [`Sass`](https://www.sass.hk/)
+
+
+
+
+
+后端：
+
+使用到的部分依赖
+
+```java
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.apache.logging.log4j:log4j-api:2.6.2'
+    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.5'
+    implementation 'com.auth0:java-jwt:4.4.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.1.3'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation 'junit:junit:4.13.1'
+}
+```
+
+
+
