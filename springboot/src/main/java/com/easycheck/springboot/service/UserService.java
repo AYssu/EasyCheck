@@ -3,6 +3,7 @@ package com.easycheck.springboot.service;
 import com.easycheck.springboot.dto.UserLoginDTO;
 import com.easycheck.springboot.dto.UserRegisterDTO;
 import com.easycheck.springboot.entity.EasyUser;
+import com.easycheck.springboot.vo.UserLoginVO;
 
 public interface UserService {
 
@@ -41,5 +42,5 @@ public interface UserService {
     * @param userIpAddress
     * @return
      */
-    String login(UserLoginDTO userLoginDTO, String userIpAddress);
+    UserLoginVO login(UserLoginDTO userLoginDTO, String userIpAddress);
 }

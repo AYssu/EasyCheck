@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class EasyUser {
 
     @TableId(type = IdType.AUTO)
-
     private Integer userId;// 主键 用户id
     private String userName;// 用户名
     private String userEmail;// 邮箱

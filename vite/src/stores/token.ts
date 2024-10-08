@@ -4,12 +4,12 @@ import {ref} from 'vue'
 export const user_token = defineStore(
     'easy_token',
     () => {
-        const token = ref('')
-        const set_token = (newToken: string) => {
-            token.value = newToken
+        const token:any = ref({})
+        const set_token = (new_token: any) => {
+            token.value = new_token
         }
         const remove_token = () => {
-            token.value = ''
+            token.value = {}
         }
         return {
             token,

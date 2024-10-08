@@ -94,8 +94,13 @@ import {user_login_services, user_register_services} from "@/api/user.ts";
 const login_dialog_show = ref(false);
 const register_dialog_show = ref(false);
 
+// 引入token的store
 import {user_token} from "@/stores/token.ts";
 const user_token_data = user_token();
+
+
+import router from "@/router/index.ts";
+
 // 登录表单
 const login_form = ref({
   username: '',
@@ -148,13 +153,18 @@ const to_login = async () => {
     return;
   }
 
+  // 执行登录的逻辑
   const login_request:any = await user_login_services(login_form.value);
 
   if (login_request.data.code===200)
   {
     ElMessage.success(login_request.data.message)
-    //
+    // 清除token
     user_token_data.remove_token();
+    user_token_data.set_token(login_request.data.data);
+
+    await router.push({name: 'home'});
+
   }else {
     ElMessage.error(login_request.data.message)
   }

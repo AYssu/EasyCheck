@@ -5,6 +5,7 @@ import com.easycheck.springboot.dto.UserRegisterDTO;
 import com.easycheck.springboot.service.UserService;
 import com.easycheck.springboot.utils.IpUtil;
 import com.easycheck.springboot.vo.ResponseResult;
+import com.easycheck.springboot.vo.UserLoginVO;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,9 @@ public class UserController {
     {
         String ipAddr = IpUtil.getIpAddr(request);
         log.info("user_login_form: {}",userLoginDTO.toString());
-        String token = userService.login(userLoginDTO, ipAddr);
-        if (token != null)
-            return ResponseResult.success("登录成功",token);
+        UserLoginVO login_success = userService.login(userLoginDTO, ipAddr);
+        if (login_success != null)
+            return ResponseResult.success("登录成功",login_success);
         return ResponseResult.fail("登录失败");
     }
 

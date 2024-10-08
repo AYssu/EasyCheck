@@ -8,8 +8,9 @@ import com.easycheck.springboot.mapper.UserMapper;
 import com.easycheck.springboot.service.UserService;
 import com.easycheck.springboot.utils.Bcrypt;
 import com.easycheck.springboot.utils.JwtUtil;
-import com.easycheck.springboot.utils.ThreadLocalUtil;
+import com.easycheck.springboot.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -89,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
     // 用户登录
     @Override
-    public String login(UserLoginDTO userLoginDTO, String userIpAddress) {
+    public UserLoginVO login(UserLoginDTO userLoginDTO, String userIpAddress) {
         // 判断用户是否存在
         EasyUser user = get_user_by_name(userLoginDTO.getUsername());
         if (user == null)
@@ -116,7 +117,11 @@ public class UserServiceImpl implements UserService {
                 redisTemplate.expire("easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
                 redisTemplate.expire(redis_token, 1, TimeUnit.DAYS);
 
-                return redis_token;
+                UserLoginVO userLogin = new UserLoginVO();
+                // 拷贝用户信息
+                BeanUtils.copyProperties(user, userLogin);
+                userLogin.setToken(redis_token);
+                return userLogin;
 
             }
             // 生成token
@@ -130,7 +135,12 @@ public class UserServiceImpl implements UserService {
             // 缓存token 1天
             redisTemplate.opsForValue().set(token,"easy_user_"+user.getUserId(),1, TimeUnit.DAYS);
             redisTemplate.opsForValue().set("easy_user_"+user.getUserId(),token,1, TimeUnit.DAYS);
-            return token;
+
+            // 返回用户信息
+            UserLoginVO userLogin = new UserLoginVO();
+            BeanUtils.copyProperties(user, userLogin);
+            userLogin.setToken(redis_token);
+            return userLogin;
         }
 
         return null;
