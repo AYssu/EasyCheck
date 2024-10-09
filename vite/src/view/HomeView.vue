@@ -23,12 +23,12 @@
     <el-container>
       <el-aside width="200px">
         <el-scrollbar>
-          <el-menu :default-openeds="['1', '2']">
+          <el-menu :default-openeds="['1', '2']" router>
             <el-sub-menu index="1">
               <template #title>
                 <el-icon><DataLine /></el-icon>数据统计
               </template>
-              <el-menu-item index="1-1">项目数据</el-menu-item>
+              <el-menu-item index="/home/table">项目数据</el-menu-item>
 
             </el-sub-menu>
             <el-sub-menu index="2">
@@ -37,8 +37,8 @@
               </template>
               <el-menu-item-group>
                 <template #title>项目</template>
-                <el-menu-item index="2-1">项目列表</el-menu-item>
-                <el-menu-item index="2-2">用户列表</el-menu-item>
+                <el-menu-item index="/home/project_list">项目列表</el-menu-item>
+                <el-menu-item index="/home/user_list">用户列表</el-menu-item>
 
               </el-menu-item-group>
 
@@ -48,9 +48,9 @@
               </el-menu-item-group>
               <el-sub-menu index="2-4">
                 <template #title>项目管理</template>
-                <el-menu-item index="2-4-1">卡密列表</el-menu-item>
-                <el-menu-item index="2-4-2">激活权限</el-menu-item>
-                <el-menu-item index="2-4-3">用户认证</el-menu-item>
+                <el-menu-item index="/home/card_list">卡密列表</el-menu-item>
+                <el-menu-item index="/home/user_authentic">激活权限</el-menu-item>
+                <el-menu-item index="/home/user_authority">用户认证</el-menu-item>
               </el-sub-menu>
             </el-sub-menu>
             <el-sub-menu index="3">
@@ -74,11 +74,11 @@
       <el-container>
         <el-main>
           <el-scrollbar>
-            <el-table :data="tableData">
-              <el-table-column prop="date" label="Date" width="140" />
-              <el-table-column prop="name" label="Name" width="120" />
-              <el-table-column prop="address" label="Address" />
-            </el-table>
+            <router-view v-slot="{ Component }">
+              <transition name="scale" mode="out-in">
+                <component :is="Component"/>
+              </transition>
+            </router-view>
           </el-scrollbar>
         </el-main>
       </el-container>
@@ -86,21 +86,74 @@
   </el-container>
 </template>
 
+<style scoped lang="scss">
+
+// 淡出淡入
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+// 滑动
+.slide-enter-active,
+.slide-leave-active {
+  transition: all 0.75s ease-out;
+}
+
+.slide-enter-to {
+  position: absolute;
+  right: 0;
+}
+
+.slide-enter {
+  position: absolute;
+  right: -100%;
+}
+
+.slide-leave-to {
+  position: absolute;
+  left: -100%;
+}
+
+.slide-leave {
+  position: absolute;
+  left: 0;
+}
+
+// 设置滑动过渡必须给每个组件设定宽度
+.wrapper {
+  width: 100%;
+  // min-height: 100vh;
+  // background: chartreuse;
+}
+
+// 缩放
+.scale-enter-active,
+.scale-leave-active {
+  transition: all 0.5s ease;
+}
+
+.scale-enter-from,
+.scale-leave-to {
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+
+
+</style>
 <script lang="ts" setup>
-import { ref } from 'vue'
 import {DataLine, Promotion, Setting} from '@element-plus/icons-vue'
 import default_icon from '@/assets/default.jpg'
 
 import {user_token} from "@/stores/token.ts";
 const user_data = user_token()
 
-const item = {
-  date: '2016-05-02',
-  name: 'Tom',
-  address: 'No. 189, Grove St, Los Angeles',
-}
-
-const tableData = ref(Array.from({ length: 20 }).fill(item))
 </script>
 
 <style scoped>

@@ -85,6 +85,32 @@
   </div>
 </template>
 
+<style>
+#container {
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+.el-header {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+.el-button {
+  transition: all 0.3s ease;
+}
+.el-button:hover {
+  transform: scale(1.05);
+}
+.input_dialog_head {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.footer {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+</style>
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {ElMessage} from "element-plus";
