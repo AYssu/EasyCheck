@@ -37,6 +37,13 @@ public interface UserService {
     EasyUser get_user_by_email(String email);
 
     /*
+    * 获取当前登录用户信息
+    * @return
+     */
+    EasyUser get_user_by_jwt();
+
+
+    /*
     * 用户登录
     * @param userLoginDTO
     * @param userIpAddress

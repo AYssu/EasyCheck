@@ -11,7 +11,7 @@ instance.interceptors.request.use(
     (config) => {
         const user_token_data:any = user_token();
         if (user_token_data.token) {
-            config.headers.Authorization = user_token_data.token
+            config.headers.Authorization = user_token_data.token.token
         }
         return config
     },

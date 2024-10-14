@@ -35,7 +35,7 @@
           <el-input v-model="login_form.username" clearable placeholder="请输入账号" type="text"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input v-model="login_form.password" placeholder="请输入密码" show-password type="password"></el-input>
+          <el-input @keyup.enter="to_login" v-model="login_form.password" placeholder="请输入密码" show-password type="password"></el-input>
         </el-form-item>
         <el-form-item>
           <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
@@ -64,8 +64,8 @@
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="register_form.email" clearable placeholder="请输入邮箱" type="text"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="register_form.password" placeholder="请输入密码" show-password type="password"></el-input>
+        <el-form-item  label="密码" prop="password">
+          <el-input @keyup.enter="to_register" v-model="register_form.password" placeholder="请输入密码" show-password type="password"></el-input>
         </el-form-item>
 
         <el-form-item>
@@ -85,7 +85,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 #container {
   font-family: 'Arial', sans-serif;
   color: #333;

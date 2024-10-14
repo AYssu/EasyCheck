@@ -32,7 +32,6 @@ public class EasyInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        log.info("加密拦截器");
 
         response.setContentType("application/json;charset=utf-8");
         String authorization = request.getHeader("Authorization");

@@ -8,6 +8,7 @@ import com.easycheck.springboot.mapper.UserMapper;
 import com.easycheck.springboot.service.UserService;
 import com.easycheck.springboot.utils.Bcrypt;
 import com.easycheck.springboot.utils.JwtUtil;
+import com.easycheck.springboot.utils.ThreadLocalUtil;
 import com.easycheck.springboot.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -86,6 +87,14 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<EasyUser> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyUser::getUserEmail, email);
         return userMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public EasyUser get_user_by_jwt() {
+        // 获取当前用户
+        Map<String ,Object> map = ThreadLocalUtil.get();
+        Integer id =(Integer) map.get("id");
+        return get_user_by_id(id);
     }
 
     // 用户登录
