@@ -29,7 +29,7 @@ instance.interceptors.response.use(
         if (err.response.status === 401) {
             ElMessage.error({ message: '登录过期', grouping: true });
             // 使用router.push返回的Promise来处理跳转
-            window.location.reload();
+            // window.location.reload();
             return Promise.reject(err);
         } else {
             ElMessage.error({ message: '服务异常', grouping: true });
