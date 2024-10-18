@@ -1,10 +1,6 @@
 package com.easycheck.springboot.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +15,7 @@ public class EasyProject {
     @TableId(type = IdType.AUTO)
     private Integer projectId; // 项目ID
 
-    private String projectUser;// 项目创建者
+    private Integer projectUser;// 项目创建者
     private String projectName; // 项目名称
 
     private LocalDateTime projectCreateTime; // 项目创建时间
@@ -31,4 +27,10 @@ public class EasyProject {
     private String projectUpdateNotice; // 项目更新公告
     private String projectNotice; // 项目公告
     private String projectBase64; // 项目自定义BASE64
+    private Integer projectStatus;// 项目状态
+    private Integer freeStatus; // 项目是否免费
+
+    @TableLogic(value = "0", delval = "1")
+    private Integer deleted; // 是否删除
+
 }

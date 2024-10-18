@@ -21,4 +21,6 @@ public class ProjectListVO {
     private String projectUpdateNotice; // 项目更新公告
     private String projectNotice; // 项目公告
     private String projectBase64; // 项目自定义BASE64
+    private Integer projectStatus;// 项目状态
+    private Integer freeStatus; // 项目是否免费
 }

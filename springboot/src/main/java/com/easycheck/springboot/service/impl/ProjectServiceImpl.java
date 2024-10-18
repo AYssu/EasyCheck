@@ -10,7 +10,6 @@ import com.easycheck.springboot.mapper.ProjectMapper;
 import com.easycheck.springboot.service.ProjectService;
 import com.easycheck.springboot.service.UserService;
 import com.easycheck.springboot.utils.StringUtil;
-import com.easycheck.springboot.utils.ThreadLocalUtil;
 import com.easycheck.springboot.vo.PageBean;
 import com.easycheck.springboot.vo.ProjectListVO;
 import org.springframework.beans.BeanUtils;
@@ -20,7 +19,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -38,15 +36,32 @@ public class ProjectServiceImpl implements ProjectService {
         EasyProject project = get_project_by_name(projectCreateDTO.getProjectName());
         if (project != null)
             throw new RuntimeException("该项目已存在");
+
+        EasyUser user = userService.get_user_by_jwt();
+        if (user == null)
+            throw new RuntimeException("用户不存在");
         // 封装项目信息
         EasyProject easyProject = new EasyProject();
         easyProject.setProjectName(projectCreateDTO.getProjectName());
         easyProject.setProjectMessage(projectCreateDTO.getProjectMessage());
         easyProject.setProjectCreateTime(LocalDateTime.now());
         String project_key = StringUtil.generateRandomString(12);
+        EasyProject project_key_temp = get_project_by_key(project_key);
+
+        // 重新生成key 虽然是随机的数据 但是也存在重复的可能性
+        int errors = 0;
+        while (project_key_temp != null) {
+            project_key = StringUtil.generateRandomString(12);
+            project_key_temp = get_project_by_key(project_key);
+            errors++;
+            if (errors > 3)
+                throw new RuntimeException("生成项目key失败");
+        }
+        // 生成base64 随机的 所以算法不一样
         String base64 = StringUtil.shuffleString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
         easyProject.setProjectBase64(base64);
         easyProject.setProjectKey(project_key);
+        easyProject.setProjectUser(user.getUserId());
         // 插入数据库
         return projectMapper.insert(easyProject) > 0;
     }
@@ -56,6 +71,13 @@ public class ProjectServiceImpl implements ProjectService {
     public EasyProject get_project_by_name(String projectName) {
         LambdaQueryWrapper<EasyProject> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyProject::getProjectName, projectName);
+        return projectMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public EasyProject get_project_by_key(String projectKey) {
+        LambdaQueryWrapper<EasyProject> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyProject::getProjectKey, projectKey);
         return projectMapper.selectOne(queryWrapper);
     }
 

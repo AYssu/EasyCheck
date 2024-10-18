@@ -233,6 +233,12 @@ const to_register = async () => {
   height: 100vh; /* Full height of the viewport */
   align-items: center; /* Vertically center the content */
   justify-content: center; /* Horizontally center the content */
+  background-image: url("@/assets/background.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  overflow: hidden;
 }
 
 #container {

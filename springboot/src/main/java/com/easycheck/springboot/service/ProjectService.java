@@ -22,6 +22,13 @@ public interface ProjectService {
     EasyProject get_project_by_name(String projectName);
 
     /*
+    * 根据项目key获取项目信息
+    * @param projectKey
+    * @return
+     */
+    EasyProject get_project_by_key(String projectKey);
+
+    /*
     * 获取项目列表
     * @param projectListDTO
     * @return
