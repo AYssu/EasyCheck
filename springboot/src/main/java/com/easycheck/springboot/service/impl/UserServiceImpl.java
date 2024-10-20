@@ -113,24 +113,35 @@ public class UserServiceImpl implements UserService {
             // 判断是否已登录
             String redis_token = (String) redisTemplate.opsForValue().get("easy_user_"+user.getUserId());
             if (StringUtils.hasText(redis_token)) {
-
-                // 判断ip是否一致
-                Map<String, Object> map = JwtUtil.parseToken(redis_token);
-                String ip = (String)map.get("ip");
-                if (!ip.equals(userIpAddress))
+                try
                 {
-                    log.error("用户 {} IP发生变化 {}->{}", user.getUserName(), ip, userIpAddress);
-                    // 此处可向用户发送邮箱,验证码,等提示信息
+                    // 判断ip是否一致
+                    Map<String, Object> map = JwtUtil.parseToken(redis_token);
+                    String ip = (String)map.get("ip");
+                    if (!ip.equals(userIpAddress))
+                    {
+                        log.error("用户 {} IP发生变化 {}->{}", user.getUserName(), ip, userIpAddress);
+                        // 此处可向用户发送邮箱,验证码,等提示信息
+                    }
+
+                    //缓存token 1天 原本的想法是无感刷新token 结果刷新token后 虽然redis里面确实是有的 但是刷新token后还是无法登录
+                    //当前 使用双token即可无感刷新 反正不影响实际的操作 我也想多端登录 所以暂时保留这个想法
+                    //redisTemplate.expire(redis_token, 1, TimeUnit.DAYS);
+                    //redisTemplate.expire("easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
+
+                    UserLoginVO userLogin = new UserLoginVO();
+                    // 拷贝用户信息
+                    BeanUtils.copyProperties(user, userLogin);
+                    userLogin.setToken(redis_token);
+                    return userLogin;
+                }catch (Exception exception)
+                {
+                    // 删除token 因为测试发现redis的缓存存在这个token 但是实际上已经过期了
+                    redisTemplate.delete(redis_token);
+                    redisTemplate.delete("easy_user_" + user.getUserId());
+
+                    throw new RuntimeException("token解析失败,请重新登录!");
                 }
-
-                redisTemplate.expire("easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
-                redisTemplate.expire(redis_token, 1, TimeUnit.DAYS);
-
-                UserLoginVO userLogin = new UserLoginVO();
-                // 拷贝用户信息
-                BeanUtils.copyProperties(user, userLogin);
-                userLogin.setToken(redis_token);
-                return userLogin;
 
             }
             // 生成token

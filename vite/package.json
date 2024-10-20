@@ -13,6 +13,7 @@
     "axios": "^1.7.7",
     "echarts": "^5.5.1",
     "element-plus": "^2.8.4",
+    "less": "^4.2.0",
     "pinia": "^2.2.4",
     "pinia-plugin-persistedstate": "^4.1.1",
     "sass": "^1.79.4",

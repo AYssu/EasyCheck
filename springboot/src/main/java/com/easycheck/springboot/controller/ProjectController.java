@@ -7,10 +7,7 @@ import com.easycheck.springboot.vo.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("project")
@@ -36,5 +33,15 @@ public class ProjectController {
         log.info("project_list_form: {}", projectListDTO);
         // 调用service层
         return ResponseResult.success("查询成功", projectService.get_project_list(projectListDTO));
+    }
+
+
+    @GetMapping("project_set_status")
+    public ResponseResult<?> project_set_status(@RequestParam Integer id){
+        log.info("project_set_status_form: {}", id);
+        boolean set_success = projectService.set_project_status(id);
+        if (!set_success)
+            return ResponseResult.fail("设置失败");
+        return ResponseResult.success("设置成功");
     }
 }

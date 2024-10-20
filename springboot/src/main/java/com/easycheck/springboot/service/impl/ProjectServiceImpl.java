@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -29,6 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UserService userService;
+
     // 创建项目
     @Override
     public boolean create_project(ProjectCreateDTO projectCreateDTO) {
@@ -96,8 +98,8 @@ public class ProjectServiceImpl implements ProjectService {
         Page<EasyProject> guardPage = new Page<>(projectListDTO.getCurrentPage(), projectListDTO.getPageSize());
 
         LambdaQueryWrapper<EasyProject> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(EasyProject::getProjectUser,user.getUserId());
-        queryWrapper.like(StringUtils.hasText(projectListDTO.getProjectName()),EasyProject::getProjectName,projectListDTO.getProjectName());
+        queryWrapper.eq(EasyProject::getProjectUser, user.getUserId());
+        queryWrapper.like(StringUtils.hasText(projectListDTO.getProjectName()), EasyProject::getProjectName, projectListDTO.getProjectName());
 
         // 执行查询
         Page<EasyProject> guardPage1 = projectMapper.selectPage(guardPage, queryWrapper);
@@ -106,7 +108,7 @@ public class ProjectServiceImpl implements ProjectService {
         // 转换为VO
         List<ProjectListVO> projectListVOS = records.stream().map(record -> {
             ProjectListVO projectListVO = new ProjectListVO();
-            BeanUtils.copyProperties(record,projectListVO);
+            BeanUtils.copyProperties(record, projectListVO);
             return projectListVO;
         }).toList();
 
@@ -115,5 +117,20 @@ public class ProjectServiceImpl implements ProjectService {
         pageBean.setItems(projectListVOS);
 
         return pageBean;
+    }
+
+    @Override
+    public boolean set_project_status(Integer id) {
+        EasyUser user = userService.get_user_by_jwt();
+        if (user == null)
+            throw new RuntimeException("用户不存在");
+        EasyProject project = projectMapper.selectById(id);
+        if (project == null)
+            throw new RuntimeException("项目不存在");
+        if (!Objects.equals(project.getProjectUser(), user.getUserId()))
+            throw new RuntimeException("没有权限");
+        // 切换状态
+        project.setProjectStatus(project.getProjectStatus() == 0 ? 1 : 0);
+        return projectMapper.updateById(project) > 0;
     }
 }

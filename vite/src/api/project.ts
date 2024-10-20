@@ -22,3 +22,12 @@ export const get_project_list_services = (params: any) => {
 export const create_project_services = (params: any) => {
     return request.post('/project/project_create', params)
 }
+
+/*
+ * 更新程序的状态
+ * @id 程序的ID
+ * @return Promise
+ */
+export const update_project_status_services = (id: any) => {
+    return request.get('/project/project_set_status?id='+id)
+}

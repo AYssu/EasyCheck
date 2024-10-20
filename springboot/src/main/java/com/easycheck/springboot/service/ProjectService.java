@@ -34,4 +34,11 @@ public interface ProjectService {
     * @return
      */
     PageBean<ProjectListVO> get_project_list(ProjectListDTO projectListDTO);
+
+    /*
+    * 更新项目状态
+    * @param id
+    * @return
+     */
+    boolean set_project_status(Integer id);
 }
