@@ -5,6 +5,8 @@ import router from './router/index.ts'
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+import { ElCollapseTransition } from 'element-plus'
+
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 const app = createApp(App)
@@ -22,6 +24,7 @@ import { createPinia } from 'pinia'
 import { createPersistedState } from 'pinia-plugin-persistedstate'
 
 app.component('v-chart', ECharts)
+app.component(<string>ElCollapseTransition.name, ElCollapseTransition)
 app.use(ElementPlus, { locale: zhCn })
 app.use(createPinia().use(createPersistedState()))
 app.use(router)
