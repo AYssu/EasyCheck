@@ -6,7 +6,6 @@ import router from './router/index.ts'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import { ElCollapseTransition } from 'element-plus'
-
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
 const app = createApp(App)
