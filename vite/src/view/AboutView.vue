@@ -160,7 +160,7 @@
                   @keyup.enter="to_login"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
+        <el-checkbox  v-model="login_form.agree">同意协议</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="to_login">登录</el-button>
@@ -314,7 +314,7 @@ const to_register = async () => {
 
 };
 
-import icon from "/public/vite.svg"
+import icon from "@/assets/icon_translate.png"
 import safe from "@/assets/index/safe.svg";
 import fast from "@/assets/index/fast.svg";
 import lock from "@/assets/index/lock.svg";
@@ -386,7 +386,7 @@ const bottom_message = ref([{
   box-sizing: border-box;
   padding: 10px 20px;
   margin-left: 10px;
-  z-index: 99999;
+  z-index: 99;
   background: #ffffff;
   color: grey;
   display: none;
@@ -421,7 +421,7 @@ const bottom_message = ref([{
     left: 0;
     width: 100%;
     height: 60px;
-    z-index: 999999;
+    z-index: 999;
 
     background-color: rgb(80, 163, 162, 0.2);
     border-bottom-left-radius: 10px;
