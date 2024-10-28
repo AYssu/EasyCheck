@@ -53,7 +53,8 @@ public class UserServiceImpl implements UserService {
         user.setUserEmail(userRegisterDTO.getEmail());
 
         // 密码加密
-        String salt = Bcrypt.gensalt(10, new SecureRandom());;
+        String salt = Bcrypt.gensalt(10, new SecureRandom());
+
 
         // 加密
         String encoded = Bcrypt.hashpw(userRegisterDTO.getPassword(), salt);
@@ -66,8 +67,17 @@ public class UserServiceImpl implements UserService {
     }
 
     // 获取用户信息
+    // 通过id获取用户信息 因为每次查询验证的token会查询当前用户 所以使用了缓存
     @Override
     public EasyUser get_user_by_id(Integer id) {
+        // 直接从数据库中查询
+        EasyUser user = (EasyUser) redisTemplate.opsForValue().get("easy_user_" + id + "_struct");
+        if (user != null) {
+            log.info("从缓存中获取用户"+id+"的信息:{}",user);
+            return user;
+        }
+        user = userMapper.selectById(id);
+        redisTemplate.opsForValue().set("easy_user_" + id + "_struct", user, 15, TimeUnit.MINUTES);
         return userMapper.selectById(id);
     }
 
@@ -92,8 +102,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public EasyUser get_user_by_jwt() {
         // 获取当前用户
-        Map<String ,Object> map = ThreadLocalUtil.get();
-        Integer id =(Integer) map.get("id");
+        Map<String, Object> map = ThreadLocalUtil.get();
+        Integer id = (Integer) map.get("id");
         return get_user_by_id(id);
     }
 
@@ -102,24 +112,20 @@ public class UserServiceImpl implements UserService {
     public UserLoginVO login(UserLoginDTO userLoginDTO, String userIpAddress) {
         // 判断用户是否存在
         EasyUser user = get_user_by_name(userLoginDTO.getUsername());
-        if (user == null)
-        {
+        if (user == null) {
             throw new RuntimeException("用户不存在");
         }
 
         // 密码校验
-        if (Bcrypt.checkpw(userLoginDTO.getPassword(), user.getUserPassword()))
-        {
+        if (Bcrypt.checkpw(userLoginDTO.getPassword(), user.getUserPassword())) {
             // 判断是否已登录
-            String redis_token = (String) redisTemplate.opsForValue().get("easy_user_"+user.getUserId());
+            String redis_token = (String) redisTemplate.opsForValue().get("easy_user_" + user.getUserId());
             if (StringUtils.hasText(redis_token)) {
-                try
-                {
+                try {
                     // 判断ip是否一致
                     Map<String, Object> map = JwtUtil.parseToken(redis_token);
-                    String ip = (String)map.get("ip");
-                    if (!ip.equals(userIpAddress))
-                    {
+                    String ip = (String) map.get("ip");
+                    if (!ip.equals(userIpAddress)) {
                         log.error("用户 {} IP发生变化 {}->{}", user.getUserName(), ip, userIpAddress);
                         // 此处可向用户发送邮箱,验证码,等提示信息
                     }
@@ -134,8 +140,7 @@ public class UserServiceImpl implements UserService {
                     BeanUtils.copyProperties(user, userLogin);
                     userLogin.setToken(redis_token);
                     return userLogin;
-                }catch (Exception exception)
-                {
+                } catch (Exception exception) {
                     // 删除token 因为测试发现redis的缓存存在这个token 但是实际上已经过期了
                     redisTemplate.delete(redis_token);
                     redisTemplate.delete("easy_user_" + user.getUserId());
@@ -145,16 +150,16 @@ public class UserServiceImpl implements UserService {
 
             }
             // 生成token
-            Map<String,Object> map = new HashMap<>();
-            map.put("username",user.getUserName());
-            map.put("email",user.getUserEmail());
-            map.put("id",user.getUserId());
-            map.put("ip",userIpAddress);
+            Map<String, Object> map = new HashMap<>();
+            map.put("username", user.getUserName());
+            map.put("email", user.getUserEmail());
+            map.put("id", user.getUserId());
+            map.put("ip", userIpAddress);
             String token = JwtUtil.genToken(map);
 
             // 缓存token 1天
-            redisTemplate.opsForValue().set(token,"easy_user_"+user.getUserId(),1, TimeUnit.DAYS);
-            redisTemplate.opsForValue().set("easy_user_"+user.getUserId(),token,1, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(token, "easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set("easy_user_" + user.getUserId(), token, 1, TimeUnit.DAYS);
 
             // 返回用户信息
             UserLoginVO userLogin = new UserLoginVO();

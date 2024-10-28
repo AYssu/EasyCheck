@@ -33,8 +33,8 @@
       </div>
     </div>
   </el-collapse-transition>
-
-  <main class="main">
+  
+  <main class="main" >
     <header class="top-title-header">
       <div class="header-container" style="display:flex;justify-content: space-between;align-items: center;">
         <div class="grid-content left-icon">
@@ -99,13 +99,16 @@
         </span>
         </div>
         <div class="main-show-content-button">
-          <button class="main-show-content-button-button" type="button" @click="login_dialog_show=true">开发者登录
+
+          <button class="main-show-content-button-button"  type="button" @click="login_dialog_show=true">开发者登录
           </button>
           <button class="main-show-content-button-button" type="button" @click="register_dialog_show=true">开发者注册
           </button>
           <button class="main-show-content-button-button" style="background: white;color: rgb(128,128,128)"
                   type="button">用户登录
           </button>
+
+
         </div>
       </div>
     </div>
@@ -127,7 +130,7 @@
 
     <footer class="el-footer-box">
       <div class="footer-box-content">
-        Powered by 阿夜 | Copyright © 2013-2024
+       <el-text> Powered by 阿夜 | Copyright © 2013-2024</el-text>
       </div>
     </footer>
   </main>
@@ -157,7 +160,7 @@
                   @keyup.enter="to_login"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
+        <el-checkbox  v-model="login_form.agree">同意协议</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="to_login">登录</el-button>
@@ -202,6 +205,8 @@
 
 
 <script lang="ts" setup>
+import 'element-plus/theme-chalk/display.css'
+
 import {ref} from 'vue';
 import {ElMessage} from "element-plus";
 import {user_login_services, user_register_services} from "@/api/user.ts";
@@ -309,12 +314,11 @@ const to_register = async () => {
 
 };
 
-import icon from "/public/vite.svg"
+import icon from "@/assets/icon_translate.png"
 import safe from "@/assets/index/safe.svg";
 import fast from "@/assets/index/fast.svg";
 import lock from "@/assets/index/lock.svg";
 import hamburger from "@/assets/index/hamburger.svg"
-import logo_background from '@/assets/svg/data_safe.svg'
 import {ArrowRight} from "@element-plus/icons-vue";
 
 const show = ref(false)
@@ -351,10 +355,10 @@ const jump = () => {
 
 // 底部信息
 const content = ref({
-  title: "易验证 bate 1.0.0",
-  content: "Vue3.0+Element-Plus+SpringBoot+MybatisPlus",
-  content2: "极快部署 极简对接 极易使用",
-  content3: "支持Java C++ 等主流语言对接使用"
+  title: "易验证 Alpha",
+  content: "Vue3 SpringBoot3 Element Plus",
+  content2: "极快部署 极简对接 极易使用 容器部署",
+  content3: "支持Java C++ 等主流语言对接使用 提供完整对接案例 实现用户简洁对接"
 });
 const bottom_message = ref([{
   icon: safe,
@@ -366,8 +370,8 @@ const bottom_message = ref([{
   content: "采用高级语言特性，编辑最简易示例，不失功能的基础上针对多系统，多平台进行网络验证源码编写，运行用户自定义开发示例，支持拓展开发，云变量热更新，轻松实现用户免登录更新，云端监控，智能通知。"
 }, {
   icon: lock,
-  title: "加密服务",
-  content: "提供基础加密服务，让用户编写的代码更安全，支持二进制加密，源码级OLLVM混淆编译，DEX2C代码抽离，均实验室功能，更多服务尽情期待。"
+  title: "安全服务",
+  content: "用户信息专属保管，不会泄露任何用户相关信息，私有服务器部署，安全可靠。"
 }]);
 </script>
 
@@ -382,7 +386,7 @@ const bottom_message = ref([{
   box-sizing: border-box;
   padding: 10px 20px;
   margin-left: 10px;
-  z-index: 99999;
+  z-index: 99;
   background: #ffffff;
   color: grey;
   display: none;
@@ -417,7 +421,7 @@ const bottom_message = ref([{
     left: 0;
     width: 100%;
     height: 60px;
-    z-index: 999999;
+    z-index: 999;
 
     background-color: rgb(80, 163, 162, 0.2);
     border-bottom-left-radius: 10px;
@@ -614,7 +618,7 @@ const bottom_message = ref([{
 }
 
 
-@media only screen and (max-width: 991px) {
+@media only screen and (max-width: 1200px) {
   .self-hidden-sm-and-down {
     display: none !important
   }
@@ -622,6 +626,7 @@ const bottom_message = ref([{
     .bottom-content {
       grid-template-columns: 1fr;
     }
+
 
     .el-footer-box {
       margin-top: 0;
@@ -639,6 +644,47 @@ const bottom_message = ref([{
     padding-right: 20px;
     box-sizing: border-box;
     opacity: 0.3;
+  }
+
+  .main-show-content-title-text
+  {
+    font-size: 2.4rem !important;
+  }
+
+
+  .main-show-content-button-button {
+    margin-top: 10px;
+    background: #35b25e;
+    animation: slideInFromLeft 2s ease-in-out; /* 移除了 forwards，除非您需要保持动画结束状态 */
+
+    color: white;
+    padding: 8px 10px !important;
+    border-radius: 10px;
+    border: transparent 1px solid;
+    font-weight: bold;
+    letter-spacing: 1px !important;
+    margin-right: 15px;
+    font-size: small;
+
+  }
+
+  .el-card-item-title {
+    img {
+      width: 40px !important;
+      height: 40px !important;
+    }
+  }
+  .el-card-item-title-title {
+    margin-left: 10px !important;
+    font-weight: bold;
+    font-size: 1.1rem !important;
+    color: #2c2c2c;
+
+  }
+
+  .el-card-item-title-content-content {
+    margin-top: 10px;
+    font-size: 0.9rem !important;
   }
 }
 

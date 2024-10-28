@@ -78,17 +78,7 @@
 import {Search} from "@element-plus/icons-vue";
 import {ref} from "vue";
 import {ComponentSize} from "element-plus";
-
-interface User {
-  id: number
-  project_name: string
-  date: string
-  name: string
-  email:string
-  money: number
-  level: number
-  introduction: string
-}
+import {User} from "@/interface/public.ts";
 
 const tableData: User[] = [
   {
