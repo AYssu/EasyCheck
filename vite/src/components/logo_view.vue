@@ -22,7 +22,6 @@ import logo from '@/assets/logo.jpg'
     width: 70%;
     height: 100%;
     object-fit: cover;
-    margin-top : 10px;
-    margin-bottom: 10px;
+    margin-top : 20px;
 }
 </style>

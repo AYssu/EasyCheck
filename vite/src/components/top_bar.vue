@@ -5,8 +5,10 @@ import default_icon from '@/assets/default.jpg'
 import {user_token} from "@/stores/token.ts";
 import {Expand, Fold} from "@element-plus/icons-vue";
 const user_data : any  = user_token()
+console.log(user_data)
 
 import {aside_status} from "@/stores/aside.ts";
+import breadcrumb from "@/components/breadcrumb.vue";
 const aside_data = aside_status()
 
 const change_aside_status = () => {
@@ -21,6 +23,7 @@ const change_aside_status = () => {
       <el-icon size="20" style="cursor: pointer" class="el-icon-s-fold">
         <component @click="change_aside_status" :is="aside_data.status?Fold:Expand"/>
       </el-icon>
+      <breadcrumb />
     </div>
     <div class="user_info">
       <el-dropdown>
@@ -50,6 +53,12 @@ const change_aside_status = () => {
   align-items: center;
   height: 60px;
   width: 100%;
+}
+
+.bread_menu {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
 }
 
 </style>

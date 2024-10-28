@@ -17,45 +17,79 @@ const routes = [
         path: '/home',
         name: 'home',
         component: () => import('@/view/HomeView.vue'),
-        title: 'home',
+        meta: {
+            keepAlive: false,
+            title: '主页',
+
+        },
         redirect: {name: 'table'},
         children: [
             {
                 path: '/home/table',
                 name: 'table',
                 component: () => import('@/view/data_table/index_view.vue'),
-                title: '项目数据',
+                meta: {
+                    keepAlive: false,
+                    title: '项目数据',
+                },
             },
             {
                 path: '/home/project_list',
                 name: 'project_list',
                 component: () => import('@/view/project_manager/project_list.vue'),
-                title: '项目列表',
-            },
-            {
-                path: '/home/card_list',
-                name: 'card_list',
-                component: () => import('@/view/project_manager/card_list.vue'),
-                title: '卡密列表',
-            },
-            {
-                path: '/home/user_authentic',
-                name: 'user_authentic',
-                component: () => import('@/view/project_manager/user_authentic.vue'),
-                title: '用户权限',
-            },
-            {
-                path: '/home/user_authority',
-                name: 'user_authority',
-                component: () => import('@/view/project_manager/user_authority.vue'),
-                title: '用户认证',
+                meta: {
+                    keepAlive: false,
+                    title: '项目列表',
+                },
             },
             {
                 path: '/home/user_list',
                 name: 'user_list',
                 component: () => import('@/view/project_manager/user_list.vue'),
-                title: '用户列表',
+                meta: {
+                    keepAlive: false,
+                    title: '用户列表',
+                },
             },
+            {
+                path: '/home/manage/',
+                name: 'manage_menu',
+                meta: {
+                    keepAlive: false,
+                    title: '项目管理',
+                },
+                children: [
+
+                    {
+                        path: '/home/manage/card_list',
+                        name: 'card_list',
+                        component: () => import('@/view/project_manager/card_list.vue'),
+                        meta: {
+                            keepAlive: false,
+                            title: '卡密列表',
+                        },
+                    },
+                    {
+                        path: '/home/manage/user_authentic',
+                        name: 'user_authentic',
+                        component: () => import('@/view/project_manager/user_authentic.vue'),
+                        meta: {
+                            keepAlive: false,
+                            title: '用户认证',
+                        },
+                    },
+                    {
+                        path: '/home/manage/user_authority',
+                        name: 'user_authority',
+                        component: () => import('@/view/project_manager/user_authority.vue'),
+                        meta: {
+                            keepAlive: false,
+                            title: '用户权限',
+                        },
+                    },
+                ]
+            },
+
         ]
     }
 ]
