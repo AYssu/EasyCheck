@@ -45,7 +45,7 @@
 
         </template>
       </el-table-column>
-      <el-table-column  label="操作">
+      <el-table-column  label="操作" width="500">
         <template #default>
           <el-button type="primary" size="small" plain >通用编辑</el-button>
           <el-button type="success" size="small" plain >余额管理</el-button>
