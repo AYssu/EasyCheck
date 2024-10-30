@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +63,7 @@ public class UserServiceImpl implements UserService {
         log.info("encoded: {},salt: {}", encoded, salt);
 
         user.setUserPassword(encoded);
+        user.setRegisterTime(LocalDateTime.now());
 
         return userMapper.insert(user) > 0;
     }
@@ -115,7 +117,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new RuntimeException("用户不存在");
         }
-
+        log.info("user {}",user);
         // 密码校验
         if (Bcrypt.checkpw(userLoginDTO.getPassword(), user.getUserPassword())) {
             // 判断是否已登录

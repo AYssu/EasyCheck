@@ -105,7 +105,8 @@ import {
   TitleComponent,
   TooltipComponent,
   GridComponent,
-  VisualMapComponent
+  VisualMapComponent,
+  LegendComponent
 } from 'echarts/components';
 import { LineChart } from 'echarts/charts';
 import { UniversalTransition } from 'echarts/features';
@@ -125,7 +126,8 @@ echarts.use([
   VisualMapComponent,
   LineChart,
   CanvasRenderer,
-  UniversalTransition
+  UniversalTransition,
+    LegendComponent,
 ]);
 
 const activeName = ref('1')

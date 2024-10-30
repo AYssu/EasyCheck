@@ -1,5 +1,6 @@
 package com.easycheck.springboot.vo;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ public class ProjectListVO {
 
     private String projectName; // 项目名称
 
-    @JsonFormat(pattern = "yyyy年MM月dd日")
+    @JSONField(format = "yyyy年MM月dd日")
     private LocalDateTime projectCreateTime; // 项目创建时间
 
     private String projectKey; // 项目密钥

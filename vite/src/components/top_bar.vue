@@ -14,6 +14,7 @@ const aside_data = aside_status()
 const change_aside_status = () => {
   aside_data.toggleStatus()
 }
+// 这边需要注意的就是这个username 原本都是小驼峰的 但是后端的login vo 重写了spring security 的user方法 然后自己定义的userName 就没了
 
 </script>
 
@@ -35,7 +36,7 @@ const change_aside_status = () => {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span>{{ user_data.token.userName }} | {{user_data.token.userEmail}} |</span>
+      <span>{{ user_data.token.username }} | {{user_data.token.userEmail}} |</span>
       <el-tag v-if="user_data.token.level===1" size="small" round effect="light" type="info" style="margin-left: 5px;margin-right: 8px">小萌新</el-tag>
       <el-tag v-else-if="user_data.token.level===2" size="small" round effect="light" type="warning" style="margin-left: 5px;margin-right: 8px">进阶用户</el-tag>
       <el-tag v-else-if="user_data.token.level===3" size="small" round effect="light" type="primary" style="margin-left: 5px;margin-right: 8px">核心用户</el-tag>

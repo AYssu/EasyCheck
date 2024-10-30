@@ -1,18 +1,18 @@
 <template>
-<el-tabs
-    class="tab-view"
-    type="card"
-    v-model="active_tab"
-    closable
-    @tab-remove="tab_remove"
-    @tab-click="tab_click">
-  <el-tab-pane v-for="(item ,index) in tab_list" :key="index" :name="item.path" :label="item.title" ></el-tab-pane>
-</el-tabs>
+  <el-tabs
+      v-model="active_tab"
+      class="tab-view"
+      closable
+      type="card"
+      @tab-remove="tab_remove"
+      @tab-click="tab_click">
+    <el-tab-pane v-for="(item ,index) in tab_list" :key="index" :label="item.title" :name="item.path"></el-tab-pane>
+  </el-tabs>
 </template>
-<style scoped lang="scss">
+<style lang="scss" scoped>
 :deep(.el-tabs__header) {
-    box-sizing: border-box;
-    margin: 0; // 修正了Opx为0px
+  box-sizing: border-box;
+  margin: 0; // 修正了Opx为0px
 }
 
 :deep(.el-tabs__item) {
@@ -53,42 +53,51 @@
 import {Tab, tabs_status} from "@/stores/tabs/tabs.ts";
 import {computed, onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
-import {TabsPaneContext} from "element-plus";
+import {ElMessage, TabsPaneContext} from "element-plus";
 import router from "@/router";
+
+// 获取tabs状态 路由的store
 const tabs_status_data = tabs_status();
 
 const active_tab = ref('');
-const tab_list =  computed(()=>{
+
+// 计算属性 获取tabs的列表
+const tab_list = computed(() => {
   return tabs_status_data.get_tab_list();
 })
 
+// 添加tab
 const add_tab = () => {
-  const tab:Tab = {
+  const tab: Tab = {
     title: route.meta.title as string,
     path: route.path
   }
   tabs_status_data.set_tab_list(tab)
 }
 
+// 监听路由变化
 const route = useRoute();
-watch(()=>route.path, ()=>{
+watch(() => route.path, () => {
   add_tab()
   active_tab.value = route.path
 })
 
+// 删除tab
 const tab_remove = (tab_name: string) => {
   console.log("delete tab:", tab_name)
   const tabs = tab_list.value;
-  let active_tab_name = active_tab.value;
-  if (tab_name === active_tab_name)
-  {
-    tabs.forEach((item, index)=>{
-      if (item.path === tab_name)
-      {
 
-        const next_tab = tabs[index+1] || tabs[index-1];
-        if (next_tab)
-        {
+  // 不能删除首页 初始进入首页会载入table
+  if (tab_name === "/home/table") {
+    ElMessage.warning("不能删除首页");
+    return
+  }
+  let active_tab_name = active_tab.value;
+  if (tab_name === active_tab_name) {
+    tabs.forEach((item, index) => {
+      if (item.path === tab_name) {
+        const next_tab = tabs[index + 1] || tabs[index - 1];
+        if (next_tab) {
           active_tab_name = next_tab.path;
         }
       }
@@ -97,16 +106,18 @@ const tab_remove = (tab_name: string) => {
   console.log("active_tab_name:", active_tab_name)
   active_tab.value = active_tab_name
   router.push({path: active_tab_name})
-  tabs_status_data.tab_list = tabs.filter(item=>item.path !== tab_name)
+  tabs_status_data.tab_list = tabs.filter(item => item.path !== tab_name)
 
 }
 
-
+// 切换tab
 const tab_click = (tab: TabsPaneContext) => {
   console.log(tab.props)
   router.push({path: tab.props.name as string})
 }
-onMounted(()=> {
+
+// 初始化路由路径和激活路由样式
+onMounted(() => {
   active_tab.value = route.path
   add_tab()
 })
