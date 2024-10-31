@@ -79,6 +79,13 @@ const add_tab = () => {
 const route = useRoute();
 watch(() => route.path, () => {
   add_tab()
+  const routes = router.getRoutes();
+  const routeToDeactivate = routes.find(r => r.path === route.path);
+  if (routeToDeactivate) {
+    console.log("routeToDeactivate:", routeToDeactivate)
+    // routeToDeactivate.meta.keepAlive = true;
+  }
+
   active_tab.value = route.path
 })
 
@@ -106,6 +113,15 @@ const tab_remove = (tab_name: string) => {
   console.log("active_tab_name:", active_tab_name)
   active_tab.value = active_tab_name
   router.push({path: active_tab_name})
+
+  // 更新对应路由的keepAlive属性为false
+  const routes = router.getRoutes();
+  const routeToDeactivate = routes.find(r => r.path === tab_name);
+  if (routeToDeactivate) {
+    console.log("routeToDeactivate:", routeToDeactivate)
+    routeToDeactivate.meta.keepAlive = false;
+  }
+
   tabs_status_data.tab_list = tabs.filter(item => item.path !== tab_name)
 
 }

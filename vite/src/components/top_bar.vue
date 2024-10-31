@@ -4,17 +4,29 @@ import default_icon from '@/assets/default.jpg'
 // 引入数据
 import {user_token} from "@/stores/token.ts";
 import {Expand, Fold} from "@element-plus/icons-vue";
-const user_data : any  = user_token()
+const user_data  = user_token() as any
 console.log(user_data)
 
 import {aside_status} from "@/stores/aside.ts";
 import breadcrumb from "@/components/breadcrumb.vue";
+import {computed} from "vue";
 const aside_data = aside_status()
 
 const change_aside_status = () => {
   aside_data.toggleStatus()
 }
 // 这边需要注意的就是这个username 原本都是小驼峰的 但是后端的login vo 重写了spring security 的user方法 然后自己定义的userName 就没了
+
+const UNKNOWN_USERNAME = '未知用户名';
+const UNKNOWN_EMAIL = '未知邮箱';
+
+const top_user_info = computed(() => {
+  const username = user_data?.token?.username || UNKNOWN_USERNAME;
+  const userEmail = user_data?.token?.userEmail || UNKNOWN_EMAIL;
+
+  return `${username} | ${userEmail} |`;
+});
+
 
 </script>
 
@@ -36,12 +48,18 @@ const change_aside_status = () => {
           </el-dropdown-menu>
         </template>
       </el-dropdown>
-      <span>{{ user_data.token.username }} | {{user_data.token.userEmail}} |</span>
+      <span>{{top_user_info}}</span>
       <el-tag v-if="user_data.token.level===1" size="small" round effect="light" type="info" style="margin-left: 5px;margin-right: 8px">小萌新</el-tag>
       <el-tag v-else-if="user_data.token.level===2" size="small" round effect="light" type="warning" style="margin-left: 5px;margin-right: 8px">进阶用户</el-tag>
       <el-tag v-else-if="user_data.token.level===3" size="small" round effect="light" type="primary" style="margin-left: 5px;margin-right: 8px">核心用户</el-tag>
       <el-tag v-else-if="user_data.token.level===4" size="small" round effect="light" type="success" style="margin-left: 5px;margin-right: 8px">资深用户</el-tag>
-      <el-tag v-else-if="user_data.token.level===5" size="small" round effect="light" type="danger" style="margin-left: 5px;margin-right: 8px">超级管理员</el-tag>
+      <el-tag v-else-if="user_data.token.level===5" size="small" round effect="light" type="danger" style="margin-left: 5px;margin-right: 8px">
+      <el-icon>
+        <svg  class="icon" viewBox="0 0 1024 1024"  xmlns="http://www.w3.org/2000/svg"  width="200" height="200"><path d="M976.394 400.901L811.794 86.08a43.357 43.357 0 0 0-38.415-23.265h-532.67a43.357 43.357 0 0 0-38.416 23.265L37.693 400.9a43.35 43.35 0 0 0 5.845 48.704l430.935 490.412a43.35 43.35 0 0 0 65.127 0l430.935-490.412a43.35 43.35 0 0 0 5.86-48.704zM792.2 421.471L539.217 701.685a43.336 43.336 0 0 1-64.346 0L221.873 421.471a43.35 43.35 0 1 1 64.36-58.097l220.81 244.574 220.811-244.574a43.35 43.35 0 1 1 64.346 58.097z" ></path></svg>
+      </el-icon>
+        超级管理员
+
+      </el-tag>
     </div>
   </div>
 

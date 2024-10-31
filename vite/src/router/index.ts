@@ -38,7 +38,7 @@ const routes = [
                 name: 'project_list',
                 component: () => import('@/view/project_manager/project_list.vue'),
                 meta: {
-                    keepAlive: false,
+                    keepAlive: true,
                     title: '项目列表',
                 },
             },
