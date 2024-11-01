@@ -122,6 +122,14 @@
 
 <style lang="scss" scoped>
 
+.el-menu {
+  .is-active
+  {
+    color: #42b983 !important;
+  }
+}
+
+
 // 淡出淡入
 .fade-enter-active,
 .fade-leave-active {
