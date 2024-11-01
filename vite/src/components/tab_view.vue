@@ -79,13 +79,6 @@ const add_tab = () => {
 const route = useRoute();
 watch(() => route.path, () => {
   add_tab()
-  const routes = router.getRoutes();
-  const routeToDeactivate = routes.find(r => r.path === route.path);
-  if (routeToDeactivate) {
-    console.log("routeToDeactivate:", routeToDeactivate)
-    // routeToDeactivate.meta.keepAlive = true;
-  }
-
   active_tab.value = route.path
 })
 

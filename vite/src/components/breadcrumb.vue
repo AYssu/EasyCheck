@@ -16,7 +16,6 @@ import {useRoute} from 'vue-router'
 const use_route = useRoute()
 const get_breadcrumb = () => {
   let matched = use_route.matched.filter(item => item.meta && item.meta.title);
-  console.log(matched)
   const first = matched[0];
   if (first && first.path !== '/home') {
     matched = [{ path: '/home', meta: { title: 'homepage' }} as any].concat(matched);

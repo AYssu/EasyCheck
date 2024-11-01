@@ -11,7 +11,10 @@ const routes = [
         path: '/about',
         name: 'about',
         component: () => import('@/view/AboutView.vue'),
-        title: 'about',
+        meta: {
+            keepAlive: false,
+            title: '关于',
+        }
     },
     {
         path: '/home',

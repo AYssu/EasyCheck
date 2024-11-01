@@ -166,7 +166,8 @@ public class UserServiceImpl implements UserService {
             // 返回用户信息
             UserLoginVO userLogin = new UserLoginVO();
             BeanUtils.copyProperties(user, userLogin);
-            userLogin.setToken(redis_token);
+            // 这个之前的时候写成了 redis_token 那个要在redis存在才有 修正为 token
+            userLogin.setToken(token);
             return userLogin;
         }
 

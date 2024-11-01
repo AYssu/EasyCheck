@@ -81,8 +81,6 @@
                 <el-menu-item index="3-3">代理分配</el-menu-item>
                 <el-menu-item index="3-4">代理统计</el-menu-item>
               </el-menu-item-group>
-
-
             </el-sub-menu>
             <el-menu-item index="4">
               <template #title>
@@ -107,15 +105,15 @@
         </el-header>
         <tab_view/>
         <el-main>
+
           <router-view  v-slot="{ Component }">
             <transition mode="out-in" name="scale">
-             <div>
-               <keep-alive >
-                 <component :is="Component" />
-               </keep-alive>
-             </div>
+              <keep-alive :include="keepAliveList"  >
+              <component :is="Component"  />
+              </keep-alive>
             </transition>
           </router-view>
+
         </el-main>
       </el-container>
     </el-container>
@@ -188,29 +186,34 @@ import top_bar from '@/components/top_bar.vue'
 
 import {useRouter} from "vue-router";
 import {computed, ref, watch} from "vue";
-
-const router = useRouter()
 import {aside_status} from "@/stores/aside.ts";
-
-const aside_data = aside_status()
-
 import icon_translate from '@/assets/icon_translate.png'
 import tab_view from "@/components/tab_view.vue";
+import {tabs_status} from "@/stores/tabs/tabs.ts";
+
+const router = useRouter()
+
+const aside_data = aside_status()
 
 // 获取当前路由
 const active_menu = computed(() => {
   return router.currentRoute.value.path
 })
 
-const keep_alive_status = ref(false)
+// 缓存路由 判断哪些属于该缓存的页面
+const tabs_data =tabs_status()
+const keepAliveList = computed(() => {
+  return tabs_data.tab_list
+      .map(item => {
+        const matchedRoute = router.getRoutes().find(r => r.path === item.path);
+        if (matchedRoute && matchedRoute.name) {
+          return matchedRoute.name as string;
+        }
+        return null;
+      })
+      .filter(name => name !== null); // 过滤掉 null 值
+});
 
-import {useRoute} from 'vue-router'
-
-const route = useRoute()
-watch(() => route.path, () => {
-  keep_alive_status.value = route.meta.keepAlive as boolean
-  console.log("keep_alive_status:", keep_alive_status.value)
-})
 
 // 监听侧边栏状态
 const show_aside = ref(true);
@@ -234,6 +237,8 @@ const handleOpen = (key: string, keyPath: string[]) => {
 const handleClose = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
 }
+
+
 </script>
 
 <style scoped>
