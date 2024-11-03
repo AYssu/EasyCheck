@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div style="margin-bottom: 20px">
+    <div style="margin-bottom: 20px;margin-top: 10px">
       <el-input
           v-model="search_params.projectName"
-          placeholder="请输入搜索内容"
+          placeholder="请输入项目名称"
           style="width: 40%;margin-right: 10px"
           @keyup.enter="get_project_list(search_params)"
       >
@@ -88,7 +88,7 @@
         <template #default>
           <el-button plain size="small" type="primary">通用编辑</el-button>
           <el-button plain size="small" type="success">公告编辑</el-button>
-          <el-button plain size="small" type="info">远程设置</el-button>
+          <el-button plain size="small" type="info">接口列表</el-button>
           <el-button plain size="small" type="warning">更新设置</el-button>
           <el-button plain size="small" type="danger">删除应用</el-button>
 

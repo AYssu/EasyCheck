@@ -79,6 +79,7 @@ const add_tab = () => {
 const route = useRoute();
 watch(() => route.path, () => {
   add_tab()
+  document.title = route.meta.title as string
   active_tab.value = route.path
 })
 
@@ -128,6 +129,7 @@ const tab_click = (tab: TabsPaneContext) => {
 // 初始化路由路径和激活路由样式
 onMounted(() => {
   active_tab.value = route.path
+  document.title = route.meta.title as string
   add_tab()
 })
 </script>
