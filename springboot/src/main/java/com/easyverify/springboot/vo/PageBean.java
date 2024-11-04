@@ -12,4 +12,5 @@ import java.util.List;
 public class PageBean <T>{
     private int total;//总条数
     private List<T> items;//当前页数据集合
+    private List<String> names;// 获取所有程序合集名称
 }

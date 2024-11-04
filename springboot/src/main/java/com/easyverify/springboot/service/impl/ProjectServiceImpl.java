@@ -12,6 +12,7 @@ import com.easyverify.springboot.vo.PageBean;
 import com.easyverify.springboot.vo.ProjectListVO;
 import com.easyverify.springboot.service.ProjectService;
 import com.easyverify.springboot.utils.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class ProjectServiceImpl implements ProjectService {
 
@@ -112,10 +114,17 @@ public class ProjectServiceImpl implements ProjectService {
             return projectListVO;
         }).toList();
 
+        // 获取所有项目名称 前端补全时需要显示全部项目名称
+        LambdaQueryWrapper<EasyProject> select_all_name = new LambdaQueryWrapper<>();
+        select_all_name.select(EasyProject::getProjectName);
+        select_all_name.eq(EasyProject::getProjectUser,user.getUserId());
+        List<String> names = projectMapper.selectObjs(select_all_name);
+
+        log.info("names:{}",names);
         // 设置返回值
         pageBean.setTotal((int) guardPage1.getTotal());
         pageBean.setItems(projectListVOS);
-
+        pageBean.setNames(names);
         return pageBean;
     }
 

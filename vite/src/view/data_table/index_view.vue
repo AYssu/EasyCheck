@@ -18,23 +18,23 @@
       <el-card class="top_menu_card">
         <div class="top_menu_list">
           <img :src="project_icon" alt="">
-          <el-text type="info" style="margin-top: 10px">项目编辑</el-text>
+          <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
         </div>
       </el-card>
       <el-card class="top_menu_card">
         <div class="top_menu_list">
           <img :src="edit_icon" alt="">
-          <el-text type="info" style="margin-top: 10px">项目编辑</el-text>
+          <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
         </div>
       </el-card><el-card class="top_menu_card">
       <div class="top_menu_list">
         <img :src="tips_icon" alt="">
-        <el-text type="info" style="margin-top: 10px">项目编辑</el-text>
+        <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
       </div>
     </el-card><el-card class="top_menu_card">
       <div class="top_menu_list">
         <img :src="data_icon" alt="">
-        <el-text type="info" style="margin-top: 10px">项目编辑</el-text>
+        <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
       </div>
     </el-card>
 
@@ -530,6 +530,7 @@ const option = ref({
   justify-content: center;
   margin-left: 20px;
 }
+
 .left_info {
   height: 100px;
   width: 100%;
