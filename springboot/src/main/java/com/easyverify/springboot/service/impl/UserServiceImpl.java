@@ -106,7 +106,10 @@ public class UserServiceImpl implements UserService {
         // 获取当前用户
         Map<String, Object> map = ThreadLocalUtil.get();
         Integer id = (Integer) map.get("id");
-        return get_user_by_id(id);
+        EasyUser user = get_user_by_id(id);
+        if (user == null)
+            throw new RuntimeException("用户不存在");
+        return user;
     }
 
     // 用户登录

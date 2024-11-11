@@ -1,6 +1,7 @@
 package com.easyverify.springboot.service;
 
 import com.easyverify.springboot.dto.ProjectCreateDTO;
+import com.easyverify.springboot.dto.ProjectInfoDTO;
 import com.easyverify.springboot.dto.ProjectListDTO;
 import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.vo.PageBean;
@@ -29,6 +30,12 @@ public interface ProjectService {
     EasyProject get_project_by_key(String projectKey);
 
     /*
+    * 根据项目id获取项目信息
+    * @param pid
+    * @return
+     */
+    EasyProject get_project_by_id_with_uid(Integer pid, Integer uid);
+    /*
     * 获取项目列表
     * @param projectListDTO
     * @return
@@ -41,4 +48,18 @@ public interface ProjectService {
     * @return
      */
     boolean set_project_status(Integer id);
+
+    /*
+    * 重置项目key
+    * @param pid
+    * @return
+     */
+    boolean reset_key_base64(Integer pid);
+
+    /*
+    * 更新项目信息
+    * @param projectInfoDTO
+    * @return
+     */
+    boolean update_normal_info(ProjectInfoDTO projectInfoDTO);
 }

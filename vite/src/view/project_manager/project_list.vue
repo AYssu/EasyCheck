@@ -1,40 +1,40 @@
 <template>
   <div>
     <div style="margin-bottom: 20px;margin-top: 10px">
-        <el-autocomplete
-            v-model="search_params.projectName"
-            :fetch-suggestions="querySearch"
-            clearable
-            placeholder="请输入项目名称"
-            style="width: 40%;margin-right: 10px"
-            @keyup.enter="get_project_list(search_params)"
-            @select="get_project_list(search_params)"
-        >
-          <template #prepend>
-            <el-button :icon="Search" @click="get_project_list(search_params)"></el-button>
-          </template>
-        </el-autocomplete>
+      <el-autocomplete
+          v-model="search_params.projectName"
+          :fetch-suggestions="querySearch"
+          clearable
+          placeholder="请输入项目名称"
+          style="width: 40%;margin-right: 10px"
+          @select="get_project_list(search_params)"
+          @keyup.enter="get_project_list(search_params)"
+      >
+        <template #prepend>
+          <el-button :icon="Search" @click="get_project_list(search_params)"></el-button>
+        </template>
+      </el-autocomplete>
       <el-button plain type="primary" @click="drawer = true">添加项目</el-button>
 
     </div>
     <div class="box_card_list">
 
-      <a-card v-for="(item,index) in tableData" :key="index" hoverable style="width: 240px" @click="on_click_open_show(item)">
+      <a-card v-for="(item,index) in tableData" :key="index" hoverable style="width: 240px">
         <template #cover>
           <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>
         </template>
         <template #actions>
-          <setting-outlined  />
-          <edit-outlined  />
-          <ellipsis-outlined  />
+          <setting-outlined/>
+          <edit-outlined @click="on_click_open_show(item)"/>
+          <ellipsis-outlined/>
         </template>
-        <a-card-meta  >
+        <a-card-meta>
           <template #avatar>
-            <a-avatar :src="item.projectIcon" />
+            <a-avatar :src="item.projectIcon"/>
           </template>
           <template #title>
-            <div >
-              <el-text >{{ item.projectName }}</el-text>
+            <div>
+              <el-text>{{ item.projectName }}</el-text>
               <el-switch
                   v-model="item.projectStatus"
                   :active-value="0"
@@ -51,7 +51,7 @@
           <template #description>
             <div>
               <div>
-                <el-text type="info" size="small">创建时间: {{ item.projectCreateTime }}</el-text>
+                <el-text size="small" type="info">创建时间: {{ item.projectCreateTime }}</el-text>
               </div>
             </div>
           </template>
@@ -59,89 +59,6 @@
       </a-card>
     </div>
 
-<!--    <el-table-->
-<!--        :data="tableData"-->
-<!--        :default-sort="{ prop: 'date', order: 'descending' }"-->
-<!--    >-->
-<!--      <template #empty>-->
-<!--        <el-empty :image-size="200"/>-->
-<!--      </template>-->
-<!--      <el-table-column label="编号" prop="projectId" width="65"/>-->
-
-<!--      <el-table-column label="项目图标" prop="projectUpdateUrl" width="100">-->
-<!--        <template #default="row:any">-->
-<!--          <div style="width: 100%;display: flex;justify-content: center;align-items: center;">-->
-<!--            <el-image-->
-<!--                :src="row.row.projectIcon"-->
-<!--                fit="contain"-->
-<!--                style="width: 40px; height: 40px;border-radius: 5px"-->
-<!--            />-->
-<!--          </div>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="项目名称" prop="projectName" width="130">-->
-<!--        <template #default="scope">-->
-<!--          <el-tag :type="scope.row.tagType">{{ scope.row.projectName }}</el-tag>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="添加日期" prop="projectCreateTime" sortable width="130"/>-->
-
-<!--      <el-table-column label="项目密钥" prop="projectKey" width="210">-->
-<!--        <template #default="scope">-->
-<!--          <el-text style="margin-left: 5px" type="warning" @click="copy_text(scope.row.projectKey)">-->
-<!--            {{ scope.row.projectKey }}-->
-<!--          </el-text>-->
-<!--          <el-button plain size="small" style="margin-left: 7px" type="primary"-->
-<!--                     @click="copy_text(scope.row.projectKey)">复制-->
-<!--          </el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="BASE64" prop="projectBase64" show-overflow-tooltip sortable width="640">-->
-<!--        <template #default="scope">-->
-<!--          <el-text style="margin-left: 5px" type="info" @click="copy_text(scope.row.projectBase64)">-->
-<!--            {{ scope.row.projectBase64 }}-->
-<!--          </el-text>-->
-
-<!--          <el-button plain size="small" style="margin-left: 7px" type="primary"-->
-<!--                     @click="copy_text(scope.row.projectBase64)">复制-->
-<!--          </el-button>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="运行状态" prop="projectStatus" width="100">-->
-<!--        <template #default="scope:any">-->
-<!--          <el-switch-->
-<!--              v-model="scope.row.projectStatus"-->
-<!--              :active-value="0"-->
-<!--              :disabled="true"-->
-<!--              :inactive-value="1"-->
-<!--              active-text="运行"-->
-<!--              inactive-text="暂停"-->
-<!--              inline-prompt-->
-<!--              style="&#45;&#45;el-switch-on-color: #13ce66; &#45;&#45;el-switch-off-color: #ff4949"-->
-<!--              @click="update_project_status($event,scope.row)"-->
-<!--          />-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="项目简介" prop="projectMessage" width="200">-->
-<!--        <template #default="scope">-->
-<!--          <el-text style="margin-left: 5px" type="info">-->
-<!--            {{ scope.row.projectMessage == "" ? "暂无介绍..." : scope.row.projectMessage }}-->
-<!--          </el-text>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--      <el-table-column label="操作" width="460">-->
-<!--        <template #default>-->
-<!--          <el-button plain size="small" type="primary">通用编辑</el-button>-->
-<!--          <el-button plain size="small" type="success">公告编辑</el-button>-->
-<!--          <el-button plain size="small" type="info">接口列表</el-button>-->
-<!--          <el-button plain size="small" type="warning">更新设置</el-button>-->
-<!--          <el-button plain size="small" type="danger">删除应用</el-button>-->
-
-<!--        </template>-->
-<!--      </el-table-column>-->
-<!--    </el-table>-->
-<!--    -->
-<!--    -->
     <el-pagination
         v-model:current-page="search_params.currentPage"
 
@@ -160,9 +77,10 @@
     <a-modal v-model:open="drawer" aria-hidden="false" title="创建程序" @ok="handleOk">
       <template #footer>
         <a-button key="back" @click="handleCancel">取消</a-button>
-        <a-button key="submit" type="primary" :loading="loading" @click="handleOk">创建</a-button>
+        <a-button key="submit" :loading="loading" type="primary" @click="handleOk">创建</a-button>
       </template>
-      <el-form :label-position="'left'" :model="create_project_params" :rules="create_rules"  label-width="80px" style="margin: 30px">
+      <el-form :label-position="'left'" :model="create_project_params" :rules="create_rules" label-width="80px"
+               style="margin: 30px">
         <el-form-item label="项目名称" prop="projectName">
           <el-input v-model="create_project_params.projectName" placeholder="请输入项目名称"/>
         </el-form-item>
@@ -173,37 +91,50 @@
     </a-modal>
 
     <a-drawer
-        width="640"
-        placement="right"
         :closable="false"
         :open="a_drawer"
+        placement="right"
         title="项目详情"
+        width="640"
         @close="()=>a_drawer=false">
       <template #extra>
         <a-button style="margin-right: 8px" @click="a_drawer = false">取消</a-button>
         <a-button type="primary" @click="on_update_project()">更新数据</a-button>
       </template>
-      <a-form layout="vertical" :model="show_project_info"  >
-        <a-form-item  label="项目名称">
-          <el-input   v-model="show_project_info.projectName" placeholder="请输入项目名称">
+      <a-form :model="show_project_info" layout="vertical">
+        <a-form-item label="项目名称">
+          <el-input v-model="show_project_info.projectName" placeholder="请输入项目名称">
           </el-input>
         </a-form-item>
-        <a-form-item label="程序密钥">
-          <el-input  v-model="show_project_info.projectKey"  readonly placeholder="请输入项目key" >
+        <a-form-item>
+          <template #label>
+            <span>项目key</span>
+            <el-icon size="15" style="margin-left: 4px" @click="click_reset_key(show_project_info.projectId)">
+              <svg class="icon" data-spm-anchor-id="a313x.search_index.0.i8.1cfb3a81XkHwer" height="200" p-id="4887"
+                   t="1731297185428" version="1.1"
+                   viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M943.8 484.1c-17.5-13.7-42.8-10.7-56.6 6.8-5.7 7.3-8.5 15.8-8.6 24.4h-0.4c-0.6 78.3-26.1 157-78 223.3-124.9 159.2-356 187.1-515.2 62.3-31.7-24.9-58.2-54-79.3-85.9h77.1c22.4 0 40.7-18.3 40.7-40.7v-3c0-22.4-18.3-40.7-40.7-40.7H105.5c-22.4 0-40.7 18.3-40.7 40.7v177.3c0 22.4 18.3 40.7 40.7 40.7h3c22.4 0 40.7-18.3 40.7-40.7v-73.1c24.2 33.3 53 63.1 86 89 47.6 37.3 101 64.2 158.9 79.9 55.9 15.2 113.5 19.3 171.2 12.3 57.7-7 112.7-24.7 163.3-52.8 52.5-29 98-67.9 135.3-115.4 37.3-47.6 64.2-101 79.9-158.9 10.2-37.6 15.4-76 15.6-114.6h-0.1c-0.3-11.6-5.5-23.1-15.5-30.9zM918.7 135.2h-3c-22.4 0-40.7 18.3-40.7 40.7V249c-24.2-33.3-53-63.1-86-89-47.6-37.3-101-64.2-158.9-79.9-55.9-15.2-113.5-19.3-171.2-12.3-57.7 7-112.7 24.7-163.3 52.8-52.5 29-98 67.9-135.3 115.4-37.3 47.5-64.2 101-79.9 158.8-10.2 37.6-15.4 76-15.6 114.6h0.1c0.2 11.7 5.5 23.2 15.4 30.9 17.5 13.7 42.8 10.7 56.6-6.8 5.7-7.3 8.5-15.8 8.6-24.4h0.4c0.6-78.3 26.1-157 78-223.3 124.9-159.2 356-187.1 515.2-62.3 31.7 24.9 58.2 54 79.3 85.9h-77.1c-22.4 0-40.7 18.3-40.7 40.7v3c0 22.4 18.3 40.7 40.7 40.7h177.3c22.4 0 40.7-18.3 40.7-40.7V175.8c0.1-22.3-18.2-40.6-40.6-40.6z"
+                    p-id="4888"></path>
+              </svg>
+            </el-icon>
+          </template>
+          <el-input v-model="show_project_info.projectKey" placeholder="请输入项目key" readonly>
             <template #append>
               <el-button @click="copy_text(show_project_info.projectKey)">复制</el-button>
             </template>
           </el-input>
         </a-form-item>
         <a-form-item label="自定义BASE64">
-          <el-input readonly v-model="show_project_info.projectBase64"  placeholder="请输入项目名称">
+          <el-input v-model="show_project_info.projectBase64" placeholder="请输入项目名称" readonly>
             <template #append>
               <el-button @click="copy_text(show_project_info.projectBase64)">复制</el-button>
             </template>
           </el-input>
         </a-form-item>
         <a-form-item label="项目简绍">
-          <el-input type="textarea"  v-model = 'show_project_info.projectMessage' show-word-limit maxlength="100" placeholder="请输入项目名称" />
+          <el-input v-model='show_project_info.projectMessage' maxlength="100" placeholder="请输入项目名称" show-word-limit
+                    type="textarea"/>
         </a-form-item>
       </a-form>
     </a-drawer>
@@ -214,8 +145,13 @@
 
 import {Search} from "@element-plus/icons-vue";
 import {createVNode, onMounted, ref, UnwrapRef} from "vue";
-import {create_project_services, get_project_list_services, update_project_status_services} from "@/api/project.ts";
-import {Action, ComponentSize, ElMessage, ElMessageBox} from "element-plus";
+import {
+  create_project_services,
+  get_project_list_services,
+  update_project_normal_info_services, update_project_reset_key,
+  update_project_status_services
+} from "@/api/project.ts";
+import {ComponentSize, ElMessage} from "element-plus";
 
 const drawer = ref<boolean>(false);
 const a_drawer = ref<boolean>(false);
@@ -235,7 +171,7 @@ const show_project_info = ref<Project>({
   projectIcon: "",
   projectBase64: ""
 });
-import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
+import {SettingOutlined, EditOutlined, EllipsisOutlined} from '@ant-design/icons-vue';
 import {message, Modal} from "ant-design-vue";
 
 
@@ -262,9 +198,10 @@ interface Search {
   pageSize: number
   projectName: string | null
 }
+
 const loading = ref<boolean>(false);
 
-const handleOk =async () => {
+const handleOk = async () => {
   loading.value = true;
   await create_project_click()
   loading.value = false;
@@ -275,10 +212,28 @@ const handleCancel = () => {
 };
 
 
-const on_update_project = ()=> {
+const on_update_project = async () => {
+  const params = {
+    projectId: show_project_info.value.projectId,
+    projectName: show_project_info.value.projectName,
+    projectMessage: show_project_info.value.projectMessage
+  }
+
+  try {
+    const result = await update_project_normal_info_services(params)
+    if (result.data.code === 200) {
+      message.success(result.data.message)
+      await get_project_list(search_params.value)
+      a_drawer.value = false
+    } else {
+      message.error(result.data.message)
+    }
+  } catch (e) {
+    console.log(e)
+  }
 
 }
-const on_click_open_show = (data:any)=> {
+const on_click_open_show = (data: any) => {
   // 这样就不会修改原本的table_data咯
   show_project_info.value = JSON.parse(JSON.stringify(data));
   a_drawer.value = true
@@ -325,7 +280,6 @@ const get_project_list = async (value: UnwrapRef<Search>) => {
 }
 
 
-
 const randomType = () => {
   const types = ['info', 'success', 'warning', 'danger'];
   return types[Math.floor(Math.random() * 4)];
@@ -358,19 +312,18 @@ const handleCurrentChange = (val: number) => {
 }
 
 
-import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
 
-const update_project_status = ( row: Project) => {
-  if (row.projectStatus == 0)
-  {
+const update_project_status = (row: Project) => {
+  if (row.projectStatus == 0) {
     Modal.confirm({
       title: `确定要禁用项目${row.projectName}吗？`,
       okText: '禁用',
       okType: 'danger',
       cancelText: '取消',
       icon: createVNode(ExclamationCircleOutlined),
-      content: createVNode('div', { style: 'color:red;' }, '禁用后程序用户无法登录，卡密不可使用'),
-      onOk : async () => {
+      content: createVNode('div', {style: 'color:red;'}, '禁用后程序用户无法登录，卡密不可使用'),
+      onOk: async () => {
         const update_result = await update_project_status_services(row.projectId);
         if (update_result.data.code === 200) {
           ElMessage.success(update_result.data.message)
@@ -384,7 +337,7 @@ const update_project_status = ( row: Project) => {
       },
       class: 'test',
     });
-  }else {
+  } else {
     Modal.success({
       maskClosable: true,
       title: '提示',
@@ -446,13 +399,19 @@ const copy_text = (key: string) => {
     okCancel: true,
     onOk: () => {
       // 复制文本到剪贴板
-      navigator.clipboard.writeText(key).then(() => {
-        message.success('复制成功');
-      }).catch(() => {
-        message.error('复制失败，请手动复制');
-      });
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(key).then(() => {
+          message.success('复制成功');
+        }).catch((error) => {
+          message.error('复制失败，请手动复制');
+          console.error('复制失败:', error);
+        });
+      } else {
+        old_copy(key);
+      }
     },
-    onCancel: () => {}
+    onCancel: () => {
+    }
   })
 };
 
@@ -479,6 +438,26 @@ const createFilter = (queryString: string) => {
 }
 
 
+const click_reset_key = async (pid: number) => {
+
+  Modal.warning({
+    title: '重置项目key',
+    content: '确定要重置项目key吗？',
+    okText: '确定',
+    okCancel: true,
+    cancelText: '取消',
+    onOk: async () => {
+      const update_result = await update_project_reset_key(pid);
+      if (update_result.data.code === 200) {
+        message.success(update_result.data.message)
+        await get_project_list(search_params.value);
+      } else {
+        message.error(update_result.data.message)
+      }
+    },
+  })
+}
+
 onMounted(() => {
   // 初始化数据
   get_project_list(search_params.value);
@@ -491,6 +470,7 @@ onMounted(() => {
 :where(.ant-card-meta-detail >div:not(:last-child)) {
   margin-bottom: 0 !important;
 }
+
 .box_card_list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));

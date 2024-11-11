@@ -31,3 +31,17 @@ export const create_project_services = (params: any) => {
 export const update_project_status_services = (id: any) => {
     return request.get('/project/project_set_status?id='+id)
 }
+
+/*
+ * 更新项目的信息
+ * @params params
+ * @return Promise
+ */
+export const update_project_normal_info_services = (params: any) => {
+    return request.post('/project/project_update_info', params)
+}
+
+
+export const update_project_reset_key = (pid:number)=>{
+    return request.get('/project/project_reset_key?pid='+pid)
+}

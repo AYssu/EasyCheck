@@ -1,5 +1,6 @@
 <template>
   <el-tabs
+      v-loading.fullscreen.lock="fullscreenLoading"
       v-model="active_tab"
       class="tab-view"
       closable
@@ -9,6 +10,7 @@
     <el-tab-pane v-for="(item ,index) in tab_list" :key="index" :label="item.title" :name="item.path"></el-tab-pane>
   </el-tabs>
 </template>
+
 <style lang="scss" scoped>
 :deep(.el-tabs__header) {
   box-sizing: border-box;
@@ -55,6 +57,7 @@ import {computed, onMounted, ref, watch} from "vue";
 import {useRoute} from "vue-router";
 import {ElMessage, TabsPaneContext} from "element-plus";
 import router from "@/router";
+import {message} from "ant-design-vue";
 
 // 获取tabs状态 路由的store
 const tabs_status_data = tabs_status();
@@ -65,6 +68,9 @@ const active_tab = ref('');
 const tab_list = computed(() => {
   return tabs_status_data.get_tab_list();
 })
+
+
+const fullscreenLoading = ref(false)
 
 // 添加tab
 const add_tab = () => {
@@ -121,15 +127,26 @@ const tab_remove = (tab_name: string) => {
 }
 
 // 切换tab
-const tab_click = (tab: TabsPaneContext) => {
-  console.log(tab.props)
-  router.push({path: tab.props.name as string})
+const tab_click = async (tab: TabsPaneContext) => {
+  if (tab.props.name === active_tab.value)
+    return
+  fullscreenLoading.value = true
+  const old_route = route.name
+  await router.push({path: tab.props.name as string})
+  if (old_route === route.name)
+  {
+    message.error("切换失败,刷新浏览器")
+    window.location.reload()
+  }
+  fullscreenLoading.value = false
 }
+
 
 // 初始化路由路径和激活路由样式
 onMounted(() => {
   active_tab.value = route.path
   document.title = route.meta.title as string
   add_tab()
+
 })
 </script>

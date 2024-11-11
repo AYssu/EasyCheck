@@ -145,13 +145,9 @@
     </ul>
   </div>
 
-  <el-dialog v-model="login_dialog_show" :close-on-press-escape="true" :show-close="false" width="40%">
-    <template #header>
-      <div class="input_dialog_head">
-        <el-text size="large">用户登录</el-text>
-      </div>
-    </template>
-    <el-form ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px">
+   <a-modal  v-model:open="login_dialog_show" :footer="null" title="用户登录"  width="40%">
+
+    <el-form style="margin-top: 20px" ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="login_form.username" clearable placeholder="请输入账号" type="text"></el-input>
       </el-form-item>
@@ -169,14 +165,9 @@
       </el-form-item>
     </el-form>
 
-  </el-dialog>
-  <el-dialog v-model="register_dialog_show" :close-on-press-escape="true" :show-close="false" width="40%">
-    <template #header>
-      <div class="input_dialog_head">
-        <el-text size="large">用户注册</el-text>
-      </div>
-    </template>
-    <el-form ref="loginForm" :model="register_form" :rules="register_rules" label-width="60px">
+   </a-modal>
+  <a-modal  v-model:open="register_dialog_show" :footer="null" title="用户注册"  width="40%">
+  <el-form style="margin-top: 20px"  ref="loginForm" :model="register_form" :rules="register_rules" label-width="60px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="register_form.username" clearable placeholder="请输入账号" type="text"></el-input>
       </el-form-item>
@@ -198,7 +189,7 @@
       </el-form-item>
     </el-form>
 
-  </el-dialog>
+  </a-modal>
 
   <el-backtop :bottom="20" :right="20"/>
 </template>
@@ -519,7 +510,7 @@ const bottom_message = ref([{
 
     .main-show-content-button-button {
       margin-top: 10px;
-      background: #35b25e;
+      background: #42b983;
       animation: slideInFromLeft 2s ease-in-out; /* 移除了 forwards，除非您需要保持动画结束状态 */
 
       color: white;
