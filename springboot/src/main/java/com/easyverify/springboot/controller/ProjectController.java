@@ -1,6 +1,7 @@
 package com.easyverify.springboot.controller;
 
 import com.easyverify.springboot.dto.ProjectCreateDTO;
+import com.easyverify.springboot.dto.ProjectInfoDTO;
 import com.easyverify.springboot.dto.ProjectListDTO;
 import com.easyverify.springboot.vo.ResponseResult;
 import com.easyverify.springboot.service.ProjectService;
@@ -43,5 +44,28 @@ public class ProjectController {
         if (!set_success)
             return ResponseResult.fail("设置失败");
         return ResponseResult.success("设置成功");
+    }
+
+    @GetMapping("project_reset_key")
+    public ResponseResult<?> project_reset_key(@RequestParam Integer pid){
+        log.info("project_reset_key_form project id: {}", pid);
+        if (pid == null|| pid <= 0)
+            return ResponseResult.fail("参数错误");
+
+        // 调用service层
+        boolean reset_success = projectService.reset_key_base64(pid);
+        if (!reset_success)
+            return ResponseResult.fail("重置失败");
+        return ResponseResult.success("重置成功");
+    }
+
+    @PostMapping("project_update_info")
+    public ResponseResult<?> project_update_info(@RequestBody @Validated ProjectInfoDTO projectInfoDTO){
+        log.info("project_update_info_form: {}", projectInfoDTO);
+        // 调用service层
+        boolean update_success = projectService.update_normal_info(projectInfoDTO);
+        if (!update_success)
+            return ResponseResult.fail("更新失败");
+        return ResponseResult.success("更新成功");
     }
 }

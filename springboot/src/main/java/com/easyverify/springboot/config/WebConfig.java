@@ -13,6 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     private EasyInterceptor easyInterceptor;
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-       registry.addInterceptor(easyInterceptor).excludePathPatterns("/user/login","/user/register");
+       registry.addInterceptor(easyInterceptor)
+               .excludePathPatterns("/user/login","/user/register","/swagger-ui/*","/v3/*");
     }
 }

@@ -3,6 +3,7 @@ package com.easyverify.springboot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyverify.springboot.dto.ProjectCreateDTO;
+import com.easyverify.springboot.dto.ProjectInfoDTO;
 import com.easyverify.springboot.dto.ProjectListDTO;
 import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.entity.EasyUser;
@@ -42,8 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RuntimeException("该项目已存在");
 
         EasyUser user = userService.get_user_by_jwt();
-        if (user == null)
-            throw new RuntimeException("用户不存在");
+
         // 封装项目信息
         EasyProject easyProject = new EasyProject();
         easyProject.setProjectName(projectCreateDTO.getProjectName());
@@ -93,8 +93,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         // 获取当前用户
         EasyUser user = userService.get_user_by_jwt();
-        if (user == null)
-            throw new RuntimeException("用户不存在");
 
         // 获取项目列表
         Page<EasyProject> guardPage = new Page<>(projectListDTO.getCurrentPage(), projectListDTO.getPageSize());
@@ -114,7 +112,7 @@ public class ProjectServiceImpl implements ProjectService {
             return projectListVO;
         }).toList();
 
-        // 获取所有项目名称 前端补全时需要显示全部项目名称
+        // 获取所有项目名称 前端auto时需要显示全部项目名称
         LambdaQueryWrapper<EasyProject> select_all_name = new LambdaQueryWrapper<>();
         select_all_name.select(EasyProject::getProjectName);
         select_all_name.eq(EasyProject::getProjectUser,user.getUserId());
@@ -131,15 +129,63 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public boolean set_project_status(Integer id) {
         EasyUser user = userService.get_user_by_jwt();
-        if (user == null)
-            throw new RuntimeException("用户不存在");
-        EasyProject project = projectMapper.selectById(id);
-        if (project == null)
-            throw new RuntimeException("项目不存在");
-        if (!Objects.equals(project.getProjectUser(), user.getUserId()))
-            throw new RuntimeException("没有权限");
+
+        EasyProject project = get_project_by_id_with_uid(id, user.getUserId());
         // 切换状态
         project.setProjectStatus(project.getProjectStatus() == 0 ? 1 : 0);
         return projectMapper.updateById(project) > 0;
+    }
+
+    // 重置key
+    @Override
+    public boolean reset_key_base64(Integer pid) {
+        // 获取当前用户
+        EasyUser user = userService.get_user_by_jwt();
+
+        // 获取项目
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+
+        String base64 = StringUtil.shuffleString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
+        String project_key = StringUtil.generateRandomString(12);
+        EasyProject project_key_temp = get_project_by_key(project_key);
+
+        // 重新生成key 虽然是随机的数据 但是也存在重复的可能性
+        int errors = 0;
+        while (project_key_temp != null) {
+            project_key = StringUtil.generateRandomString(12);
+            project_key_temp = get_project_by_key(project_key);
+            log.info("key create errors:" + errors);
+            errors++;
+            if (errors > 3)
+                throw new RuntimeException("生成项目key失败");
+        }
+        project.setProjectBase64(base64);
+        project.setProjectKey(project_key);
+        return projectMapper.updateById(project) > 0;
+    }
+
+    @Override
+    public boolean update_normal_info(ProjectInfoDTO projectInfoDTO) {
+        EasyUser user = userService.get_user_by_jwt();
+
+        // 获取项目
+        EasyProject project = get_project_by_id_with_uid(projectInfoDTO.getProjectId(), user.getUserId());
+
+        project.setProjectName(projectInfoDTO.getProjectName());
+        project.setProjectMessage(projectInfoDTO.getProjectMessage());
+        return projectMapper.updateById(project) > 0;
+    }
+
+    // 获取项目 根据用户ID
+    @Override
+    public EasyProject get_project_by_id_with_uid(Integer pid, Integer uid) {
+
+        LambdaQueryWrapper<EasyProject> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyProject::getProjectId, pid);
+        queryWrapper.eq(EasyProject::getProjectUser, uid);
+        EasyProject project = projectMapper.selectOne(queryWrapper);
+        if (project == null)
+            throw new RuntimeException("项目不存在");
+        return project;
     }
 }
