@@ -132,6 +132,19 @@
             </template>
           </el-input>
         </a-form-item>
+        <a-form-item >
+          <template #label>
+            <span>项目绑定密钥</span>
+            <el-icon size="15" style="margin-left: 4px" @click="help_show">
+              <svg t="1731378682079" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1594" width="200" height="200"><path d="M878.08 731.274667a32 32 0 0 1-54.88-32.938667A360.789333 360.789333 0 0 0 874.666667 512c0-200.298667-162.368-362.666667-362.666667-362.666667S149.333333 311.701333 149.333333 512s162.368 362.666667 362.666667 362.666667a360.789333 360.789333 0 0 0 186.314667-51.445334 32 32 0 0 1 32.928 54.88A424.778667 424.778667 0 0 1 512 938.666667C276.362667 938.666667 85.333333 747.637333 85.333333 512S276.362667 85.333333 512 85.333333s426.666667 191.029333 426.666667 426.666667c0 78.293333-21.152 153.568-60.586667 219.274667zM650.666667 437.333333c0 65.898667-46.72 120.853333-109.194667 135.082667V608a32 32 0 0 1-64 0v-64a32 32 0 0 1 32-32C552.266667 512 586.666667 478.4 586.666667 437.333333s-34.4-74.666667-77.194667-74.666666c-26.773333 0-51.082667 13.248-65.173333 34.624a73.088 73.088 0 0 0-8.522667 17.717333 32 32 0 0 1-60.885333-19.690667c3.797333-11.754667 9.173333-22.933333 15.978666-33.237333 25.856-39.253333 70.186667-63.413333 118.613334-63.413333C587.274667 298.666667 650.666667 360.576 650.666667 437.333333zM512 736a32 32 0 1 1 0-64 32 32 0 0 1 0 64z" fill="#000000" p-id="1595"></path></svg>
+            </el-icon>
+          </template>
+          <el-input v-model="show_project_info.bindKey" placeholder="项目绑定密钥" readonly>
+            <template #append>
+              <el-button @click="copy_text(show_project_info.bindKey)">复制</el-button>
+            </template>
+          </el-input>
+        </a-form-item>
         <a-form-item label="项目简绍">
           <el-input v-model='show_project_info.projectMessage' maxlength="100" placeholder="请输入项目名称" show-word-limit
                     type="textarea"/>
@@ -148,7 +161,7 @@ import {createVNode, onMounted, ref, UnwrapRef} from "vue";
 import {
   create_project_services,
   get_project_list_services,
-  update_project_normal_info_services, update_project_reset_key,
+  update_project_normal_info_services, update_project_reset_key_services,
   update_project_status_services
 } from "@/api/project.ts";
 import {ComponentSize, ElMessage} from "element-plus";
@@ -169,7 +182,8 @@ const show_project_info = ref<Project>({
   tagType: "",
   projectStatus: 0,
   projectIcon: "",
-  projectBase64: ""
+  projectBase64: "",
+  bindKey: ""
 });
 import {SettingOutlined, EditOutlined, EllipsisOutlined} from '@ant-design/icons-vue';
 import {message, Modal} from "ant-design-vue";
@@ -185,6 +199,7 @@ export interface Project {
   projectStatus: number
   projectIcon: string
   projectBase64: string
+  bindKey: string
 }
 
 // 创建程序的参数
@@ -429,6 +444,7 @@ const querySearch = (queryString: string, cb: any) => {
   // call callback function to return suggestions
   cb(results)
 }
+
 const createFilter = (queryString: string) => {
   return (restaurant: RestaurantItem) => {
     return (
@@ -437,9 +453,14 @@ const createFilter = (queryString: string) => {
   }
 }
 
+// 重置密钥返回结构体
+interface reset_data {
+  success: boolean
+  projectBase64: string
+  projectKey: string
+}
 
 const click_reset_key = async (pid: number) => {
-
   Modal.warning({
     title: '重置项目key',
     content: '确定要重置项目key吗？',
@@ -447,21 +468,54 @@ const click_reset_key = async (pid: number) => {
     okCancel: true,
     cancelText: '取消',
     onOk: async () => {
-      const update_result = await update_project_reset_key(pid);
-      if (update_result.data.code === 200) {
-        message.success(update_result.data.message)
-        await get_project_list(search_params.value);
-      } else {
-        message.error(update_result.data.message)
+      const update_result = await update_project_reset_key_services(pid);
+      try {
+        const project_reset_data = update_result.data.data as reset_data;
+        if (update_result.data.code === 200) {
+          if (project_reset_data.success)
+          {
+            message.success(update_result.data.message)
+            show_project_info.value.projectBase64 = project_reset_data.projectBase64
+            show_project_info.value.projectKey = project_reset_data.projectKey
+            await get_project_list(search_params.value);
+          }else {
+            message.error("重置错误")
+          }
+        } else {
+          message.error(update_result.data.message)
+        }
+      }catch (e){
+        console.log(e)
       }
     },
   })
 }
 
+const help_show = () => {
+  const contentVNode = createVNode('div', {}, [
+    '1.该密钥程序创建就已决定，无法改变',
+    createVNode('br'),
+    '2.绑定密钥即为当前程序生成一个用户',
+    createVNode('br'),
+    '3.绑定密钥后，使用用户登录不需要卡密',
+    createVNode('br'),
+    '4.绑定密钥后，用户无法解绑，请谨慎使用',
+  ]);
+
+  Modal.info({
+    title: "绑定密钥帮助",
+    content: contentVNode,
+    okText: "确定",
+    cancelText: "取消",
+    okCancel: true,
+    onOk: () => {
+    }
+  });
+}
+
 onMounted(() => {
   // 初始化数据
   get_project_list(search_params.value);
-
 })
 
 </script>

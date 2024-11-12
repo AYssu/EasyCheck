@@ -1,5 +1,6 @@
 package com.easyverify.springboot.controller;
 
+import com.easyverify.springboot.dto.UserProjectBindDTO;
 import com.easyverify.springboot.utils.IpUtil;
 import com.easyverify.springboot.dto.UserLoginDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;

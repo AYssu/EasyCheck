@@ -24,4 +24,5 @@ public class ProjectListVO {
     private String projectBase64; // 项目自定义BASE64
     private Integer projectStatus;// 项目状态
     private Integer freeStatus; // 项目是否免费
+    private String bindKey; // 绑定码
 }

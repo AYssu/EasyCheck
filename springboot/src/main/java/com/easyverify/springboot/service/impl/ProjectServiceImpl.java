@@ -5,23 +5,27 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyverify.springboot.dto.ProjectCreateDTO;
 import com.easyverify.springboot.dto.ProjectInfoDTO;
 import com.easyverify.springboot.dto.ProjectListDTO;
+import com.easyverify.springboot.dto.ProjectUserBindListDTO;
 import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.entity.EasyUser;
 import com.easyverify.springboot.mapper.ProjectMapper;
 import com.easyverify.springboot.service.UserService;
+import com.easyverify.springboot.utils.Base64Util;
 import com.easyverify.springboot.vo.PageBean;
 import com.easyverify.springboot.vo.ProjectListVO;
 import com.easyverify.springboot.service.ProjectService;
 import com.easyverify.springboot.utils.StringUtil;
+import com.easyverify.springboot.vo.ProjectResetVo;
+import com.easyverify.springboot.vo.ProjectUserBindListVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -34,6 +38,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private UserService userService;
 
+    // 自定义加密base64
+    @Value("${encrypt.base64}")
+    public String encrypt_base64;
     // 创建项目
     @Override
     public boolean create_project(ProjectCreateDTO projectCreateDTO) {
@@ -105,10 +112,15 @@ public class ProjectServiceImpl implements ProjectService {
         Page<EasyProject> guardPage1 = projectMapper.selectPage(guardPage, queryWrapper);
         List<EasyProject> records = guardPage1.getRecords();
 
+        Base64Util.setBase64(encrypt_base64);
         // 转换为VO
         List<ProjectListVO> projectListVOS = records.stream().map(record -> {
             ProjectListVO projectListVO = new ProjectListVO();
             BeanUtils.copyProperties(record, projectListVO);
+
+            // 生成绑定key 程序默认 生成不可改变
+            String bind_key = Base64Util.encodeBase64Str(String.valueOf(record.getProjectId()));
+            projectListVO.setBindKey(bind_key);
             return projectListVO;
         }).toList();
 
@@ -138,7 +150,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     // 重置key
     @Override
-    public boolean reset_key_base64(Integer pid) {
+    public ProjectResetVo reset_key_base64(Integer pid) {
         // 获取当前用户
         EasyUser user = userService.get_user_by_jwt();
 
@@ -161,7 +173,15 @@ public class ProjectServiceImpl implements ProjectService {
         }
         project.setProjectBase64(base64);
         project.setProjectKey(project_key);
-        return projectMapper.updateById(project) > 0;
+
+        boolean success = projectMapper.updateById(project) > 0;
+
+        // 返回值 封装结构体
+        ProjectResetVo projectResetVo = new ProjectResetVo();
+        projectResetVo.setSuccess(success);
+        projectResetVo.setProjectBase64(base64);
+        projectResetVo.setProjectKey(project_key);
+        return projectResetVo;
     }
 
     @Override
@@ -176,6 +196,21 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.updateById(project) > 0;
     }
 
+    @Override
+    public PageBean<ProjectUserBindListVo> get_project_user_bind_list(ProjectUserBindListDTO projectUserBindListDTO) {
+        EasyUser user = userService.get_user_by_jwt();
+
+        Integer totalCount = projectMapper.select_bind_user_total(user.getUserId());
+        log.info("totalCount:{}" , totalCount);
+        Integer size = projectUserBindListDTO.getPageSize();
+        Integer offset = (projectUserBindListDTO.getCurrentPage() - 1) * projectUserBindListDTO.getPageSize();
+
+        List<ProjectUserBindListVo> lists = projectMapper.select_bind_user_list(size, offset, user.getUserId());
+
+        log.info("lists:{}", lists);
+        return new PageBean<>(totalCount, lists, null);
+    }
+
     // 获取项目 根据用户ID
     @Override
     public EasyProject get_project_by_id_with_uid(Integer pid, Integer uid) {
@@ -187,5 +222,10 @@ public class ProjectServiceImpl implements ProjectService {
         if (project == null)
             throw new RuntimeException("项目不存在");
         return project;
+    }
+
+    @Override
+    public EasyProject get_project_by_id(Integer id) {
+        return projectMapper.selectById(id);
     }
 }

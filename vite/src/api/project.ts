@@ -41,7 +41,20 @@ export const update_project_normal_info_services = (params: any) => {
     return request.post('/project/project_update_info', params)
 }
 
-
-export const update_project_reset_key = (pid:number)=>{
+/*
+ * 重置项目key
+ * @params params
+ * @return Promise
+ */
+export const update_project_reset_key_services = (pid:number)=>{
     return request.get('/project/project_reset_key?pid='+pid)
+}
+
+/*
+ * 获取项目绑定的用户列表
+ * @params params
+ * @return Promise
+ */
+export const get_project_user_list_services = (params: any)=>{
+    return request.post('/project/project_bind_list', params)
 }
