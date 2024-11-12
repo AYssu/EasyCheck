@@ -11,6 +11,9 @@ public class Base64Util {
     public static String str = "";
 
     public static void setBase64(String str) {
+        if(str.length()!=64){
+            throw new IllegalArgumentException("base64 string length must be 64");
+        }
         Base64Util.str = str;
     }
 

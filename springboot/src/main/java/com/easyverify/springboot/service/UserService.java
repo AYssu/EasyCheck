@@ -1,6 +1,7 @@
 package com.easyverify.springboot.service;
 
 import com.easyverify.springboot.dto.UserLoginDTO;
+import com.easyverify.springboot.dto.UserProjectBindDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;
 import com.easyverify.springboot.entity.EasyUser;
 import com.easyverify.springboot.vo.UserLoginVO;
@@ -50,4 +51,5 @@ public interface UserService {
     * @return
      */
     UserLoginVO login(UserLoginDTO userLoginDTO, String userIpAddress);
+
 }

@@ -16,33 +16,33 @@
         :data="tableData"
         :default-sort="{ prop: 'date', order: 'descending' }"
     >
-      <el-table-column prop="id"  width="100" label="用户ID" />
-      <el-table-column prop="project_name"  width="120" label="归属程序">
+      <el-table-column prop="openUserId"  width="100" label="用户ID" />
+      <el-table-column prop="projectName"  width="120" label="归属程序">
         <template #default="scope">
-          <el-tag type="primary">{{ scope.row.project_name }}</el-tag>
+          <el-tag type="primary">{{ scope.row.projectName }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="date" label="注册日期" sortable width="120" />
-      <el-table-column prop="name" label="用户昵称" width="120" />
-      <el-table-column prop="email" label="用户邮箱"  width="150">
+      <el-table-column prop="openCreateTime" label="注册日期" sortable width="140" />
+      <el-table-column prop="openEmail" label="用户邮箱"  width="170">
         <template #default="scope">
-          <el-link type="success">{{scope.row.email}}</el-link>
+          <el-link type="success">{{scope.row.openEmail}}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="money" label="用户余额"  width="100">
+      <el-table-column prop="openSvipTime" align="left" label="会员到期"  width="200">
         <template #default="scope">
-          <el-text type="danger" style="margin-left: 5px">{{scope.row.money}} ¥</el-text>
+          <el-text type="danger" style="margin-left: 5px">{{scope.row.openSvipTime==null?"未激活":scope.row.openSvipTime}}</el-text>
         </template>
       </el-table-column>
-      <el-table-column prop="level" label="会员等级" width="100">
+      <el-table-column prop="openVip" label="会员等级" width="100">
         <template #default="scope">
-          <el-tag v-if="scope.row.level===1" size="small" round effect="light" type="info" style="margin-left: 5px;margin-right: 8px">小萌新</el-tag>
-          <el-tag v-else-if="scope.row.level===2" size="small" round effect="light" type="warning" style="margin-left: 5px;margin-right: 8px">进阶用户</el-tag>
-          <el-tag v-else-if="scope.row.level===3" size="small" round effect="light" type="primary" style="margin-left: 5px;margin-right: 8px">核心用户</el-tag>
-          <el-tag v-else-if="scope.row.level===4" size="small" round effect="light" type="success" style="margin-left: 5px;margin-right: 8px">资深用户</el-tag>
-          <el-tag v-else-if="scope.row.level===5" size="small" round effect="light" type="danger" style="margin-left: 5px;margin-right: 8px">超级管理员</el-tag>
-
-
+          <el-tag
+              :size="tagSize"
+              :round="tagRound"
+              :effect="tagEffect"
+              :type="getVipType(scope.row.openVip)"
+              style="margin-left: 5px; margin-right: 8px">
+            {{ getVipLabel(scope.row.openVip) }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column  label="操作" width="500">
@@ -60,12 +60,12 @@
       <el-pagination
           v-model:current-page="currentPage2"
           v-model:page-size="pageSize2"
-          :page-sizes="[20, 50, 80, 400]"
+          :page-sizes="[10, 20, 30, 40]"
           :size="size"
           :disabled="disabled"
           :background="background"
           layout="sizes, prev, pager, next"
-          :total="1000"
+          :total="total"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
       />
@@ -76,43 +76,73 @@
 <script lang="ts" setup>
 
 import {Search} from "@element-plus/icons-vue";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {ComponentSize} from "element-plus";
-import {User} from "@/interface/public.ts";
+import {get_project_user_list_services} from "@/api/project.ts";
+interface Project_User {
+  openUserId: number
+  projectName: string
+  openCreateTime: string
+  openEmail: string
+  openVip: number
+  openSvipTime: string
+}
 
-const tableData: User[] = [
-  {
-    id: 1,
-    project_name: '未来之役',
-    date: '2016-05-02',
-    name: '王小虎',
-    email:'123456@qq.com',
-    money: 100,
-    level: 1,
-    introduction: 'Vue is a progressive framework for building user interfaces.'
-  },
-    {
-      id: 2,
-      project_name: '王者荣耀',
-      date: '2016-05-04',
-      name: '王小虎',
-      email:'123456@qq.com',
-      money: 100,
-      level: 2,
-      introduction: 'Vue is a progressive framework for building user interfaces.'
-    },
-]
+const tableData = ref<Project_User[]>();
 
-const currentPage2 = ref(5)
-const pageSize2 = ref(20)
-const size = ref<ComponentSize>('default')
+const currentPage2 = ref(1)
+const pageSize2 = ref(10)
+const total = ref(0)
+const size = ref<ComponentSize>('small')
 const background = ref(false)
 const disabled = ref(false)
 
+
+const tagSize = ref('small');
+const tagRound = ref(true);
+const tagEffect = ref('light');
+
+const vipLevels: any = {
+  1: { label: '小萌新', type: 'info' },
+  2: { label: '进阶用户', type: 'warning' },
+  3: { label: '核心用户', type: 'primary' },
+  4: { label: '资深用户', type: 'success' },
+  5: { label: '无敌大佬', type: 'danger' },
+  default: { label: '加载中', type: 'info' }
+};
+
+const  getVipType = (level:number) => {
+  return vipLevels[level] ? vipLevels[level].type : vipLevels.default.type;
+}
+
+const  getVipLabel = (level:number) => {
+  return vipLevels[level] ? vipLevels[level].label : vipLevels.default.label;
+}
 const handleSizeChange = (val: number) => {
   console.log(`${val} items per page`)
+  get_user_list()
 }
 const handleCurrentChange = (val: number) => {
   console.log(`current page: ${val}`)
+  get_user_list()
 }
+
+const get_user_list = async ()=>{
+  const params = {
+    currentPage:currentPage2.value,
+    pageSize: pageSize2.value
+  }
+  const result = await get_project_user_list_services(params);
+  try {
+    tableData.value = result.data.data.items
+    total.value = result.data.data.total
+  }catch (e)
+  {
+    console.log(e)
+  }
+}
+
+onMounted(()=>{
+  get_user_list()
+})
 </script>

@@ -1,6 +1,10 @@
 package com.easyverify.springboot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.easyverify.springboot.dto.UserProjectBindDTO;
+import com.easyverify.springboot.entity.EasyProject;
+import com.easyverify.springboot.service.ProjectService;
+import com.easyverify.springboot.utils.Base64Util;
 import com.easyverify.springboot.utils.Bcrypt;
 import com.easyverify.springboot.utils.JwtUtil;
 import com.easyverify.springboot.dto.UserLoginDTO;
@@ -13,6 +17,7 @@ import com.easyverify.springboot.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,6 +40,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    // 自定义加密base64
+    @Value("${encrypt.base64}")
+    public String encrypt_base64;
     // user service 功能的实现
     @Override
     public boolean register(UserRegisterDTO userRegisterDTO) {
@@ -55,7 +63,6 @@ public class UserServiceImpl implements UserService {
 
         // 密码加密
         String salt = Bcrypt.gensalt(10, new SecureRandom());
-
 
         // 加密
         String encoded = Bcrypt.hashpw(userRegisterDTO.getPassword(), salt);
@@ -176,4 +183,6 @@ public class UserServiceImpl implements UserService {
 
         return null;
     }
+
+
 }
