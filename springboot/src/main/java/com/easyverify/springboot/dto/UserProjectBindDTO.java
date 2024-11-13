@@ -17,6 +17,11 @@ public class UserProjectBindDTO {
     @Email(message = "请输入正确的邮箱地址")
     public String email; // 邮箱地址
     /**
+     * 验证码，用户登录使用的验证码
+     */
+    @NotBlank(message = "验证码不能为空")
+    public String code;
+    /**
      * 用户密码，用户登录使用的密码
      */
     @NotBlank(message = "密码不能为空")

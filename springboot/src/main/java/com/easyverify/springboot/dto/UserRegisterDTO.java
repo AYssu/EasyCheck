@@ -32,4 +32,9 @@ public class UserRegisterDTO {
     @Pattern(regexp = "^.{6,18}$", message = "密码长度在 6 到 18 个字符")
     private String password;
 
+    /**
+     * 邮箱验证码
+     */
+    @NotBlank(message = "验证码不能为空")
+    private String code;
 }

@@ -17,9 +17,9 @@
       <el-button plain type="primary" @click="drawer = true">添加项目</el-button>
 
     </div>
+    <el-empty v-if="tableData.length === 0"></el-empty>
     <div class="box_card_list">
-
-      <a-card v-for="(item,index) in tableData" :key="index" hoverable style="width: 240px">
+           <a-card v-for="(item,index) in tableData" :key="index" hoverable style="width: 240px">
         <template #cover>
           <img alt="example" src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>
         </template>
