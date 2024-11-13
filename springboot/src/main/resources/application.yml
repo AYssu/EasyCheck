@@ -13,6 +13,27 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  profiles:
+    active: dev
+  mail:
+    host: smtp.qq.com
+    protocol: smtp
+    default-encoding: utf-8
+    username: xxx@qq.com
+    password: xxx
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+          connection-timeout: 5000
+          timeout: 3000
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: true
+    port: 465
 
 server:
   port: 5200

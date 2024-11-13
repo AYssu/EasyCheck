@@ -18,4 +18,11 @@ public interface OpenAPIService {
      * @return
      */
     OpenUser get_user_by_email(String email);
+
+    /*
+     * 发送验证码邮件
+     * @param email
+     * @return
+     */
+    boolean send_register_code_mail(String email);
 }

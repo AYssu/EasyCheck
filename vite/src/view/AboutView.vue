@@ -33,8 +33,8 @@
       </div>
     </div>
   </el-collapse-transition>
-  
-  <main class="main" >
+
+  <main class="main">
     <header class="top-title-header">
       <div class="header-container" style="display:flex;justify-content: space-between;align-items: center;">
         <div class="grid-content left-icon">
@@ -100,7 +100,7 @@
         </div>
         <div class="main-show-content-button">
 
-          <button class="main-show-content-button-button"  type="button" @click="login_dialog_show=true">开发者登录
+          <button class="main-show-content-button-button" type="button" @click="login_dialog_show=true">开发者登录
           </button>
           <button class="main-show-content-button-button" type="button" @click="register_dialog_show=true">开发者注册
           </button>
@@ -130,7 +130,7 @@
 
     <footer class="el-footer-box">
       <div class="footer-box-content">
-       <el-text> Powered by 阿夜 | Copyright © 2013-2024</el-text>
+        <el-text> Powered by 阿夜 | Copyright © 2013-2024</el-text>
       </div>
     </footer>
   </main>
@@ -145,9 +145,9 @@
     </ul>
   </div>
 
-   <a-modal  v-model:open="login_dialog_show" :footer="null" title="用户登录"  width="40%">
+  <a-modal v-model:open="login_dialog_show" :footer="null" title="用户登录" width="40%">
 
-    <el-form style="margin-top: 20px" ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px">
+    <el-form ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px" style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="login_form.username" clearable placeholder="请输入账号" type="text"></el-input>
       </el-form-item>
@@ -156,7 +156,7 @@
                   @keyup.enter="to_login"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox  v-model="login_form.agree">同意协议</el-checkbox>
+        <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="to_login">登录</el-button>
@@ -165,14 +165,21 @@
       </el-form-item>
     </el-form>
 
-   </a-modal>
-  <a-modal  v-model:open="register_dialog_show" :footer="null" title="用户注册"  width="40%">
-  <el-form style="margin-top: 20px"  ref="loginForm" :model="register_form" :rules="register_rules" label-width="60px">
+  </a-modal>
+  <a-modal v-model:open="register_dialog_show" :footer="null" title="用户注册" width="40%">
+    <el-form ref="loginForm" label-position="top" :model="register_form" :rules="register_rules" label-width="60px" style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="register_form.username" clearable placeholder="请输入账号" type="text"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="register_form.email" clearable placeholder="请输入邮箱" type="text"></el-input>
+      </el-form-item>
+      <el-form-item label="验证码" prop="code" >
+        <el-input v-model="register_form.code" clearable placeholder="请输入验证码" type="text">
+          <template #append>
+            <el-button type="primary" :loading="send_loading" @click="send_code(register_form.email)">{{ send_text }}</el-button>
+          </template>
+        </el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input v-model="register_form.password" placeholder="请输入密码" show-password type="password"
@@ -200,7 +207,7 @@ import 'element-plus/theme-chalk/display.css'
 
 import {ref} from 'vue';
 import {ElMessage} from "element-plus";
-import {user_login_services, user_register_services} from "@/api/user.ts";
+import {user_login_services, user_register_code_services, user_register_services} from "@/api/user.ts";
 import {ElCollapseTransition} from 'element-plus'
 // 显示登录弹窗的变量
 const login_dialog_show = ref(false);
@@ -226,6 +233,7 @@ const register_form = ref({
   username: '',
   password: '',
   email: '',
+  code: '',
   agree: false
 })
 
@@ -251,13 +259,46 @@ const register_rules = ref({
     {required: true, message: '请输入邮箱', trigger: 'blur'},
     {type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change']}
   ],
+  code: [
+    {required: true, message: '请输入验证码', trigger: 'blur'},
+    {min: 6, max: 6, message: '验证码长度为6位', trigger: 'blur'}
+  ],
   password: [
     {required: true, message: '请输入密码', trigger: 'blur'},
     {min: 6, max: 18, message: '密码长度在 6 到 18 个字符', trigger: 'blur'}
   ],
 });
+const send_loading = ref(false);
+const send_text = ref("发送验证码");
 
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+  return emailRegex.test(email);
+};
 
+const send_code = async (email: string)=> {
+  if (!validateEmail(email))
+    return message.error("邮箱格式不正确")
+  send_loading.value = true;
+  send_text.value = "发送中..."
+  message.loading("请等待片刻,邮箱酱在全力发送...")
+  const result = await user_register_code_services(email);
+  try {
+    if (result.data.code === 200)
+    {
+      message.success(result.data.message);
+      send_text.value = "再次发送";
+      send_loading.value = false;
+    }else {
+      message.error(result.data.message);
+      send_loading.value = false;
+      send_text.value = "发送验证码";
+    }
+  }catch (e)
+  {
+    console.log(e)
+  }
+}
 // 登录方法
 const to_login = async () => {
   if (!login_form.value.agree) {
@@ -311,6 +352,7 @@ import fast from "@/assets/index/fast.svg";
 import lock from "@/assets/index/lock.svg";
 import hamburger from "@/assets/index/hamburger.svg"
 import {ArrowRight} from "@element-plus/icons-vue";
+import {message} from "ant-design-vue";
 
 const show = ref(false)
 
@@ -637,8 +679,7 @@ const bottom_message = ref([{
     opacity: 0.3;
   }
 
-  .main-show-content-title-text
-  {
+  .main-show-content-title-text {
     font-size: 2.4rem !important;
   }
 

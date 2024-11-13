@@ -1,17 +1,13 @@
 package com.easyverify.springboot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.easyverify.springboot.dto.UserProjectBindDTO;
-import com.easyverify.springboot.entity.EasyProject;
-import com.easyverify.springboot.service.ProjectService;
-import com.easyverify.springboot.utils.Base64Util;
-import com.easyverify.springboot.utils.Bcrypt;
-import com.easyverify.springboot.utils.JwtUtil;
 import com.easyverify.springboot.dto.UserLoginDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;
 import com.easyverify.springboot.entity.EasyUser;
 import com.easyverify.springboot.mapper.UserMapper;
 import com.easyverify.springboot.service.UserService;
+import com.easyverify.springboot.utils.Bcrypt;
+import com.easyverify.springboot.utils.JwtUtil;
 import com.easyverify.springboot.utils.ThreadLocalUtil;
 import com.easyverify.springboot.vo.UserLoginVO;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     // 自动注入 redisTemplate
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
 
     // 自动注入 userMapper
     @Autowired
@@ -56,6 +52,9 @@ public class UserServiceImpl implements UserService {
         if (user_by_email != null)
             throw new RuntimeException("邮箱已被使用");
 
+        String redis_code = (String) redisTemplate.opsForValue().get(userRegisterDTO.getEmail()+"_code");
+        if (redis_code == null || !redis_code.equals(userRegisterDTO.getCode()))
+            throw new RuntimeException("验证码错误");
         // 封装用户信息 插入
         EasyUser user = new EasyUser();
         user.setUserName(userRegisterDTO.getUsername());
@@ -144,9 +143,10 @@ public class UserServiceImpl implements UserService {
 
                     //缓存token 1天 原本的想法是无感刷新token 结果刷新token后 虽然redis里面确实是有的 但是刷新token后还是无法登录
                     //当前 使用双token即可无感刷新 反正不影响实际的操作 我也想多端登录 所以暂时保留这个想法
-                    //redisTemplate.expire(redis_token, 1, TimeUnit.DAYS);
-                    //redisTemplate.expire("easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
-
+                    /*
+                     redisTemplate.expire(redis_token, 1, TimeUnit.DAYS);
+                     redisTemplate.expire("easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
+                    */
                     UserLoginVO userLogin = new UserLoginVO();
                     // 拷贝用户信息
                     BeanUtils.copyProperties(user, userLogin);

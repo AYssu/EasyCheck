@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>验证码发送</title>
+    <style type="text/css">
+        /* 重置一些默认的样式 */
+        body, table, td, a {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            outline: 0;
+            font-weight: inherit;
+            font-style: inherit;
+            font-size: 100%;
+            font-family: inherit;
+            vertical-align: baseline;
+        }
+        body {
+            line-height: 1;
+            color: black;
+            background: #f0f0f0;
+        }
+        /* 布局和样式 */
+        .email-wrapper {
+            width: 100%;
+            background-color: #f0f0f0;
+            padding: 20px;
+
+        }
+        .email-content {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 30px;
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+        .body {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="email-wrapper">
+    <div class="email-content">
+        <div class="header">
+            <h1>欢迎使用Easy Verify 验证</h1>
+        </div>
+        <div class="body">
+            <p>您好，您正在请求验证码以验证您的邮箱。</p>
+            <p>您的验证码是：<span style="font-weight: bold;" th:text="${code}"></span></p>
+            <p>请在5分钟内使用此验证码完成验证。</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

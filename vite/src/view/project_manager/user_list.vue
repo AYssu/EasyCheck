@@ -16,6 +16,9 @@
         :data="tableData"
         :default-sort="{ prop: 'date', order: 'descending' }"
     >
+      <template #empty>
+        <el-empty></el-empty>
+      </template>
       <el-table-column prop="openUserId"  width="100" label="用户ID" />
       <el-table-column prop="projectName"  width="120" label="归属程序">
         <template #default="scope">
