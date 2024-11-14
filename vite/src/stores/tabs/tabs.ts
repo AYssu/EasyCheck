@@ -28,7 +28,9 @@ export const tabs_status = defineStore(
         }
 
     },{
-        persist: true,
+        persist:  {
+            storage: sessionStorage,
+        },
     }
 )
 

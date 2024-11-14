@@ -1,5 +1,6 @@
 package com.easyverify.springboot.service.impl;
 
+import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyverify.springboot.dto.ProjectCreateDTO;
@@ -8,7 +9,9 @@ import com.easyverify.springboot.dto.ProjectListDTO;
 import com.easyverify.springboot.dto.ProjectUserBindListDTO;
 import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.entity.EasyUser;
+import com.easyverify.springboot.entity.EasyVariable;
 import com.easyverify.springboot.mapper.ProjectMapper;
+import com.easyverify.springboot.mapper.VariableMapper;
 import com.easyverify.springboot.service.UserService;
 import com.easyverify.springboot.utils.Base64Util;
 import com.easyverify.springboot.vo.PageBean;
@@ -38,9 +41,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private VariableMapper variableMapper;
+
     // 自定义加密base64
     @Value("${encrypt.base64}")
     public String encrypt_base64;
+
     // 创建项目
     @Override
     public boolean create_project(ProjectCreateDTO projectCreateDTO) {
@@ -127,10 +134,10 @@ public class ProjectServiceImpl implements ProjectService {
         // 获取所有项目名称 前端auto时需要显示全部项目名称
         LambdaQueryWrapper<EasyProject> select_all_name = new LambdaQueryWrapper<>();
         select_all_name.select(EasyProject::getProjectName);
-        select_all_name.eq(EasyProject::getProjectUser,user.getUserId());
+        select_all_name.eq(EasyProject::getProjectUser, user.getUserId());
         List<String> names = projectMapper.selectObjs(select_all_name);
 
-        log.info("names:{}",names);
+        log.info("names:{}", names);
         // 设置返回值
         pageBean.setTotal((int) guardPage1.getTotal());
         pageBean.setItems(projectListVOS);
@@ -201,7 +208,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyUser user = userService.get_user_by_jwt();
 
         Integer totalCount = projectMapper.select_bind_user_total(user.getUserId());
-        log.info("totalCount:{}" , totalCount);
+        log.info("totalCount:{}", totalCount);
         Integer size = projectUserBindListDTO.getPageSize();
         Integer offset = (projectUserBindListDTO.getCurrentPage() - 1) * projectUserBindListDTO.getPageSize();
 
@@ -209,6 +216,45 @@ public class ProjectServiceImpl implements ProjectService {
 
         log.info("lists:{}", lists);
         return new PageBean<>(totalCount, lists, null);
+    }
+
+    // 获取项目变量
+    @Override
+    public Object get_project_variable(Integer pid) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+        LambdaQueryWrapper<EasyVariable> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyVariable::getProjectId, project.getProjectId());
+        EasyVariable variable = variableMapper.selectOne(queryWrapper);
+        if (variable == null)
+            return null;
+        String variableJson = variable.getVariableJson();
+        Object json = JSON.parse(variableJson);
+        log.info("{}=>{}", variableJson,json);
+        try {
+            return json;
+        } catch (Exception e) {
+            log.error("json parse error:{}", e.getMessage());
+            throw new RuntimeException("json解析错误");
+        }
+    }
+
+    @Override
+    public boolean set_project_variable(Integer pid, Object json) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+        LambdaQueryWrapper<EasyVariable> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyVariable::getProjectId, project.getProjectId());
+        EasyVariable variable = variableMapper.selectOne(queryWrapper);
+        if (variable == null) {
+            variable = new EasyVariable();
+            variable.setProjectId(project.getProjectId());
+            variable.setVariableJson(JSON.toJSONString(json));
+            return variableMapper.insert(variable) > 0;
+        }else {
+            variable.setVariableJson(JSON.toJSONString(json));
+            return variableMapper.updateById(variable) > 0;
+        }
     }
 
     // 获取项目 根据用户ID

@@ -48,7 +48,6 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     @Override
     public boolean user_project_bind(UserProjectBindDTO userProjectBindDTO) {
 
-
         Base64Util.setBase64(encrypt_base64);
         String bind_url = userProjectBindDTO.getBindKey();
         String project_id = Base64Util.decodeBase64str(bind_url);

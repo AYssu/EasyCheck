@@ -1,5 +1,7 @@
 
-
+.CodeMirror-lint-tooltip {
+  z-index: 100000 !important;
+}
 
 :root {
   line-height: 1.5; /* 1 */

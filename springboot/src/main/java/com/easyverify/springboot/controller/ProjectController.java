@@ -1,14 +1,12 @@
 package com.easyverify.springboot.controller;
 
-import com.easyverify.springboot.dto.ProjectCreateDTO;
-import com.easyverify.springboot.dto.ProjectInfoDTO;
-import com.easyverify.springboot.dto.ProjectListDTO;
-import com.easyverify.springboot.dto.ProjectUserBindListDTO;
+import com.easyverify.springboot.dto.*;
 import com.easyverify.springboot.vo.PageBean;
 import com.easyverify.springboot.vo.ProjectResetVo;
 import com.easyverify.springboot.vo.ProjectUserBindListVo;
 import com.easyverify.springboot.vo.ResponseResult;
 import com.easyverify.springboot.service.ProjectService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -79,5 +77,20 @@ public class ProjectController {
         log.info("project_bind_list{}", projectUserBindListDTO);
         PageBean<ProjectUserBindListVo> projectUserBindListVoPageBean = projectService.get_project_user_bind_list(projectUserBindListDTO);
         return ResponseResult.success("查询成功", projectUserBindListVoPageBean);
+    }
+
+    @GetMapping("project_get_variable")
+    public ResponseResult<?> project_get_variable(@RequestParam Integer pid){
+        log.info("project_get_variable_form: {}", pid);
+        return ResponseResult.success("查询成功", projectService.get_project_variable(pid));
+    }
+
+    @PostMapping("project_set_variable")
+    public ResponseResult<?> project_set_variable(@RequestBody ProjectSetVariableDTO projectSetVariableDTO){
+        log.info("project_set_variable_form: {}", projectSetVariableDTO);
+        boolean is_success = projectService.set_project_variable(projectSetVariableDTO.getPid(), projectSetVariableDTO.getJson());
+        if (!is_success)
+            return ResponseResult.fail("设置失败");
+        return ResponseResult.success("设置成功");
     }
 }

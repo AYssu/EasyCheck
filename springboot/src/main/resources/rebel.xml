@@ -9,9 +9,9 @@
 	<id>springboot.main</id>
 
 	<classpath>
-		<dir name="E:/AYssu/EasyCheck/springboot/build/resources/main">
+		<dir name="E:/AYssu/EasyVerify/springboot/build/resources/main">
 		</dir>
-		<dir name="E:/AYssu/EasyCheck/springboot/build/classes/java/main">
+		<dir name="E:/AYssu/EasyVerify/springboot/build/classes/java/main">
 		</dir>
 	</classpath>
 

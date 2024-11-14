@@ -32,9 +32,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 JSONWriter.Feature.WriteMapNullValue,
                 JSONWriter.Feature.WriteNullBooleanAsFalse,
                 JSONWriter.Feature.WriteNullNumberAsZero,
-                JSONWriter.Feature.WriteNullStringAsEmpty,
-                JSONWriter.Feature.MapSortField
+                JSONWriter.Feature.WriteNullStringAsEmpty
         );
+
         converter.setFastJsonConfig(config);
         converter.setDefaultCharset(StandardCharsets.UTF_8);
         converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
