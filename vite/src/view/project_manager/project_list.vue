@@ -30,7 +30,7 @@
             <ellipsis-outlined/>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>
+                <el-dropdown-item @click="on_click_update_project(item.projectId)">
                   <el-icon style="color: #515151">
                     <svg class="icon" height="200" p-id="9275" t="1731552005213"
                          version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
@@ -260,7 +260,26 @@
       </template>
     </a-modal>
 
+    <a-modal v-model:open="show_project_update" title="编辑项目更新" @ok="update_project_update_info" ok-text="修改" cancel-text="取消">
+      <a-form  :model="project_update_info" >
+        <a-form-item label="更新版本" style="margin-top: 20px">
+          <a-input  v-model:value="project_update_info.updateVersion" placeholder="请输入项目名称"></a-input>
+        </a-form-item>
 
+        <a-form-item label="更新链接">
+          <a-input v-model:value="project_update_info.updateUrl"  placeholder="请输入项目更新链接"></a-input>
+        </a-form-item>
+        <a-form-item label="更新类型">
+          <a-radio-group v-model:value="project_update_info.mustUpdate" button-style="outline">
+            <a-radio-button :value="1">强制</a-radio-button>
+            <a-radio-button :value="2">非强制</a-radio-button>
+          </a-radio-group>
+        </a-form-item>
+        <a-form-item label="更新内容">
+          <el-input v-model="project_update_info.updateMessage" type="textarea"  :rows="5"  show-word-limit maxlength="512"  placeholder="请输入项目更新内容"></el-input>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
@@ -269,8 +288,12 @@ import {Search} from "@element-plus/icons-vue";
 import {createVNode, onMounted, reactive, ref, UnwrapRef} from "vue";
 import {
   create_project_services,
-  get_project_list_services, get_project_variable_services, set_project_variable_services,
-  update_project_normal_info_services, update_project_reset_key_services,
+  get_project_list_services,
+  get_project_update_info_services,
+  get_project_variable_services, set_project_default_update_services, set_project_update_info_services,
+  set_project_variable_services,
+  update_project_normal_info_services,
+  update_project_reset_key_services,
   update_project_status_services
 } from "@/api/project.ts";
 import {ComponentSize, ElMessage} from "element-plus";
@@ -308,6 +331,16 @@ import "codemirror/addon/lint/lint.css";
 import "codemirror/addon/lint/lint.js";
 import "codemirror/addon/lint/json-lint";
 
+const show_project_update = ref(false)
+const project_update_info = ref({
+  pid: 0,
+  mustUpdate: 1,
+  updateId: 1,
+  updateMessage: "未设置公告,请前往控制台更改",
+  updateUrl: "https://example.com",
+  updateVersion: "1000"
+})
+
 const cmRef = ref<CmComponentRef>();
 (window as any).jsonlint = jsonlint;
 
@@ -342,7 +375,60 @@ defineExpose({
   },
 });
 
+const on_click_update_project = async (pid:number)=> {
+  const result = await get_project_update_info_services(pid);
+  try {
+    if (result.data.code === 200) {
+      const result_data = result.data.data;
+      if (result_data==null)
+      {
+        Modal.confirm({
+          title: '提示',
+          content: '该项目没有更新信息，是否创建?',
+          okText: '创建',
+          cancelText: '取消',
+          onOk: async () => {
+            const create_result = await set_project_default_update_services(pid);
+            try {
+              if (create_result.data.code === 200) {
+                message.success('创建成功')
+              }else {
+                message.error(result.data.message)
+              }
+            }catch (e)
+            {
+              console.log(e)
+            }
+          }
+        })
+      }else {
+        project_update_info.value = result_data
+        project_update_info.value.pid = pid;
+        show_project_update.value = true
+      }
+    }else {
+      message.error(result.data.message)
+    }
+  }catch (e)
+  {
+    console.log(e)
+  }
+}
 
+const update_project_update_info = async ()=>{
+  const result = await set_project_update_info_services(project_update_info.value);
+  try {
+    if (result.data.code === 200) {
+      message.success('更新成功')
+      show_project_update.value = false
+    }else {
+      message.error(result.data.message)
+    }
+  }catch (e)
+  {
+    console.log(e)
+  }
+}
 const handle_edit_variable = async (pid: number,title:string) => {
   const result = await get_project_variable_services(pid)
   choose_project_variable.value.pid = pid;
@@ -377,6 +463,8 @@ const format_loading = ref(false)
 const format_json = async () => {
   try {
     format_loading.value = true
+    const hide = message.loading('格式化中...', 0);
+    setTimeout(hide, 1000);
     const result =  JSON.parse(code.value)
     setTimeout(()=>{
       code.value = JSON.stringify(result, null, 2)

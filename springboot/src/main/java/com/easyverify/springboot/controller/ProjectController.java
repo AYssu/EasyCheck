@@ -93,4 +93,28 @@ public class ProjectController {
             return ResponseResult.fail("设置失败");
         return ResponseResult.success("设置成功");
     }
+
+    @GetMapping("project_set_default_update")
+    public ResponseResult<?> project_set_default_update(@RequestParam Integer pid){
+        log.info("project_set_default_update: {}", pid);
+        boolean is_success = projectService.set_project_default_update(pid);
+        if (!is_success)
+            return ResponseResult.fail("更新初始化成功");
+        return ResponseResult.success("设置成功");
+    }
+
+    @GetMapping("project_get_update")
+    public ResponseResult<?> project_get_update(@RequestParam Integer pid){
+        log.info("project_get_update_form: {}", pid);
+        return ResponseResult.success("查询成功", projectService.get_project_update(pid));
+    }
+
+    @PostMapping("project_update_update")
+    public ResponseResult<?> project_update_update(@RequestBody ProjectUpdateDTO projectUpdateDTO){
+        log.info("project_update_update_form: {}", projectUpdateDTO);
+        boolean is_success = projectService.update_update_info(projectUpdateDTO);
+        if (!is_success)
+            return ResponseResult.fail("更新失败");
+        return ResponseResult.success("更新成功");
+    }
 }

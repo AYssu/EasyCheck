@@ -8,4 +8,5 @@ public class ProjectSetVariableDTO {
     @NotBlank(message = "项目ID不能为空")
     private Integer pid;
     private Object json;
+
 }

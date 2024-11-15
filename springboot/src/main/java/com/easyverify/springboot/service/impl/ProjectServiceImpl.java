@@ -3,23 +3,19 @@ package com.easyverify.springboot.service.impl;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.easyverify.springboot.dto.ProjectCreateDTO;
-import com.easyverify.springboot.dto.ProjectInfoDTO;
-import com.easyverify.springboot.dto.ProjectListDTO;
-import com.easyverify.springboot.dto.ProjectUserBindListDTO;
+import com.easyverify.springboot.dto.*;
 import com.easyverify.springboot.entity.EasyProject;
+import com.easyverify.springboot.entity.EasyProjectUpdate;
 import com.easyverify.springboot.entity.EasyUser;
 import com.easyverify.springboot.entity.EasyVariable;
 import com.easyverify.springboot.mapper.ProjectMapper;
+import com.easyverify.springboot.mapper.UpdateMapper;
 import com.easyverify.springboot.mapper.VariableMapper;
 import com.easyverify.springboot.service.UserService;
 import com.easyverify.springboot.utils.Base64Util;
-import com.easyverify.springboot.vo.PageBean;
-import com.easyverify.springboot.vo.ProjectListVO;
+import com.easyverify.springboot.vo.*;
 import com.easyverify.springboot.service.ProjectService;
 import com.easyverify.springboot.utils.StringUtil;
-import com.easyverify.springboot.vo.ProjectResetVo;
-import com.easyverify.springboot.vo.ProjectUserBindListVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +39,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private VariableMapper variableMapper;
+
+    @Autowired
+    private UpdateMapper updateMapper;
 
     // 自定义加密base64
     @Value("${encrypt.base64}")
@@ -257,6 +256,61 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
+
+    // 获取项目更新
+    @Override
+    public ProjectUpdateVo get_project_update(Integer pid) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+
+        EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
+        if (projectUpdate == null)
+        {
+            return null;
+        }
+        // 封装返回值
+        ProjectUpdateVo projectUpdateVo = new ProjectUpdateVo();
+        BeanUtils.copyProperties(projectUpdate, projectUpdateVo);
+        return projectUpdateVo;
+    }
+
+    @Override
+    public boolean set_project_default_update(Integer pid) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+
+
+        EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
+        if (projectUpdate != null)
+            throw new RuntimeException("项目已存在更新");
+        // 插入一条记录
+        EasyProjectUpdate new_projectUpdate = new EasyProjectUpdate();
+        new_projectUpdate.setProjectId(project.getProjectId());
+        return updateMapper.insert(new_projectUpdate)>0;
+    }
+
+    @Override
+    public boolean update_update_info(ProjectUpdateDTO projectUpdateDTO) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(projectUpdateDTO.getPid(), user.getUserId());
+        EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
+        if (projectUpdate == null)
+        {
+            throw new RuntimeException("项目不存在更新功能");
+        }
+        // 更新
+        projectUpdate.setUpdateMessage(projectUpdateDTO.getUpdateMessage());
+        projectUpdate.setUpdateUrl(projectUpdateDTO.getUpdateUrl());
+        projectUpdate.setUpdateVersion(projectUpdateDTO.getUpdateVersion());
+        return updateMapper.updateById(projectUpdate)>0;
+    }
+
+    EasyProjectUpdate get_project_update_by_pid(Integer pid)
+    {
+        LambdaQueryWrapper<EasyProjectUpdate> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyProjectUpdate::getProjectId, pid);
+        return updateMapper.selectOne(queryWrapper);
+    }
     // 获取项目 根据用户ID
     @Override
     public EasyProject get_project_by_id_with_uid(Integer pid, Integer uid) {

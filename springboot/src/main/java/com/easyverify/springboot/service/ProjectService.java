@@ -1,14 +1,8 @@
 package com.easyverify.springboot.service;
 
-import com.easyverify.springboot.dto.ProjectCreateDTO;
-import com.easyverify.springboot.dto.ProjectInfoDTO;
-import com.easyverify.springboot.dto.ProjectListDTO;
-import com.easyverify.springboot.dto.ProjectUserBindListDTO;
+import com.easyverify.springboot.dto.*;
 import com.easyverify.springboot.entity.EasyProject;
-import com.easyverify.springboot.vo.PageBean;
-import com.easyverify.springboot.vo.ProjectListVO;
-import com.easyverify.springboot.vo.ProjectResetVo;
-import com.easyverify.springboot.vo.ProjectUserBindListVo;
+import com.easyverify.springboot.vo.*;
 
 public interface ProjectService {
     /**
@@ -95,4 +89,25 @@ public interface ProjectService {
      * @return boolean
      */
     boolean set_project_variable(Integer pid, Object json);
+
+    /**
+     * 获取项目更新信息
+     * @param pid 项目id
+     * @return ProjectUpdateVo
+     */
+    ProjectUpdateVo get_project_update(Integer pid);
+
+    /**
+     * 设置项目默认更新信息
+     * @param pid 项目id
+     * @return boolean
+     */
+    boolean set_project_default_update(Integer pid);
+
+    /**
+     * 更新项目更新信息
+     * @param projectUpdateDTO 结构封装
+     * @return boolean
+     */
+    boolean update_update_info(ProjectUpdateDTO projectUpdateDTO);
 }
