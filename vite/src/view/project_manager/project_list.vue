@@ -304,9 +304,7 @@ import {
   update_project_status_services
 } from "@/api/project.ts";
 import {ComponentSize, ElMessage} from "element-plus";
-import type { DropdownInstance } from 'element-plus'
 
-const dropdown1 = ref<DropdownInstance>()
 import project_background from '@/assets/svg/project_background.svg'
 
 const drawer = ref<boolean>(false);
