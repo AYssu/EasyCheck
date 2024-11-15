@@ -17,9 +17,6 @@ public class ProjectListVO {
 
     private String projectKey; // 项目密钥
     private String projectMessage; // 项目描述
-    private Integer projectVersion; // 项目版本
-    private String projectUpdateUrl; // 项目更新地址
-    private String projectUpdateNotice; // 项目更新公告
     private String projectNotice; // 项目公告
     private String projectBase64; // 项目自定义BASE64
     private Integer projectStatus;// 项目状态
