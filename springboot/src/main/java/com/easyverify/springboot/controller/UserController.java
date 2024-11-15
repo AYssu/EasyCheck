@@ -1,10 +1,9 @@
 package com.easyverify.springboot.controller;
 
-import com.easyverify.springboot.dto.UserProjectBindDTO;
-import com.easyverify.springboot.utils.IpUtil;
 import com.easyverify.springboot.dto.UserLoginDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;
 import com.easyverify.springboot.service.UserService;
+import com.easyverify.springboot.utils.IpUtil;
 import com.easyverify.springboot.vo.ResponseResult;
 import com.easyverify.springboot.vo.UserLoginVO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +24,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-
     @PostMapping("register")
     public ResponseResult<?> user_register(@RequestBody @Validated UserRegisterDTO userRegisterDTO)
     {
@@ -34,7 +32,6 @@ public class UserController {
             return ResponseResult.success("注册成功!");
         return ResponseResult.fail("注册失败");
     }
-
 
     @PostMapping("login")
     public ResponseResult<?> user_login(@RequestBody @Validated UserLoginDTO userLoginDTO, HttpServletRequest request)

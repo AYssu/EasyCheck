@@ -76,3 +76,31 @@ export const get_project_variable_services = (pid: number)=>{
 export const set_project_variable_services = (params: any)=>{
     return request.post('/project/project_set_variable', params)
 }
+
+/**
+ * 设置项目默认更新方式
+ * @params params
+ * @return Promise
+ */
+export const set_project_default_update_services = (pid: number)=>{
+    return request.get('/project/project_set_default_update?pid='+pid);
+}
+
+/**
+ * 获取项目更新信息
+ * @params params
+ * @return Promise
+ */
+export const get_project_update_info_services = (pid: number)=>{
+    return request.get('/project/project_get_update?pid='+pid);
+}
+
+
+/**
+ * 设置项目更新信息
+ * @param params
+ * @return Promise
+ */
+export const set_project_update_info_services = (params: any)=>{
+    return request.post('/project/project_update_update', params);
+}
