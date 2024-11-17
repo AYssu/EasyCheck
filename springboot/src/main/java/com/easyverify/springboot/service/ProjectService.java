@@ -110,4 +110,12 @@ public interface ProjectService {
      * @return boolean
      */
     boolean update_update_info(ProjectUpdateDTO projectUpdateDTO);
+
+    /**
+     * 更新项目通知信息
+     * @param pid 程序ID
+     * @param notice 通知内容
+     * @return boolean
+     */
+    boolean update_update_notice_info(Integer pid, String notice);
 }

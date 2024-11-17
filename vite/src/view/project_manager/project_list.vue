@@ -29,10 +29,10 @@
           <a-dropdown :trigger="['contextmenu','click']" arrow placement="bottom">
             <ellipsis-outlined/>
             <template #overlay>
-               <a-menu>
-                  <a-menu-item key="0" @click="on_click_update_project(item.projectId)">
-                    <el-text size="small">
-                      <el-icon style="color: #515151;margin-right: 3px;">
+              <a-menu>
+                <a-menu-item key="0" @click="on_click_update_project(item.projectId)">
+                  <el-text size="small">
+                    <el-icon style="color: #515151;margin-right: 3px;">
                       <svg class="icon" height="200" p-id="9275" t="1731552005213"
                            version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -42,21 +42,28 @@
                             d="M511.552 274.003l0.185-0.002 0.158-0.001h0.21a36.364 36.364 0 0 1 0.426 0.004L512 274c0.206 0 0.41 0.002 0.615 0.005l0.043 0.001 0.182 0.003a36.207 36.207 0 0 1 1.746 0.082l0.101 0.008c0.15 0.01 0.299 0.023 0.448 0.036l0.203 0.018c0.095 0.008 0.19 0.017 0.284 0.027l0.277 0.03c0.118 0.011 0.236 0.025 0.354 0.039l0.126 0.016c0.154 0.017 0.307 0.037 0.46 0.057l0.05 0.009a35.674 35.674 0 0 1 8.426 2.211l0.054 0.022 0.015 0.006 0.222 0.09 0.101 0.042 0.195 0.08c0.245 0.103 0.49 0.208 0.734 0.317l0.025 0.011 0.112 0.05a35.694 35.694 0 0 1 1.168 0.55l0.134 0.068c0.128 0.063 0.254 0.127 0.38 0.192l0.132 0.068a35.817 35.817 0 0 1 8.11 5.767l168.889 157.898 0.431 0.41c14.106 13.623 14.723 36.094 1.28 50.473-13.578 14.523-36.359 15.29-50.883 1.711L548 392.94V726c0 19.882-16.118 36-36 36-19.683 0-35.677-15.797-35.995-35.405L476 726V392.939L367.586 494.297c-14.524 13.579-37.305 12.812-50.883-1.711-13.443-14.379-12.826-36.85 1.28-50.473l0.431-0.41 168.89-157.898a35.844 35.844 0 0 1 8.11-5.767l0.117-0.06a33.602 33.602 0 0 1 1.35-0.66 35.758 35.758 0 0 1 10.791-3.06l0.024-0.002c0.15-0.02 0.301-0.036 0.453-0.052l0.164-0.017 0.345-0.034 0.23-0.02c0.132-0.012 0.265-0.022 0.398-0.032l0.112-0.008-0.112 0.008a36.32 36.32 0 0 1 1.452-0.08c0.042 0 0.083-0.002 0.125-0.003 0.122-0.004 0.244-0.008 0.366-0.01h0.015l0.128-0.003h0.033l0.083-0.002h0.064z"
                             fill="#333333" p-id="9277"></path>
                       </svg>
-                    </el-icon>更新管理</el-text>
-                  </a-menu-item>
-                  <a-menu-item key="1" @click="()=>{show_project_info = item as Project;show_notice=true}" >
-                    <el-text size="small"> <el-icon style="color: #515151;margin-right: 3px;">
+                    </el-icon>
+                    更新管理
+                  </el-text>
+                </a-menu-item>
+                <a-menu-item key="1"
+                             @click="()=>{show_project_info = JSON.parse(JSON.stringify(item)) as Project;show_notice=true}">
+                  <el-text size="small">
+                    <el-icon style="color: #515151;margin-right: 3px;">
                       <svg class="icon" height="200" p-id="14603" t="1731552056423"
                            version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M774.447309 893.981872 246.411717 893.981872c-64.806461 0-117.349037-52.542376-117.349037-117.349237L129.06268 248.580654c0-64.789473 52.542776-117.331649 117.349037-117.331649l528.035592 0c64.806861 0 117.349237 52.542176 117.349237 117.331649l0 528.052181C891.796546 841.439696 839.25437 893.981872 774.447309 893.981872zM833.138516 248.580654c0-32.386042-26.288177-58.657031-58.691207-58.657031L246.411717 189.923624c-32.386042 0-58.674619 26.271188-58.674619 58.657031l0 528.052181c0 32.386042 26.288576 58.675018 58.674619 58.675018l528.035592 0c32.403031 0 58.691207-26.289176 58.691207-58.675018L833.138516 248.580654zM715.789279 717.958816l-410.703543 0c-16.218404 0-29.337109-13.135094-29.337109-29.337109 0-16.219004 13.118506-29.338109 29.337109-29.338109l410.703543 0c16.185027 0 29.338109 13.119105 29.338109 29.338109C745.127388 704.823722 731.974305 717.958816 715.789279 717.958816zM715.789279 365.94668c-16.235992 0-29.33691-13.153082-29.33691-29.355097 0-16.219004 13.101117-29.319521 29.33691-29.319521 16.185027 0 29.338109 13.100518 29.338109 29.319521C745.127388 352.793798 731.974305 365.94668 715.789279 365.94668zM587.796458 541.93556 305.085736 541.93556c-16.218404 0-29.337109-13.136094-29.337109-29.320121 0-16.219004 13.118506-29.337509 29.337109-29.337509l282.710522 0c16.202015 0 29.338109 13.118506 29.338109 29.337509C617.134367 528.799466 603.963497 541.93556 587.796458 541.93556zM510.446102 365.94668c-16.235992 0-29.33651-13.153082-29.33651-29.355097 0-16.219004 13.100518-29.319521 29.33651-29.319521 16.203014 0 29.320121 13.100518 29.320121 29.319521C539.766023 352.793798 526.649116 365.94668 510.446102 365.94668zM305.085736 365.94668c-16.218404 0-29.337109-13.153082-29.337109-29.355097 0-16.219004 13.118506-29.319521 29.337109-29.319521 16.236991 0 29.337509 13.100518 29.337509 29.319521C334.423445 352.793798 321.322727 365.94668 305.085736 365.94668z"
                             fill="#262535" p-id="14604"></path>
                       </svg>
-                    </el-icon>公告管理</el-text>
-                  </a-menu-item>
-                  <a-menu-item key="2" >
+                    </el-icon>
+                    公告管理
+                  </el-text>
+                </a-menu-item>
+                <a-menu-item key="2">
 
-                    <el-text size="small"> <el-icon style="color: #515151;margin-right: 3px;">
+                  <el-text size="small">
+                    <el-icon style="color: #515151;margin-right: 3px;">
                       <svg class="icon" height="200" p-id="19136" t="1731552116654"
                            version="1.1" viewBox="0 0 1246 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -69,34 +76,39 @@
                             d="M698.033638 1023.999914a32.734353 32.734353 0 0 1-22.195908-8.607831L532.505041 883.913607l135.684016-141.315997a32.857322 32.857322 0 0 1 47.39226 45.498537l-89.115648 92.829313 93.776174 86.016829a32.857322 32.857322 0 0 1-22.208205 57.057625z"
                             fill="#231815" p-id="19139"></path>
                       </svg>
-                    </el-icon>接口管理</el-text>
-                  </a-menu-item>
-                  <a-menu-item key="3" @click="handle_edit_variable(item.projectId,item.projectName)">
-                    <el-icon style="color: #515151;margin-right: 3px;">
-                      <svg class="icon" height="200" p-id="23610" t="1731552163584"
-                           version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M127.78104098 789.54900543v-144.98828641c0-32.10454914-25.89076543-59.03094518-59.03094517-59.03094519h-19.67698173V522.35630617h19.67698173c32.10454914 0 59.03094518-25.89076543 59.03094517-59.03094519v-144.98828641c0-65.24472889 52.81716148-118.06189037 118.06189038-118.06189038H284.16126419v78.70792692h-39.35396344c-21.74824297 0-39.35396347 17.6057205-39.35396347 39.35396346v160.52274568c0 34.17581037-21.74824297 64.20909827-53.8527921 74.56540444 32.10454914 10.35630617 53.8527921 40.38959408 53.8527921 74.56540445v160.52274568c0 21.74824297 17.6057205 39.35396347 39.35396347 39.35396345H284.16126419v78.70792691h-39.35396344c-64.20909827 1.03563061-117.02625975-51.78153086-117.02625977-117.02625975zM896.21895902 644.56071902v144.98828641c0 65.24472889-52.81716148 118.06189037-118.06189038 118.06189038H739.83873581v-78.70792692h39.35396344c21.74824297 0 39.35396347-17.6057205 39.35396347-39.35396346V629.02625975c0-34.17581037 21.74824297-64.20909827 53.8527921-74.56540444-32.10454914-10.35630617-53.8527921-40.38959408-53.8527921-74.56540445V319.37270518c0-21.74824297-17.6057205-39.35396347-39.35396347-39.35396345H739.83873581V201.31081482h39.35396344c65.24472889 0 118.06189037 52.81716148 118.06189038 118.06189036v144.98828643c0 32.10454914 25.89076543 59.03094518 59.03094519 59.03094519h19.67698171v63.17346765h-19.67698171c-34.17581037-1.03563061-60.06657581 25.89076543-60.0665758 57.99531457z"
-                            p-id="23611"></path>
-                        <path
-                            d="M562.77696916 270.4184459l75.84958641 24.59622717-176.36789412 543.76821191-75.8392301-24.59622717z"
-                            p-id="23612"></path>
-                      </svg>
                     </el-icon>
-                    <el-text size="small">变量管理</el-text>
-                  </a-menu-item>
-                  <a-menu-item key="4" >
+                    接口管理
+                  </el-text>
+                </a-menu-item>
+                <a-menu-item key="3" @click="handle_edit_variable(item.projectId,item.projectName)">
+                  <el-icon style="color: #515151;margin-right: 3px;">
+                    <svg class="icon" height="200" p-id="23610" t="1731552163584"
+                         version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                          d="M127.78104098 789.54900543v-144.98828641c0-32.10454914-25.89076543-59.03094518-59.03094517-59.03094519h-19.67698173V522.35630617h19.67698173c32.10454914 0 59.03094518-25.89076543 59.03094517-59.03094519v-144.98828641c0-65.24472889 52.81716148-118.06189037 118.06189038-118.06189038H284.16126419v78.70792692h-39.35396344c-21.74824297 0-39.35396347 17.6057205-39.35396347 39.35396346v160.52274568c0 34.17581037-21.74824297 64.20909827-53.8527921 74.56540444 32.10454914 10.35630617 53.8527921 40.38959408 53.8527921 74.56540445v160.52274568c0 21.74824297 17.6057205 39.35396347 39.35396347 39.35396345H284.16126419v78.70792691h-39.35396344c-64.20909827 1.03563061-117.02625975-51.78153086-117.02625977-117.02625975zM896.21895902 644.56071902v144.98828641c0 65.24472889-52.81716148 118.06189037-118.06189038 118.06189038H739.83873581v-78.70792692h39.35396344c21.74824297 0 39.35396347-17.6057205 39.35396347-39.35396346V629.02625975c0-34.17581037 21.74824297-64.20909827 53.8527921-74.56540444-32.10454914-10.35630617-53.8527921-40.38959408-53.8527921-74.56540445V319.37270518c0-21.74824297-17.6057205-39.35396347-39.35396347-39.35396345H739.83873581V201.31081482h39.35396344c65.24472889 0 118.06189037 52.81716148 118.06189038 118.06189036v144.98828643c0 32.10454914 25.89076543 59.03094518 59.03094519 59.03094519h19.67698171v63.17346765h-19.67698171c-34.17581037-1.03563061-60.06657581 25.89076543-60.0665758 57.99531457z"
+                          p-id="23611"></path>
+                      <path
+                          d="M562.77696916 270.4184459l75.84958641 24.59622717-176.36789412 543.76821191-75.8392301-24.59622717z"
+                          p-id="23612"></path>
+                    </svg>
+                  </el-icon>
+                  <el-text size="small">变量管理</el-text>
+                </a-menu-item>
+                <a-menu-item key="4">
 
-                    <el-text size="small">  <el-icon style="color: #515151;margin-right: 3px;">
+                  <el-text size="small">
+                    <el-icon style="color: #515151;margin-right: 3px;">
                       <svg class="icon" height="200" p-id="5610" t="1731551752877"
                            version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M606.1 386.9c17.4 0 31.6 14.1 31.6 31.6v315.9c0 17.4-14.1 31.6-31.6 31.6s-31.6-14.1-31.6-31.6v-316c0-17.4 14.1-31.5 31.6-31.5z m-189.6 0c17.4 0 31.6 14.1 31.6 31.6v315.9c0 17.4-14.1 31.6-31.6 31.6-17.4 0-31.6-14.1-31.6-31.6v-316c0-17.4 14.2-31.5 31.6-31.5z m-126.4-63.2V766c0 34.9 28.3 63.2 63.2 63.2h315.9c34.9 0 63.2-28.3 63.2-63.2V323.7H290.1z m158-126.4c-34.9 0-63.2 28.3-63.2 63.2h252.7c0-34.9-28.3-63.2-63.2-63.2H448.1zM226.9 323.7h-63.2c-17.4 0-31.6-14.1-31.6-31.6 0-17.4 14.1-31.6 31.6-31.6h158v-31.6c0-52.3 42.4-94.8 94.8-94.8h189.6c52.3 0 94.8 42.4 94.8 94.8v31.6h158c17.4 0 31.6 14.1 31.6 31.6 0 17.4-14.1 31.6-31.6 31.6h-63.2V766c0 69.8-56.6 126.4-126.4 126.4h-316c-69.8 0-126.4-56.6-126.4-126.4V323.7z"
                             p-id="5611"></path>
                       </svg>
-                    </el-icon>刪除程序</el-text>
-                  </a-menu-item>
-               </a-menu>
+                    </el-icon>
+                    刪除程序
+                  </el-text>
+                </a-menu-item>
+              </a-menu>
             </template>
           </a-dropdown>
         </template>
@@ -230,11 +242,12 @@
       </a-form>
     </a-drawer>
 
-    <a-modal v-model:open="show_notice" title="修改程序公告" cancel-text="取消" ok-text="修改" @ok="update_project_notice">
-        <a-form :model="show_project_info" >
-          <a-form-item style="margin-top: 20px">
-            <el-input v-model="show_project_info.projectNotice" placeholder="请输入公告内容" type="textarea" :rows="10"/>
-          </a-form-item>
+    <a-modal v-model:open="show_notice" cancel-text="取消" ok-text="修改" title="修改程序公告"
+             @ok="update_project_notice">
+      <a-form :model="show_project_info">
+        <a-form-item style="margin-top: 20px">
+          <el-input v-model="show_project_info.projectNotice" :rows="10" placeholder="请输入公告内容" type="textarea"/>
+        </a-form-item>
       </a-form>
     </a-modal>
 
@@ -251,7 +264,7 @@
 
       <template #footer>
         <el-row justify="end">
-          <el-button type="warning" :loading="format_loading"  @click="format_json">
+          <el-button :loading="format_loading" type="warning" @click="format_json">
             <el-icon>
               <svg class="icon" height="200" p-id="1585" t="1731564695662" version="1.1"
                    viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
@@ -262,19 +275,20 @@
             </el-icon>
             <el-text style="color: white">格式化</el-text>
           </el-button>
-          <el-button type="primary" :loading="update_variable_loading" @click="update_variable">更新变量</el-button>
+          <el-button :loading="update_variable_loading" type="primary" @click="update_variable">更新变量</el-button>
         </el-row>
       </template>
     </a-modal>
 
-    <a-modal v-model:open="show_project_update" title="编辑项目更新" @ok="update_project_update_info" ok-text="修改" cancel-text="取消">
-      <a-form  :model="project_update_info" >
+    <a-modal v-model:open="show_project_update" cancel-text="取消" ok-text="修改" title="编辑项目更新"
+             @ok="update_project_update_info">
+      <a-form :model="project_update_info">
         <a-form-item label="更新版本" style="margin-top: 20px">
-          <a-input  v-model:value="project_update_info.updateVersion" placeholder="请输入项目名称"></a-input>
+          <a-input v-model:value="project_update_info.updateVersion" placeholder="请输入项目名称"></a-input>
         </a-form-item>
 
         <a-form-item label="更新链接">
-          <a-input v-model:value="project_update_info.updateUrl"  placeholder="请输入项目更新链接"></a-input>
+          <a-input v-model:value="project_update_info.updateUrl" placeholder="请输入项目更新链接"></a-input>
         </a-form-item>
         <a-form-item label="更新类型">
           <a-radio-group v-model:value="project_update_info.mustUpdate" button-style="outline">
@@ -283,7 +297,8 @@
           </a-radio-group>
         </a-form-item>
         <a-form-item label="更新内容">
-          <el-input v-model="project_update_info.updateMessage" type="textarea"  :rows="5"  show-word-limit maxlength="512"  placeholder="请输入项目更新内容"></el-input>
+          <el-input v-model="project_update_info.updateMessage" :rows="5" maxlength="512" placeholder="请输入项目更新内容"
+                    show-word-limit type="textarea"></el-input>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -297,7 +312,10 @@ import {
   create_project_services,
   get_project_list_services,
   get_project_update_info_services,
-  get_project_variable_services, set_project_default_update_services, set_project_update_info_services,
+  get_project_variable_services,
+  set_project_default_update_services,
+  set_project_notice_services,
+  set_project_update_info_services,
   set_project_variable_services,
   update_project_normal_info_services,
   update_project_reset_key_services,
@@ -361,6 +379,7 @@ interface Project_Variable {
   pid: number
   title: string
 }
+
 const choose_project_variable = ref<Project_Variable>({
   pid: 0,
   title: ''
@@ -384,17 +403,32 @@ defineExpose({
   },
 });
 
-const update_project_notice = ()=> {
+const update_project_notice = async () => {
+  // 更新项目公告
+  const result = await set_project_notice_services({
+    pid: show_project_info.value.projectId,
+    notice: show_project_info.value.projectNotice
+  })
 
+  try {
+    if (result.data.code === 200) {
+      show_notice.value = false
+      message.success('更新成功')
+      await get_project_list(search_params.value)
+    } else {
+      message.error(result.data.message)
+    }
+  } catch (e) {
+    console.log(e)
+  }
 }
 
-const on_click_update_project = async (pid:number)=> {
+const on_click_update_project = async (pid: number) => {
   const result = await get_project_update_info_services(pid);
   try {
     if (result.data.code === 200) {
       const result_data = result.data.data;
-      if (result_data==null)
-      {
+      if (result_data == null) {
         Modal.confirm({
           title: '提示',
           content: '该项目没有更新信息，是否创建?',
@@ -405,44 +439,42 @@ const on_click_update_project = async (pid:number)=> {
             try {
               if (create_result.data.code === 200) {
                 message.success('创建成功')
-              }else {
+              } else {
                 message.error(result.data.message)
               }
-            }catch (e)
-            {
+            } catch (e) {
               console.log(e)
             }
           }
         })
-      }else {
+      } else {
         project_update_info.value = result_data
         project_update_info.value.pid = pid;
         show_project_update.value = true
       }
-    }else {
+    } else {
       message.error(result.data.message)
     }
-  }catch (e)
-  {
+  } catch (e) {
     console.log(e)
   }
 }
 
-const update_project_update_info = async ()=>{
+const update_project_update_info = async () => {
   const result = await set_project_update_info_services(project_update_info.value);
+  console.log(project_update_info.value)
   try {
     if (result.data.code === 200) {
       message.success('更新成功')
       show_project_update.value = false
-    }else {
+    } else {
       message.error(result.data.message)
     }
-  }catch (e)
-  {
+  } catch (e) {
     console.log(e)
   }
 }
-const handle_edit_variable = async (pid: number,title:string) => {
+const handle_edit_variable = async (pid: number, title: string) => {
   const result = await get_project_variable_services(pid)
   choose_project_variable.value.pid = pid;
   choose_project_variable.value.title = title
@@ -478,8 +510,8 @@ const format_json = async () => {
     format_loading.value = true
     const hide = message.loading('格式化中...', 0);
     setTimeout(hide, 1000);
-    const result =  JSON.parse(code.value)
-    setTimeout(()=>{
+    const result = JSON.parse(code.value)
+    setTimeout(() => {
       code.value = JSON.stringify(result, null, 2)
       format_loading.value = false
     }, 1000)
@@ -839,7 +871,6 @@ const help_show = () => {
 onMounted(() => {
   // 初始化数据
   get_project_list(search_params.value);
-
 })
 
 </script>

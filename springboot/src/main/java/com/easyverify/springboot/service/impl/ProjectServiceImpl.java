@@ -229,7 +229,7 @@ public class ProjectServiceImpl implements ProjectService {
             return null;
         String variableJson = variable.getVariableJson();
         Object json = JSON.parse(variableJson);
-        log.info("{}=>{}", variableJson,json);
+        log.info("{}=>{}", variableJson, json);
         try {
             return json;
         } catch (Exception e) {
@@ -250,7 +250,7 @@ public class ProjectServiceImpl implements ProjectService {
             variable.setProjectId(project.getProjectId());
             variable.setVariableJson(JSON.toJSONString(json));
             return variableMapper.insert(variable) > 0;
-        }else {
+        } else {
             variable.setVariableJson(JSON.toJSONString(json));
             return variableMapper.updateById(variable) > 0;
         }
@@ -264,8 +264,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
 
         EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
-        if (projectUpdate == null)
-        {
+        if (projectUpdate == null) {
             return null;
         }
         // 封装返回值
@@ -286,7 +285,7 @@ public class ProjectServiceImpl implements ProjectService {
         // 插入一条记录
         EasyProjectUpdate new_projectUpdate = new EasyProjectUpdate();
         new_projectUpdate.setProjectId(project.getProjectId());
-        return updateMapper.insert(new_projectUpdate)>0;
+        return updateMapper.insert(new_projectUpdate) > 0;
     }
 
     @Override
@@ -294,23 +293,32 @@ public class ProjectServiceImpl implements ProjectService {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(projectUpdateDTO.getPid(), user.getUserId());
         EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
-        if (projectUpdate == null)
-        {
+        if (projectUpdate == null) {
             throw new RuntimeException("项目不存在更新功能");
         }
         // 更新
         projectUpdate.setUpdateMessage(projectUpdateDTO.getUpdateMessage());
         projectUpdate.setUpdateUrl(projectUpdateDTO.getUpdateUrl());
         projectUpdate.setUpdateVersion(projectUpdateDTO.getUpdateVersion());
-        return updateMapper.updateById(projectUpdate)>0;
+        projectUpdate.setMustUpdate(projectUpdateDTO.getMustUpdate());
+        return updateMapper.updateById(projectUpdate) > 0;
     }
 
-    EasyProjectUpdate get_project_update_by_pid(Integer pid)
-    {
+    // 更新通知
+    @Override
+    public boolean update_update_notice_info(Integer pid, String notice) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+        project.setProjectNotice(notice);
+        return projectMapper.updateById(project) > 0;
+    }
+
+    EasyProjectUpdate get_project_update_by_pid(Integer pid) {
         LambdaQueryWrapper<EasyProjectUpdate> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyProjectUpdate::getProjectId, pid);
         return updateMapper.selectOne(queryWrapper);
     }
+
     // 获取项目 根据用户ID
     @Override
     public EasyProject get_project_by_id_with_uid(Integer pid, Integer uid) {

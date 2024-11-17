@@ -1,6 +1,6 @@
 spring:
   application:
-    name: easy_check_spring_boot
+    name: easy_verify_spring_boot
   datasource:
     url: jdbc:mysql://localhost:3306/easy_verify?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
@@ -34,6 +34,9 @@ spring:
             required: true
         debug: true
     port: 465
+  aop:
+    auto: true
+    proxy-target-class: true
 
 server:
   port: 5200
@@ -45,3 +48,4 @@ mybatis-plus:
 # 随机编码 改了之后所有的url加密字段都会改变
 encrypt:
   base64: Yv49zklFRh0V2Km5uSoqOZjbP6pywdDC/e7EgUGWM+XrHAaLxI3i1BTctJnQNf8s
+

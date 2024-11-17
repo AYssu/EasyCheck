@@ -117,4 +117,16 @@ public class ProjectController {
             return ResponseResult.fail("更新失败");
         return ResponseResult.success("更新成功");
     }
+
+    @PostMapping("project_update_notice")
+    public ResponseResult<?> project_update_notice(@RequestBody @Validated ProjectUpdateNoticeDTO projectUpdateNoticeDTO)
+    {
+        log.info("project_update_notice_form: {}", projectUpdateNoticeDTO);
+        boolean is_success = projectService.update_update_notice_info(projectUpdateNoticeDTO.getPid(), projectUpdateNoticeDTO.getNotice());
+        if (!is_success)
+        {
+            return ResponseResult.fail("更新失败");
+        }
+        return ResponseResult.success("更新成功!");
+    }
 }

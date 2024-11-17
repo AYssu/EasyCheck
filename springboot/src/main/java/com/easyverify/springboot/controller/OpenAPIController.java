@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@RestController
-@RequestMapping("open")
+
 @Slf4j
+@RestController
 public class OpenAPIController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class OpenAPIController {
      * @param email 邮箱地址
      * @return 返回数据
      */
-    @GetMapping("send_register_code")
+    @GetMapping("/open/send_register_code")
     public ResponseResult<?> send_code(@RequestParam String email)
     {
         if (!isValidEmail(email))
@@ -60,7 +60,7 @@ public class OpenAPIController {
      * @param userProjectBindDTO 绑定信息
      * @return 返回数据
      */
-    @PostMapping("user_project_bind")
+    @PostMapping("/open/user_project_bind")
     public ResponseResult<?> user_project_bind(@RequestBody @Validated UserProjectBindDTO userProjectBindDTO)
     {
         log.info("user_project_bind form: {}",userProjectBindDTO);
@@ -69,6 +69,12 @@ public class OpenAPIController {
         if (success)
             return ResponseResult.success("注册成功");
         return ResponseResult.fail("注册失败");
+    }
+
+    @PostMapping("/AY{base}")
+    public String test(@PathVariable String base)
+    {
+        return base;
     }
 
 }
