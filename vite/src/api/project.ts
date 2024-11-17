@@ -104,3 +104,12 @@ export const get_project_update_info_services = (pid: number)=>{
 export const set_project_update_info_services = (params: any)=>{
     return request.post('/project/project_update_update', params);
 }
+
+/**
+ * 设置项目公告
+ * @param params
+ * @return Promise
+ */
+export const set_project_notice_services = (params: any)=>{
+    return request.post('/project/project_update_notice', params);
+}
