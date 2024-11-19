@@ -75,7 +75,7 @@ public class OpenAPIController {
     @PostMapping("/{base}")
     public ResponseResult<?> open_api(@PathVariable String base,@RequestBody @Validated OpenAPIDTO openAPIDTO)
     {
-
+        log.info("open_api object: {}",openAPIDTO);
         return ResponseResult.fail("");
     }
 
