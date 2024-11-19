@@ -1,8 +1,11 @@
 package com.easyverify.springboot.service;
 
 import com.easyverify.springboot.dto.*;
+import com.easyverify.springboot.entity.EasyLink;
 import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.vo.*;
+
+import java.util.List;
 
 public interface ProjectService {
     /**
@@ -118,4 +121,34 @@ public interface ProjectService {
      * @return boolean
      */
     boolean update_update_notice_info(Integer pid, String notice);
+
+    /**
+     * 获取项目链接
+     *
+     * @param pid 项目id
+     * @return LinksVo
+     */
+    List<LinksVo> get_project_links(Integer pid);
+
+    /**
+     * 添加项目链接
+     *
+     * @param projectLinkDTO 结构封装
+     * @return boolean
+     */
+    boolean add_project_link(ProjectLinkDTO projectLinkDTO);
+
+    /**
+     * 绑定项目
+     * @param key 项目key
+     * @return EasyLink
+     */
+    EasyLink get_link_by_key(String key);
+
+    /**
+     * 更新项目链接
+     * @param projectLinkDTO 结构封装
+     * @return boolean
+     */
+    boolean update_project_link(ProjectLinkDTO projectLinkDTO);
 }

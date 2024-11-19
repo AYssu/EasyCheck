@@ -4,10 +4,8 @@ import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyverify.springboot.dto.*;
-import com.easyverify.springboot.entity.EasyProject;
-import com.easyverify.springboot.entity.EasyProjectUpdate;
-import com.easyverify.springboot.entity.EasyUser;
-import com.easyverify.springboot.entity.EasyVariable;
+import com.easyverify.springboot.entity.*;
+import com.easyverify.springboot.mapper.LinkMapper;
 import com.easyverify.springboot.mapper.ProjectMapper;
 import com.easyverify.springboot.mapper.UpdateMapper;
 import com.easyverify.springboot.mapper.VariableMapper;
@@ -20,11 +18,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -47,6 +49,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Value("${encrypt.base64}")
     public String encrypt_base64;
 
+    @Autowired
+    private LinkMapper linkMapper;
+
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
     // 创建项目
     @Override
     public boolean create_project(ProjectCreateDTO projectCreateDTO) {
@@ -313,6 +320,83 @@ public class ProjectServiceImpl implements ProjectService {
         return projectMapper.updateById(project) > 0;
     }
 
+    @Override
+    public List<LinksVo> get_project_links(Integer pid) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
+
+        List<EasyLink> links = get_project_links_redis(project.getProjectId());
+        if (links == null|| links.isEmpty() )
+            return null;
+        return links.stream()
+                .map(link -> {
+                    LinksVo linksVo = new LinksVo();
+                    BeanUtils.copyProperties(link, linksVo);
+                    return linksVo;
+                })
+                .collect(Collectors.toList());
+    }
+
+    // 获取项目链接列表 使用redis缓存 减少数据库查询
+    List<EasyLink> get_project_links_redis(Integer pid) {
+        Object object = redisTemplate.opsForValue().get("project_links_" + pid);
+        if (object instanceof List<?> list) {
+            if (!list.isEmpty() && list.get(0) instanceof EasyLink) {
+                log.info("redis get project links temp {}",pid);
+                return (List<EasyLink>) list;
+            }
+        }
+        LambdaQueryWrapper<EasyLink> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyLink::getProjectId,pid);
+        List<EasyLink> easyLinks = linkMapper.selectList(queryWrapper);
+        if (easyLinks.isEmpty())
+        {
+            return null;
+        }
+        redisTemplate.opsForValue().set("project_links_"+pid,easyLinks,30, TimeUnit.MINUTES);
+        return easyLinks;
+    }
+    @Override
+    public boolean add_project_link(ProjectLinkDTO projectLinkDTO) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(projectLinkDTO.getProjectId(), user.getUserId());
+
+        List<EasyLink> links = get_project_links_redis(project.getProjectId());
+
+        boolean exists = links.stream().anyMatch(link -> link.getType().equals(projectLinkDTO.getType()));
+        if (exists) {
+            throw new RuntimeException("项目已存在该类型链接");
+        }
+
+        // 完成程序查询
+        EasyLink easyLink = new EasyLink();
+        String link_key = StringUtil.generateRandomString(12);
+        EasyLink easy_link_temp = get_link_by_key(link_key);
+
+        // 重新生成key 虽然是随机的数据 但是也存在重复的可能性
+        int errors = 0;
+        while (easy_link_temp != null) {
+            link_key = StringUtil.generateRandomString(12);
+            easy_link_temp = get_link_by_key(link_key);
+            log.info("key create errors:" + errors);
+            errors++;
+            if (errors > 3)
+                throw new RuntimeException("生成项目key失败");
+        }
+
+        // 删除缓存
+        redisTemplate.delete("project_links_"+project.getProjectId());
+        easyLink.setLink(link_key);
+        easyLink.setProjectId(project.getProjectId());
+        easyLink.setType(projectLinkDTO.getType());
+        easyLink.setCode(projectLinkDTO.getCode());
+        easyLink.setCodeType(projectLinkDTO.getCodeType());
+        easyLink.setSafeType(projectLinkDTO.getSafeType());
+        easyLink.setReturnTime(projectLinkDTO.getReturnTime());
+        return linkMapper.insert(easyLink) > 0 ;
+    }
+
+
     EasyProjectUpdate get_project_update_by_pid(Integer pid) {
         LambdaQueryWrapper<EasyProjectUpdate> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyProjectUpdate::getProjectId, pid);
@@ -335,5 +419,33 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public EasyProject get_project_by_id(Integer id) {
         return projectMapper.selectById(id);
+    }
+
+    @Override
+    public EasyLink get_link_by_key(String key) {
+        LambdaQueryWrapper<EasyLink> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyLink::getLink, key);
+        return linkMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public boolean update_project_link(ProjectLinkDTO projectLinkDTO) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(projectLinkDTO.getProjectId(), user.getUserId());
+
+        LambdaQueryWrapper<EasyLink> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyLink::getProjectId, project.getProjectId());
+        queryWrapper.eq(EasyLink::getType, projectLinkDTO.getType());
+        EasyLink easyLink = linkMapper.selectOne(queryWrapper);
+        if (easyLink == null) {
+            throw new RuntimeException("项目不存在该类型链接");
+        }
+
+        redisTemplate.delete("project_links_"+project.getProjectId());
+        easyLink.setCode(projectLinkDTO.getCode());
+        easyLink.setCodeType(projectLinkDTO.getCodeType());
+        easyLink.setSafeType(projectLinkDTO.getSafeType());
+        easyLink.setReturnTime(projectLinkDTO.getReturnTime());
+        return linkMapper.updateById(easyLink) > 0;
     }
 }

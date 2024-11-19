@@ -3,6 +3,7 @@ package com.easyverify.springboot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.easyverify.springboot.dto.UserLoginDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;
+import com.easyverify.springboot.entity.EasyLink;
 import com.easyverify.springboot.entity.EasyUser;
 import com.easyverify.springboot.mapper.UserMapper;
 import com.easyverify.springboot.service.UserService;
@@ -183,6 +184,8 @@ public class UserServiceImpl implements UserService {
 
         return null;
     }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.easyverify.springboot.controller;
 
+import com.easyverify.springboot.dto.OpenAPIDTO;
 import com.easyverify.springboot.dto.UserProjectBindDTO;
 import com.easyverify.springboot.service.OpenAPIService;
 import com.easyverify.springboot.vo.ResponseResult;
@@ -71,10 +72,11 @@ public class OpenAPIController {
         return ResponseResult.fail("注册失败");
     }
 
-    @PostMapping("/AY{base}")
-    public String test(@PathVariable String base)
+    @PostMapping("/{base}")
+    public ResponseResult<?> open_api(@PathVariable String base,@RequestBody @Validated OpenAPIDTO openAPIDTO)
     {
-        return base;
+
+        return ResponseResult.fail("");
     }
 
 }
