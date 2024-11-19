@@ -1,16 +1,15 @@
 package com.easyverify.springboot.controller;
 
 import com.easyverify.springboot.dto.*;
-import com.easyverify.springboot.vo.PageBean;
-import com.easyverify.springboot.vo.ProjectResetVo;
-import com.easyverify.springboot.vo.ProjectUserBindListVo;
-import com.easyverify.springboot.vo.ResponseResult;
+import com.easyverify.springboot.vo.*;
 import com.easyverify.springboot.service.ProjectService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("project")
@@ -128,5 +127,29 @@ public class ProjectController {
             return ResponseResult.fail("更新失败");
         }
         return ResponseResult.success("更新成功!");
+    }
+
+    @GetMapping("project_get_link")
+    public ResponseResult<?> project_get_link(@RequestParam Integer pid){
+        log.info("project_get_link_form: {}", pid);
+        List<LinksVo> linksVo = projectService.get_project_links(pid);
+        return ResponseResult.success("查询成功", linksVo);
+    }
+
+    @PostMapping("project_add_link")
+    public ResponseResult<?> project_add_link(@RequestBody @Validated ProjectLinkDTO projectLinkDTO){
+        log.info("project_add_link_form: {}", projectLinkDTO);
+        boolean is_success = projectService.add_project_link(projectLinkDTO);
+        if (!is_success)
+            return ResponseResult.fail("添加失败");
+        return ResponseResult.success("添加成功");
+    }
+    @PostMapping("project_update_link")
+    public ResponseResult<?> project_update_link(@RequestBody ProjectLinkDTO projectLinkDTO){
+        log.info("project_update_link_form: {}", projectLinkDTO);
+        boolean is_success = projectService.update_project_link(projectLinkDTO);
+        if (!is_success)
+            return ResponseResult.fail("更新失败");
+        return ResponseResult.success("更新成功");
     }
 }

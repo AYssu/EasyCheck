@@ -145,7 +145,14 @@
     </ul>
   </div>
 
-  <a-modal v-model:open="login_dialog_show" :footer="null" title="用户登录" width="40%">
+  <a-modal v-model:open="login_dialog_show"
+           ok-text="登录"
+           :confirm-loading="confirmLoading"
+           cancel-text="没有账号？前往注册"
+           @ok="to_login"
+           @cancel="()=>{login_dialog_show = false;register_dialog_show = true;}"
+           title="用户登录"
+           width="40%">
 
     <el-form ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px" style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
@@ -158,15 +165,19 @@
       <el-form-item>
         <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="to_login">登录</el-button>
-        <el-button @click="()=>{login_dialog_show = false;register_dialog_show = true;}">没有账号？前往注册
-        </el-button>
-      </el-form-item>
+
     </el-form>
 
   </a-modal>
-  <a-modal v-model:open="register_dialog_show" :footer="null" title="用户注册" width="40%">
+  <a-modal
+      v-model:open="register_dialog_show"
+      ok-text="注册"
+      :confirm-loading="confirmLoading"
+      cancel-text="已有账号？前往登录"
+      @ok="to_register"
+      @cancel="()=>{login_dialog_show = true;register_dialog_show = false;}"
+      title="用户注册"
+      width="40%">
     <el-form ref="loginForm" label-position="top" :model="register_form" :rules="register_rules" label-width="60px" style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="register_form.username" clearable placeholder="请输入账号" type="text"></el-input>
@@ -189,22 +200,16 @@
       <el-form-item>
         <el-checkbox v-model="register_form.agree">同意协议</el-checkbox>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="to_register">注册</el-button>
-        <el-button @click="()=>{register_dialog_show = false;login_dialog_show = true;}">已有账号？前往登录
-        </el-button>
-      </el-form-item>
+
     </el-form>
 
   </a-modal>
-
   <el-backtop :bottom="20" :right="20"/>
 </template>
 
 
 <script lang="ts" setup>
 import 'element-plus/theme-chalk/display.css'
-
 import {ref} from 'vue';
 import {ElMessage} from "element-plus";
 import {user_login_services, user_register_code_services, user_register_services} from "@/api/user.ts";
@@ -212,7 +217,7 @@ import {ElCollapseTransition} from 'element-plus'
 // 显示登录弹窗的变量
 const login_dialog_show = ref(false);
 const register_dialog_show = ref(false);
-
+const confirmLoading = ref(false);
 // 引入token的store
 import {user_token} from "@/stores/token.ts";
 
@@ -306,11 +311,13 @@ const to_login = async () => {
     return;
   }
 
+  confirmLoading.value = true
   // 执行登录的逻辑
   const login_request: any = await user_login_services(login_form.value);
 
   if (login_request.data.code === 200) {
     ElMessage.success(login_request.data.message)
+    confirmLoading.value = false
     // 清除token
     user_token_data.remove_token();
     user_token_data.set_token(login_request.data.data);
@@ -318,6 +325,7 @@ const to_login = async () => {
     await router.push({name: 'home'});
 
   } else {
+    confirmLoading.value = false
     ElMessage.error(login_request.data.message)
   }
 };
@@ -330,10 +338,11 @@ const to_register = async () => {
     ElMessage.error('请先同意协议');
     return;
   }
-
+  confirmLoading.value = true
   const register_request: any = await user_register_services(register_form.value);
 
   if (register_request.data.code === 200) {
+    confirmLoading.value = false
     ElMessage.success(register_request.data.message);
     register_dialog_show.value = false;
     login_form.value.username = register_form.value.username;
@@ -342,6 +351,7 @@ const to_register = async () => {
 
     login_dialog_show.value = true;
   } else
+    confirmLoading.value = false
     ElMessage.error(register_request.data.message);
 
 };
