@@ -2,20 +2,34 @@
   <el-container class="layout-container-demo">
 
     <el-container>
-      <el-aside style="max-width: 200px" width="auto">
+      <el-aside v-if="!phone_bool" style="max-width: 200px" width="auto">
         <div>
-          <logo_view v-if="show_aside"/>
+          <logo_view v-if="show_aside&&!phone_bool"/>
           <div style="width: 100%;display: flex;justify-content: center;margin-top: 18px;margin-bottom: 10px">
-            <img v-if="!show_aside" :src="icon_translate" alt="icon" style="width: 25px;height: 25px">
+            <img v-if="!show_aside||phone_bool" :src="icon_translate" alt="icon" style="width: 25px;height: 25px">
           </div>
-          <el-menu :collapse="!show_aside"
+          <el-menu :collapse="!show_aside||phone_bool"
                    :default-active="active_menu"
                    :default-openeds="['1', '2']"
                    class="el-menu-vertical-demo"
                    router
                    @close="handleClose"
                    @open="handleOpen">
-            <el-sub-menu index="1">
+
+            <el-menu-item v-if="!phone_bool" index="1"  route="/home/table" >
+              <template #title>
+                <el-icon>
+                  <svg class="icon" height="200" p-id="1546" t="1730291296708"
+                       version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M647 457.415a45 45 0 0 1 45 45v405a45 45 0 0 1-45 45h-45a45 45 0 0 1-45-45v-405a45 45 0 0 1 45-45h45z m-225 180a45 45 0 0 1 45 45v225a45 45 0 0 1-45 45H377a45 45 0 0 1-45-45v-225a45 45 0 0 1 45-45h45z m-225-90a45 45 0 0 1 45 45v315a45 45 0 0 1-45 45H152a45 45 0 0 1-45-45v-315a45 45 0 0 1 45-45h45z m675-225a45 45 0 0 1 45 45v540a45 45 0 0 1-45 45h-45a45 45 0 0 1-45-45v-540a45 45 0 0 1 45-45h45zM939.5 62l-90 208.35L797.075 206l-233.37 189.135-228.6-24.615L115.28 457.55a22.5 22.5 0 0 1-27.36-9l-1.8-3.645a22.5 22.5 0 0 1 9-27.36l3.6-1.845 230.175-91.08 221.4 23.85 218.385-177.21L709.55 98.81 939.5 62z"
+                        fill="#515151" p-id="1547"></path>
+                  </svg>
+                </el-icon>
+                <span>数据统计</span>
+              </template>
+            </el-menu-item>
+            <el-sub-menu v-if="phone_bool" index="1" >
               <template #title>
                 <el-icon>
                   <svg class="icon" height="200" p-id="1546" t="1730291296708"
@@ -28,7 +42,6 @@
                 <span>数据统计</span>
               </template>
               <el-menu-item index="/home/table">项目数据</el-menu-item>
-
             </el-sub-menu>
             <el-sub-menu index="2">
               <template #title>
@@ -82,7 +95,7 @@
                 <el-menu-item index="3-4">代理统计</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>
-            <el-menu-item index="4">
+            <el-menu-item v-if="!phone_bool" index="4">
               <template #title>
                 <el-icon>
                   <svg class="icon" height="200" p-id="1063" version="1.1" viewBox="0 0 1024 1024"
@@ -95,6 +108,21 @@
                 <span>关于我们</span>
               </template>
             </el-menu-item>
+            <el-sub-menu v-if="phone_bool" index="4">
+              <template #title>
+                <el-icon>
+                  <svg class="icon" height="200" p-id="1063" version="1.1" viewBox="0 0 1024 1024"
+                       width="200" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M505.173 68.267c244.313 0 442.368 198.055 442.368 442.368S749.486 953.003 505.173 953.003 62.805 754.948 62.805 510.635 260.86 68.267 505.173 68.267z m8.192 404.138c-22.621 0-40.96 18.339-40.96 40.96v172.032c0 22.622 18.339 40.96 40.96 40.96 22.622 0 40.96-18.338 40.96-40.96V513.365c0-22.621-18.338-40.96-40.96-40.96z m0-141.994c-22.621 0-40.96 18.338-40.96 40.96 0 22.621 18.339 40.96 40.96 40.96 22.622 0 40.96-18.339 40.96-40.96 0-22.622-18.338-40.96-40.96-40.96z"
+                        fill="#515151" p-id="1064"></path>
+                  </svg>
+                </el-icon>
+                <span>关于我们</span>
+              </template>
+              <el-menu-item >关于我们</el-menu-item>
+
+            </el-sub-menu>
 
           </el-menu>
         </div>
@@ -187,6 +215,13 @@
 }
 
 
+@media only screen and (max-width: 1200px) {
+  .el-header {
+    height: 30px;
+    padding: 0;
+  }
+}
+
 </style>
 <script lang="ts" setup>
 import logo_view from "@/components/logo_view.vue"
@@ -198,6 +233,7 @@ import {aside_status} from "@/stores/aside.ts";
 import icon_translate from '@/assets/icon_translate.png'
 import tab_view from "@/components/tab_view.vue";
 import {tabs_status} from "@/stores/tabs/tabs.ts";
+import {phone_bool} from "@/main.ts";
 
 const router = useRouter()
 

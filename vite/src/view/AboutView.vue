@@ -146,14 +146,17 @@
   </div>
 
   <a-modal v-model:open="login_dialog_show"
-           ok-text="登录"
-           :confirm-loading="confirmLoading"
-           cancel-text="没有账号？前往注册"
-           @ok="to_login"
-           @cancel="()=>{login_dialog_show = false;register_dialog_show = true;}"
            title="用户登录"
-           width="40%">
+           :width="phone_bool ? '90%' : '40%'">
 
+    <template #footer>
+      <div >
+        <a-button type="default" @click="()=>{login_dialog_show = false;register_dialog_show = true;}"
+                  style="margin-right: 20px">没有账号？前往注册
+        </a-button>
+        <a-button type="primary" :loading="confirmLoading" @click="to_login">登录</a-button>
+      </div>
+    </template>
     <el-form ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px" style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="login_form.username" clearable placeholder="请输入账号" type="text"></el-input>
@@ -171,13 +174,16 @@
   </a-modal>
   <a-modal
       v-model:open="register_dialog_show"
-      ok-text="注册"
-      :confirm-loading="confirmLoading"
-      cancel-text="已有账号？前往登录"
-      @ok="to_register"
-      @cancel="()=>{login_dialog_show = true;register_dialog_show = false;}"
       title="用户注册"
-      width="40%">
+      :width="phone_bool ? '90%' : '40%'">
+    <template #footer>
+      <div >
+        <a-button type="default" @click="()=>{register_dialog_show = false;login_dialog_show = true;}"
+                  style="margin-right: 20px">已有账号？前往登录
+        </a-button>
+        <a-button type="primary" :loading="confirmLoading" @click="to_login">注册</a-button>
+      </div>
+    </template>
     <el-form ref="loginForm" label-position="top" :model="register_form" :rules="register_rules" label-width="60px" style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="register_form.username" clearable placeholder="请输入账号" type="text"></el-input>
@@ -363,6 +369,7 @@ import lock from "@/assets/index/lock.svg";
 import hamburger from "@/assets/index/hamburger.svg"
 import {ArrowRight} from "@element-plus/icons-vue";
 import {message} from "ant-design-vue";
+import {phone_bool} from "@/main.ts";
 
 const show = ref(false)
 
@@ -416,6 +423,8 @@ const bottom_message = ref([{
   title: "安全服务",
   content: "用户信息专属保管，不会泄露任何用户相关信息，私有服务器部署，安全可靠。"
 }]);
+
+
 </script>
 
 

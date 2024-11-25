@@ -7,7 +7,7 @@
       type="card"
       @tab-remove="tab_remove"
       @tab-click="tab_click">
-    <el-tab-pane v-for="(item ,index) in tab_list" :key="index" :label="item.title" :name="item.path"></el-tab-pane>
+    <el-tab-pane  v-for="(item ,index) in tab_list" :key="index" :label="item.title" :name="item.path"></el-tab-pane>
   </el-tabs>
 </template>
 
@@ -49,6 +49,20 @@
 
 :deep(.el-tabs__nav-next) {
   line-height: 26px !important;
+}
+
+
+@media only screen and (max-width: 1200px) {
+
+
+  :deep(.el-tabs__item) {
+    height: 16px !important;
+    line-height: 16px !important;
+    margin: 0 2px !important;
+    font-size: 11px !important;
+    padding: 0 8px !important; // 修正了0xp为0px
+  }
+
 }
 </style>
 <script lang="ts" setup>
