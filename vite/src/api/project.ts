@@ -113,3 +113,25 @@ export const set_project_update_info_services = (params: any)=>{
 export const set_project_notice_services = (params: any)=>{
     return request.post('/project/project_update_notice', params);
 }
+
+/**
+ * 获取项目链接
+ * @param pid 程序ID
+ * @return Promise
+ */
+export const get_project_links_services = (pid: number)=>{
+    return request.get('/project/project_get_link?pid='+pid);
+}
+
+/**
+ * 新增项目链接
+ * @param params
+ * @return Promise
+ */
+export const add_project_link_services = (params: any)=>{
+    return request.post('/project/project_add_link', params);
+}
+
+export const update_project_link_services = (params: any)=>{
+    return request.post('/project/project_update_link', params);
+}

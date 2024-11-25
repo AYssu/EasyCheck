@@ -302,6 +302,51 @@
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <a-modal width="60%" :open="false" :footer="null" :closable="false" >
+      <template #title>
+        <div style="display: flex;justify-content: space-between">
+          <span style="font-weight: bold">接口管理</span>
+          <a-button type="primary" >添加</a-button>
+        </div>
+      </template>
+      <el-table :data="data" size="small" >
+        <el-table-column prop="type" label="接口名称" width="180">
+          <template #default="scope">
+            <span v-if="scope.row.type==1">单码卡密登录</span>
+            <span v-else-if="scope.row.type==2">解绑或换机器码</span>
+            <span v-else-if="scope.row.type==3">用户登录</span>
+            <span v-else-if="scope.row.type==4">获取程序公告</span>
+            <span v-else-if="scope.row.type==5">更新查询</span>
+            <span v-else-if="scope.row.type==6">获取程序变量列表</span>
+            <span v-else-if="scope.row.type==7">单码心跳</span>
+            <span v-else-if="scope.row.type==8">用户心跳</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="link" label="接口地址" width="130">
+          <template #default="scope">
+           <el-link type="success" style="font-size: 0.65rem">/{{scope.row.link}}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column prop="code" label="返回值" width="100">
+          <template #default="scope">
+            <el-tag type="warning">{{scope.row.code}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="safeType" label="安全传输" width="80">
+          <template #default="scope">
+            <a-switch size="small" disabled="disabled" v-model:checked="scope.row.safeType" :checked-value="1" checked-children="开" un-checked-children="关" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="desc" label="描述" show-overflow-tooltip>
+          <el-text size="small">所谓永恒的爱，是从花开一直到花落，从红颜一直爱到白发。</el-text>
+        </el-table-column>
+        <el-table-column  fixed="right" label="操作" width="140" >
+          <el-button type="primary" size="small" plain>编辑</el-button>
+          <el-button type="danger" size="small" plain>删除</el-button>
+        </el-table-column>
+      </el-table>
+    </a-modal>
   </div>
 </template>
 
@@ -324,6 +369,48 @@ import {
 import {ComponentSize, ElMessage} from "element-plus";
 
 import project_background from '@/assets/svg/project_background.svg'
+
+const data = [
+  {
+    type: 1,
+    link:'AB1U7UYD5T',
+    code: 200,
+    safeType:1,
+  },
+  {
+    type: 2,
+    link:'AB1U7UYD5T',
+    code: 200,
+    safeType:2,
+  },
+  {
+    type: 3,
+    link:'AB1U7UYD5T',
+    code: 200,
+    safeType:2,
+  },
+  {
+    type: 4,
+    link:'AB1U7UYD5T',
+    code: 200,
+    safeType:1,
+  }
+  ,
+  {
+    type: 5,
+    link:'AB1U7UYD5T',
+    code: 200,
+    safeType:1,
+  }
+  ,
+  {
+    type: 6,
+    link:'AB1U7UYD5T',
+    code: 200,
+    safeType:1,
+  }
+  ,
+];
 
 const drawer = ref<boolean>(false);
 const a_drawer = ref<boolean>(false);

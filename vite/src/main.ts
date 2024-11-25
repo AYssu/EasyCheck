@@ -1,4 +1,4 @@
-import {createApp} from 'vue'
+import {computed, createApp, onUnmounted, ref} from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router/index.ts'
@@ -29,3 +29,17 @@ app.use(router)
 app.use(Antd)
 app.mount('#app')
 
+
+// 全局监听屏幕宽度
+const screenWidth = ref(window.innerWidth);
+export const phone_bool = computed(()=>{
+    return screenWidth.value < 1200;
+})
+const updateScreenWidth = ()=> {
+    screenWidth.value = window.innerWidth;
+}
+window.addEventListener('resize', updateScreenWidth);
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateScreenWidth);
+})

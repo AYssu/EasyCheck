@@ -3,50 +3,52 @@
     <div class="top_menu_bar">
       <el-card class="top_menu_card ">
         <div class="left_info">
-          <img alt="icon" :src="default_icon" style="width: 60px;height:60px;border-radius: 100%;margin-right: 8px" />
+          <img :src="default_icon" alt="icon" class="top_icon"/>
           <div class="top_menu_text">
             <div class="top_menu_title">
               <div>
-                <span style="font-weight: bold;padding-bottom: 0" >{{say_hello}}</span>
+                <span style="font-weight: bold;padding-bottom: 0">{{ say_hello }}</span>
               </div>
-              <el-text type="info" size="small">寄语:
-                {{ text }}</el-text>
+              <el-text size="small" type="info">寄语:
+                {{ text }}
+              </el-text>
             </div>
           </div>
         </div>
       </el-card>
-      <el-card class="top_menu_card">
-        <div class="top_menu_list">
-          <img :src="project_icon" alt="">
-          <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
-        </div>
-      </el-card>
-      <el-card class="top_menu_card">
-        <div class="top_menu_list">
-          <img :src="edit_icon" alt="">
-          <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
-        </div>
-      </el-card><el-card class="top_menu_card">
-      <div class="top_menu_list">
-        <img :src="tips_icon" alt="">
-        <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
+      <div v-if="!phone_bool" class="top_menu_right">
+        <el-card class="top_menu_card">
+          <div class="top_menu_list">
+            <img :src="project_icon" alt="" class="center_icon">
+            <el-text size="small" style="margin-top: 10px" type="info">项目编辑</el-text>
+          </div>
+        </el-card>
+        <el-card class="top_menu_card">
+          <div class="top_menu_list">
+            <img :src="edit_icon" alt="" class="center_icon">
+            <el-text size="small" style="margin-top: 10px" type="info">项目编辑</el-text>
+          </div>
+        </el-card>
+        <el-card class="top_menu_card">
+          <div class="top_menu_list">
+            <img :src="tips_icon" alt="" class="center_icon">
+            <el-text size="small" style="margin-top: 10px" type="info">项目编辑</el-text>
+          </div>
+        </el-card>
+        <el-card class="top_menu_card">
+          <div class="top_menu_list">
+            <img :src="data_icon" alt="" class="center_icon">
+            <el-text size="small" style="margin-top: 10px" type="info">项目编辑</el-text>
+          </div>
+        </el-card>
       </div>
-    </el-card><el-card class="top_menu_card">
-      <div class="top_menu_list">
-        <img :src="data_icon" alt="">
-        <el-text type="info" size="small" style="margin-top: 10px">项目编辑</el-text>
-      </div>
-    </el-card>
 
     </div>
 
     <div class="bottom_menu_bar">
-      <el-card style="height: calc(100vh - 300px);margin: 0 10px 0 10px;box-shadow: none">
-        <v-chart :option="option" autoresize class="chart"></v-chart>
-      </el-card>
-      <el-card style="height: calc(100vh - 300px);margin: 0 10px 0 10px;box-shadow: none">
-        <el-row>
-          <el-col :span="6">
+      <el-card style="min-height: calc(100vh - 300px);margin: 0 10px 10px 10px;box-shadow: none">
+        <div class="center_static">
+          <el-col>
             <el-statistic :value="268500">
               <template #title>
                 注册用户
@@ -61,7 +63,7 @@
               </template>
             </el-statistic>
           </el-col>
-          <el-col :span="6">
+          <el-col>
             <el-statistic :value="138">
               <template #title>
                 <div style="display: inline-flex; align-items: center">
@@ -78,7 +80,7 @@
               </template>
             </el-statistic>
           </el-col>
-          <el-col :span="6">
+          <el-col>
             <el-statistic :value="outputValue">
               <template #title>
                 剩余制卡
@@ -94,8 +96,15 @@
               </template>
             </el-statistic>
           </el-col>
-          <el-col :span="6">
-            <el-statistic :value="100" title="剩余项目">
+          <el-col>
+            <el-statistic :value="100"  >
+              <template #title>
+                <div style="display: inline-flex; align-items: center">
+                  剩余项目
+                  <el-icon :size="12" style="margin-left: 4px">
+                  </el-icon>
+                </div>
+              </template>
               <template #suffix>
                 <el-icon style="vertical-align: -0.125em">
                   <svg class="icon" height="200" p-id="14571" t="1730362349496"
@@ -108,7 +117,12 @@
               </template>
             </el-statistic>
           </el-col>
-        </el-row>
+        </div>
+
+        <v-chart :option="option" autoresize class="chart"></v-chart>
+      </el-card>
+      <el-card style="height: calc(100vh - 300px);margin: 0px 10px 0 10px;box-shadow: none">
+
         <div class="demo-collapse">
           <el-text size="default" style="font-weight: bold;" type="info">
             系统公告
@@ -173,7 +187,8 @@ import {CanvasRenderer} from 'echarts/renderers';
 import {useTransition} from '@vueuse/core'
 
 import {user_token} from "@/stores/token.ts";
-const user_data  = user_token() as any
+
+const user_data = user_token() as any
 
 
 import default_icon from '@/assets/default.jpg'
@@ -181,6 +196,8 @@ import project_icon from '@/assets/svg/project.svg'
 import data_icon from '@/assets/svg/data.svg'
 import tips_icon from '@/assets/svg/tips.svg'
 import edit_icon from '@/assets/svg/edit.svg'
+import {phone_bool} from "@/main.ts";
+
 const source = ref(0)
 const outputValue = useTransition(source, {
   duration: 1500,
@@ -207,7 +224,7 @@ function getRandomGreeting() {
   return greetings[Math.floor(Math.random() * greetings.length)];
 }
 
-const  getGreetingTime = () => {
+const getGreetingTime = () => {
   const now = new Date();
   const hour = now.getHours();
   if (hour < 5) {
@@ -230,11 +247,11 @@ const  getGreetingTime = () => {
 }
 
 
-const message = "愿你的每一天都充满阳光，每一步都走得坚定。在这个忙碌的世界里，愿你找到属于自己的宁静与快乐。祝福你，陌生人，愿好运常伴你左右。🌟";
+const message =!phone_bool.value?"愿你的每一天都充满阳光，每一步都走得坚定。在这个忙碌的世界里，愿你找到属于自己的宁静与快乐。祝福你，陌生人，愿好运常伴你左右。🌟":"在这个忙碌的世界里，愿你找到属于自己的宁静与快乐。🌟";
 const text = ref('');
 
 // 递归调用 实现打字效果
-const type = (index:number) => {
+const type = (index: number) => {
   if (index < message.length) {
     text.value = message.slice(0, index + 1);
     setTimeout(() => type(index + 1), 20); // 100毫秒打一个字
@@ -299,7 +316,7 @@ const option = ref({
   },
   xAxis: [{
     type: 'category',
-    data: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期天'],
+    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周天'],
     axisLine: {
       lineStyle: {
         color: '#DCE2E8'
@@ -399,7 +416,7 @@ const option = ref({
     }
   }],
   series: [{
-    name: '卡密制作',
+    name: phone_bool.value?'制卡':'卡密制作',
     type: 'line',
     data: [10, 10, 30, 12, 15, 3, 7],
     symbolSize: 1,
@@ -429,7 +446,7 @@ const option = ref({
       }
     }
   }, {
-    name: '用户注册',
+    name: phone_bool.value?'注册':'用户注册',
     type: 'line',
     data: [5, 12, 11, 14, 25, 16, 10],
     symbolSize: 1,
@@ -460,7 +477,7 @@ const option = ref({
     }
   },
     {
-      name: '卡密/用户登录',
+      name: phone_bool.value?'登录':'卡密/用户登录',
       type: 'line',
       data: [150, 120, 170, 140, 500, 160, 110],
       symbolSize: 1,
@@ -494,14 +511,17 @@ const option = ref({
 });
 
 </script>
-<style lang="scss" scoped>
 
+<style lang="scss" scoped>
+.el-col {
+  text-align: center;
+}
 .top_menu_card {
   display: flex;
   align-items: center;
+  margin: 10px 10px 10px 10px;
   justify-content: center;
   height: 140px;
-  margin: 10px 10px 10px 10px;
   box-shadow: none
 }
 
@@ -512,11 +532,18 @@ const option = ref({
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
   img {
     width: 40px;
     height: 40px;
   }
+
+
+  span {
+    text-align: center;
+  }
 }
+
 .top_menu_text {
   height: 100%;
   display: flex;
@@ -540,7 +567,7 @@ const option = ref({
 }
 
 .echarts-box {
-  height: calc(100vh - 100px);
+  min-height: calc(100vh - 100px);
 }
 
 .chart {
@@ -550,7 +577,12 @@ const option = ref({
 
 .top_menu_bar {
   display: grid;
-  grid-template-columns: 4fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+}
+
+.top_menu_right {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
 }
 
 .bottom_menu_bar {
@@ -560,6 +592,56 @@ const option = ref({
 
 .demo-collapse {
   margin-top: 16px;
+}
+
+.top_icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 100%;
+  margin-right: 8px;
+}
+.center_icon {
+  width: 30px;
+  height: 30px;
+}
+
+.center_static {
+  display: grid;
+  align-items: center;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+
+@media only screen and (max-width: 1200px) {
+  .top_menu_bar {
+    display: grid;
+    grid-template-columns: 1fr; /* 第二行平铺4个 */
+  }
+
+
+  .top_menu_card {
+    height: 120px;
+  }
+  .bottom_menu_bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .center_icon {
+    width: 30px !important;
+  }
+  .top_icon {
+    width: 40px;
+    height: 40px;
+  }
+  .top_menu_title {
+    span {
+      font-size: 12px;
+    }
+  }
+
+  .center_static {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 2fr));
+  }
 }
 
 </style>
