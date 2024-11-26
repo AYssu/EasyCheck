@@ -628,6 +628,7 @@ const update_variable = async () => {
     }
   } catch (e) {
     console.log(e)
+    update_variable_loading.value = false
     message.error("格式化异常,或格式不合法")
   }
 }
