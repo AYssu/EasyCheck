@@ -14,7 +14,7 @@
 <style lang="scss" scoped>
 :deep(.el-tabs__header) {
   box-sizing: border-box;
-  margin: 0; // 修正了Opx为0px
+  margin: 0 5px 0 5px !important; // 修正了Opx为0px
 }
 
 :deep(.el-tabs__item) {
@@ -60,7 +60,7 @@
     line-height: 16px !important;
     margin: 0 2px !important;
     font-size: 11px !important;
-    padding: 0 8px !important; // 修正了0xp为0px
+    padding: 8px 6px !important; // 修正了0xp为0px
   }
 
 }

@@ -5,8 +5,9 @@
           v-model="search_params.projectName"
           :fetch-suggestions="querySearch"
           clearable
+          size="small"
           placeholder="请输入项目名称"
-          style="width: 40%;margin-right: 10px"
+          style="margin-left: 5px;max-width: 40%;margin-right: 10px"
           @select="get_project_list(search_params)"
           @keyup.enter="get_project_list(search_params)"
       >
@@ -19,14 +20,14 @@
     </div>
     <el-empty v-if="tableData.length === 0"></el-empty>
     <div class="box_card_list">
-      <a-card v-for="(item,index) in tableData" :key="index" hoverable style="width: 240px">
+      <a-card v-for="(item,index) in tableData" :key="index" hoverable :style="phone_bool?'width: 180px':'width: 240px'">
         <template #cover>
           <el-image :alt="item.projectName" :src="project_background"/>
         </template>
         <template #actions>
           <setting-outlined/>
           <edit-outlined @click="on_click_open_show(item)"/>
-          <a-dropdown :trigger="['contextmenu','click']" arrow placement="bottom">
+          <a-dropdown :trigger="['contextmenu','click']" placement="bottomLeft">
             <ellipsis-outlined/>
             <template #overlay>
               <a-menu>
@@ -179,7 +180,7 @@
         :open="a_drawer"
         placement="right"
         title="项目详情"
-        width="640"
+        :width="phone_bool?'80%':'40%'"
         @close="()=>a_drawer=false">
       <template #extra>
         <a-button style="margin-right: 8px" @click="a_drawer = false">取消</a-button>
@@ -251,12 +252,12 @@
       </a-form>
     </a-modal>
 
-    <a-modal v-model:open="json_show" :closable="true" :title="choose_project_variable.title" width="50%">
+    <a-modal v-model:open="json_show" :closable="true" :title="choose_project_variable.title" :width="phone_bool?'':'60%'">
       <Codemirror
           ref="cmRef"
           v-model:value="code"
           :border="true"
-          :height="'500px'"
+          :height="'400px'"
           :options="cmOptions"
           @ready="onReady"
       >
@@ -475,6 +476,7 @@ const cmOptions: EditorConfiguration = reactive({
   mode: "application/json",
   lineNumbers: true,
   lineWiseCopyCut: true,
+  lineWrapping: false,
   gutters: ["CodeMirror-lint-markers"],
   lint: true,
 });
@@ -626,6 +628,7 @@ const update_variable = async () => {
     }
   } catch (e) {
     console.log(e)
+    update_variable_loading.value = false
     message.error("格式化异常,或格式不合法")
   }
 }
@@ -771,6 +774,7 @@ const handleCurrentChange = (val: number) => {
 
 
 import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
+import {phone_bool} from "@/main.ts";
 
 const update_project_status = (row: Project) => {
   if (row.projectStatus == 0) {
@@ -784,10 +788,10 @@ const update_project_status = (row: Project) => {
       onOk: async () => {
         const update_result = await update_project_status_services(row.projectId);
         if (update_result.data.code === 200) {
-          ElMessage.success(update_result.data.message)
+          message.success(update_result.data.message)
           await get_project_list(search_params.value);
         } else {
-          ElMessage.error(update_result.data.message)
+          message.error(update_result.data.message)
         }
       },
       onCancel() {
@@ -806,10 +810,10 @@ const update_project_status = (row: Project) => {
       onOk: async () => {
         const update_result = await update_project_status_services(row.projectId);
         if (update_result.data.code === 200) {
-          ElMessage.success(update_result.data.message)
+          message.success(update_result.data.message)
           await get_project_list(search_params.value);
         } else {
-          ElMessage.error(update_result.data.message)
+          message.error(update_result.data.message)
         }
       },
       onCancel() {
@@ -967,10 +971,15 @@ onMounted(() => {
   margin-bottom: 0 !important;
 }
 
+:deep(.ant-card-cover) {
+  margin: 0;
+}
+
 .box_card_list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 10px;
+
 }
 
 .box_card_list .ant-card {
@@ -982,4 +991,15 @@ onMounted(() => {
 .box_card_list .ant-card:hover {
   transform: translateY(-5px); /* 可选，hover时卡片上移 */
 }
+
+@media only screen and (max-width: 1200px) {
+  .box_card_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+  }
+
+}
+
+
 </style>
