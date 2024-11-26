@@ -42,7 +42,6 @@
           </div>
         </el-card>
       </div>
-
     </div>
 
     <div class="bottom_menu_bar">
@@ -121,7 +120,7 @@
 
         <v-chart :option="option" autoresize class="chart"></v-chart>
       </el-card>
-      <el-card style="height: calc(100vh - 300px);margin: 0px 10px 0 10px;box-shadow: none">
+      <el-card style="min-height: calc(100vh - 300px);margin: 0px 10px 10px 10px;box-shadow: none">
 
         <div class="demo-collapse">
           <el-text size="default" style="font-weight: bold;" type="info">
@@ -640,7 +639,7 @@ const option = ref({
   }
 
   .center_static {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 2fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 2fr));
   }
 }
 

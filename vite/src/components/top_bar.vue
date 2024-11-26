@@ -34,7 +34,8 @@ const top_user_info = computed(() => {
   <div class="toolbar">
     <div  class="bread_menu">
       <el-icon size="20" style="cursor: pointer" class="el-icon-s-fold">
-        <component @click="change_aside_status" :is="aside_data.status?Fold:Expand"/>
+        <component v-if="phone_bool" @click="change_aside_status" :is="aside_data.status?Expand:Fold"/>
+        <component v-else @click="change_aside_status" :is="aside_data.status?Fold:Expand"/>
       </el-icon>
       <breadcrumb  v-if="!phone_bool"/>
     </div>
@@ -85,7 +86,7 @@ const top_user_info = computed(() => {
     height: 40px;
   }
   .bread_menu {
-    margin-left: 0;
+    margin-left: 5px;
   }
   span {
     font-size: 10px;

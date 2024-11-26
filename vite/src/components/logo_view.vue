@@ -18,10 +18,14 @@ import logo from '@/assets/logo.jpg'
     align-items: center;
 }
 .object-cover {
-
     width: 70%;
     height: 100%;
     object-fit: cover;
     margin-top : 20px;
+}
+@media only screen and (max-width: 1200px) {
+  .object-cover {
+    width: 50%;
+  }
 }
 </style>
