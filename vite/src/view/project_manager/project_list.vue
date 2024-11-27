@@ -1,26 +1,52 @@
 <template>
   <div>
-    <div style="margin-bottom: 20px;margin-top: 10px">
-      <el-autocomplete
-          v-model="search_params.projectName"
-          :fetch-suggestions="querySearch"
-          clearable
-          size="small"
-          placeholder="请输入项目名称"
-          style="margin-left: 5px;max-width: 40%;margin-right: 10px"
-          @select="get_project_list(search_params)"
-          @keyup.enter="get_project_list(search_params)"
-      >
-        <template #prepend>
-          <el-button :icon="Search" @click="get_project_list(search_params)"></el-button>
-        </template>
-      </el-autocomplete>
-      <el-button plain type="primary" @click="drawer = true">添加项目</el-button>
+    <div style="margin-top: 10px">
+      <div v-if="phone_bool" style="display:flex;justify-content: space-between;margin-right: 10px" >
+        <div style="display: flex;align-items: center;margin-left: 10px;margin-bottom: 20px">
+          <div style="background-color: rgb(128,128,128);width: 5px;height: 10px;margin-right: 5px"></div>
+          <el-text size="small">程序管理</el-text>
+        </div>
+        <div>
+          <el-button plain size="small" :icon="FolderAdd" color="#42b983" @click="drawer = true">添加项目</el-button>
+        </div>
+      </div>
+
+      <el-form :size="phone_bool?'small':''" style="margin-left: 10px;max-width: calc(100% - 20px); " :inline="!phone_bool">
+        <el-form-item :label="!phone_bool?'':'项目名称'" >
+          <el-autocomplete
+              v-model="search_params.projectName"
+              :fetch-suggestions="querySearch"
+              clearable
+              :size="phone_bool?'small':''"
+              placeholder="请输入项目名称"
+              style="min-width: 300px;"
+              @select="get_project_list(search_params)"
+              @keyup.enter="get_project_list(search_params)"
+              @clear="get_project_list(search_params)"
+          >
+            <template v-if="!phone_bool" #prepend>
+              <el-button :icon="Search" @click="get_project_list(search_params)"></el-button>
+            </template>
+          </el-autocomplete>
+        </el-form-item>
+        <el-form-item label="项目状态" style="min-width: 240px">
+          <el-select  clearable placeholder="请选择">
+            <el-option label="启用" :value="1"/>
+            <el-option label="禁用" :value="2"/>
+          </el-select>
+
+        </el-form-item>
+
+        <el-form-item v-if="!phone_bool">
+          <el-button plain color="#42b983" @click="drawer = true" :icon="FolderAdd">添加项目</el-button>
+        </el-form-item>
+      </el-form>
 
     </div>
+
     <el-empty v-if="tableData.length === 0"></el-empty>
     <div class="box_card_list">
-      <a-card v-for="(item,index) in tableData" :key="index" hoverable :style="phone_bool?'width: 180px':'width: 240px'">
+      <a-card v-for="(item,index) in tableData" class="card-tran" :key="index" hoverable :style="phone_bool?'width: 180px':'width: 240px'">
         <template #cover>
           <el-image :alt="item.projectName" :src="project_background"/>
         </template>
@@ -195,12 +221,11 @@
           <template #label>
             <span>项目key</span>
             <el-icon size="15" style="margin-left: 4px" @click="click_reset_key(show_project_info.projectId)">
-              <svg class="icon" data-spm-anchor-id="a313x.search_index.0.i8.1cfb3a81XkHwer" height="200" p-id="4887"
-                   t="1731297185428" version="1.1"
+              <svg class="icon" height="200"
                    viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M943.8 484.1c-17.5-13.7-42.8-10.7-56.6 6.8-5.7 7.3-8.5 15.8-8.6 24.4h-0.4c-0.6 78.3-26.1 157-78 223.3-124.9 159.2-356 187.1-515.2 62.3-31.7-24.9-58.2-54-79.3-85.9h77.1c22.4 0 40.7-18.3 40.7-40.7v-3c0-22.4-18.3-40.7-40.7-40.7H105.5c-22.4 0-40.7 18.3-40.7 40.7v177.3c0 22.4 18.3 40.7 40.7 40.7h3c22.4 0 40.7-18.3 40.7-40.7v-73.1c24.2 33.3 53 63.1 86 89 47.6 37.3 101 64.2 158.9 79.9 55.9 15.2 113.5 19.3 171.2 12.3 57.7-7 112.7-24.7 163.3-52.8 52.5-29 98-67.9 135.3-115.4 37.3-47.6 64.2-101 79.9-158.9 10.2-37.6 15.4-76 15.6-114.6h-0.1c-0.3-11.6-5.5-23.1-15.5-30.9zM918.7 135.2h-3c-22.4 0-40.7 18.3-40.7 40.7V249c-24.2-33.3-53-63.1-86-89-47.6-37.3-101-64.2-158.9-79.9-55.9-15.2-113.5-19.3-171.2-12.3-57.7 7-112.7 24.7-163.3 52.8-52.5 29-98 67.9-135.3 115.4-37.3 47.5-64.2 101-79.9 158.8-10.2 37.6-15.4 76-15.6 114.6h0.1c0.2 11.7 5.5 23.2 15.4 30.9 17.5 13.7 42.8 10.7 56.6-6.8 5.7-7.3 8.5-15.8 8.6-24.4h0.4c0.6-78.3 26.1-157 78-223.3 124.9-159.2 356-187.1 515.2-62.3 31.7 24.9 58.2 54 79.3 85.9h-77.1c-22.4 0-40.7 18.3-40.7 40.7v3c0 22.4 18.3 40.7 40.7 40.7h177.3c22.4 0 40.7-18.3 40.7-40.7V175.8c0.1-22.3-18.2-40.6-40.6-40.6z"
-                    p-id="4888"></path>
+                    ></path>
               </svg>
             </el-icon>
           </template>
@@ -267,11 +292,11 @@
         <el-row justify="end">
           <el-button :loading="format_loading" type="warning" @click="format_json">
             <el-icon>
-              <svg class="icon" height="200" p-id="1585" t="1731564695662" version="1.1"
+              <svg class="icon" height="200" p-id="1585" t="1731564695662"
                    viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M607.456 302.88c13.024 8.672 18.24 21.44 13.696 33.44l-156.288 410.56c-4.576 12-18.208 21.44-35.808 24.768-17.6 3.328-36.416 0-49.44-8.64-13.024-8.704-18.24-21.44-13.696-33.472l156.288-410.56c4.576-12.032 18.24-21.44 35.808-24.8 17.6-3.296 36.448 0 49.44 8.704z m103.52-33.312a45.92 45.92 0 0 1 65.824 0.704l201.504 209.248c8.736 8.96 13.664 21.248 13.696 34.08 0 12.864-4.864 25.152-13.504 34.112l-201.6 210.88c-18.144 18.752-47.2 19.168-65.792 0.896a48.96 48.96 0 0 1-14.496-34.304 49.056 49.056 0 0 1 13.504-34.688l168.896-176.704-168.704-175.168a48.768 48.768 0 0 1-13.344-28.224l-0.32-6.464a48.96 48.96 0 0 1 14.336-34.368z m-463.808 0.704a45.888 45.888 0 0 1 65.856-0.704c9.024 8.928 14.24 21.312 14.368 34.368 0.128 13.056-4.832 25.6-13.664 34.624L144.96 513.792l168.896 176.704c7.36 7.616 11.936 17.6 13.184 28.256l0.32 6.464a48.96 48.96 0 0 1-14.464 34.272 45.92 45.92 0 0 1-65.856-0.96l-201.44-210.784A49.056 49.056 0 0 1 32 513.6c0-12.832 4.96-25.12 13.632-34.048z"
-                    fill="#FFF" p-id="1586"></path>
+                    fill="#FFF" ></path>
               </svg>
             </el-icon>
             <el-text style="color: white">格式化</el-text>
@@ -313,7 +338,7 @@
       </template>
       <el-table :data="data" size="small" >
         <el-table-column prop="type" label="接口名称" width="180">
-          <template #default="scope">
+          <template #default="scope:any">
             <span v-if="scope.row.type==1">单码卡密登录</span>
             <span v-else-if="scope.row.type==2">解绑或换机器码</span>
             <span v-else-if="scope.row.type==3">用户登录</span>
@@ -352,7 +377,7 @@
 </template>
 
 <script lang="ts" setup>
-import {Search} from "@element-plus/icons-vue";
+import {FolderAdd, Search} from "@element-plus/icons-vue";
 import {createVNode, onMounted, reactive, ref, UnwrapRef} from "vue";
 import {
   create_project_services,
@@ -774,8 +799,13 @@ const handleCurrentChange = (val: number) => {
 
 
 import {ExclamationCircleOutlined} from '@ant-design/icons-vue';
-import {phone_bool} from "@/main.ts";
+import phone_size from "@/utils/phone_size.ts";
+import {onUnmounted} from "vue";
+const {phone_bool,remove_phone_size} = phone_size();
 
+onUnmounted(() => {
+  remove_phone_size()
+})
 const update_project_status = (row: Project) => {
   if (row.projectStatus == 0) {
     Modal.confirm({
@@ -1001,5 +1031,7 @@ onMounted(() => {
 
 }
 
-
+.card-tran {
+  transition: transform 0.5s ease; /* 添加平滑过渡效果 */
+}
 </style>

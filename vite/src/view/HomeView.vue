@@ -331,13 +331,17 @@ import logo_view from "@/components/logo_view.vue"
 import top_bar from '@/components/top_bar.vue'
 
 import {useRouter} from "vue-router";
-import {computed, ref, watch} from "vue";
+import {computed, onUnmounted, ref, watch} from "vue";
 import {aside_status} from "@/stores/aside.ts";
 import icon_translate from '@/assets/icon_translate.png'
 import tab_view from "@/components/tab_view.vue";
 import {tabs_status} from "@/stores/tabs/tabs.ts";
-import {phone_bool} from "@/main.ts";
+import phone_size from "@/utils/phone_size.ts";
+const {phone_bool,remove_phone_size} = phone_size();
 
+onUnmounted(() => {
+  remove_phone_size()
+})
 const router = useRouter()
 
 const aside_data = aside_status()

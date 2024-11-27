@@ -195,8 +195,13 @@ import project_icon from '@/assets/svg/project.svg'
 import data_icon from '@/assets/svg/data.svg'
 import tips_icon from '@/assets/svg/tips.svg'
 import edit_icon from '@/assets/svg/edit.svg'
-import {phone_bool} from "@/main.ts";
+import phone_size from "@/utils/phone_size.ts";
+import {onUnmounted} from "vue";
+const {phone_bool,remove_phone_size} = phone_size();
 
+onUnmounted(() => {
+  remove_phone_size()
+})
 const source = ref(0)
 const outputValue = useTransition(source, {
   duration: 1500,
