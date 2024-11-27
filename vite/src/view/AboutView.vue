@@ -369,8 +369,13 @@ import lock from "@/assets/index/lock.svg";
 import hamburger from "@/assets/index/hamburger.svg"
 import {ArrowRight} from "@element-plus/icons-vue";
 import {message} from "ant-design-vue";
-import {phone_bool} from "@/main.ts";
+import phone_size from "@/utils/phone_size.ts";
+import {onUnmounted} from "vue";
+const {phone_bool,remove_phone_size} = phone_size();
 
+onUnmounted(() => {
+  remove_phone_size()
+})
 const show = ref(false)
 
 // 侧边栏选择事件

@@ -1,19 +1,38 @@
 <template>
   <div>
-    <div style="margin-bottom: 20px;margin-top: 10px">
-      <el-input
-          placeholder="请输入搜索内容"
-          size="small"
-          style="margin-left: 5px;max-width: 40%;margin-right: 10px"
-      >
-        <template #prepend>
-          <el-button :icon="Search"></el-button>
-        </template>
-      </el-input>
+    <div style="margin-top: 10px">
+      <div v-if="phone_bool" style="display:flex;justify-content: space-between;margin-right: 10px" >
+          <div style="display: flex;align-items: center;margin-left: 10px;margin-bottom: 20px">
+            <div style="background-color: rgb(128,128,128);width: 5px;height: 10px;margin-right: 5px"></div>
+            <el-text size="small">用户列表</el-text>
+          </div>
+        <div>
+          <el-button color="#42b983"  size="small" :icon="Search" plain>搜索</el-button>
+        </div>
+      </div>
+      <el-form :size="phone_bool?'small':''" style="margin-left: 10px;max-width: calc(100% - 20px); " :inline="!phone_bool">
 
+        <el-form-item label="用户邮箱">
+          <el-input  placeholder="请输入内容"/>
+        </el-form-item>
+        <el-form-item label="归属程序">
+          <el-input  placeholder="请输入内容"/>
+        </el-form-item>
+        <el-form-item label="会员等级" style="min-width: 240px">
+          <el-select  clearable placeholder="请选择">
+            <el-option label="测试" value="1"/>
+            <el-option label="开发" value="2"/>
+            <el-option label="发布" value="3"/>
+            <el-option label="稳定" value="4"/>
+          </el-select>
+        </el-form-item>
 
+        <el-form-item v-if="!phone_bool">
+          <el-button type="primary" >搜索</el-button>
+        </el-form-item>
+      </el-form>
     </div>
-    <el-card :shadow="false" style="margin: 0 5px;box-sizing: border-box">
+    <el-card shadow="never" style="margin: 0 5px;box-sizing: border-box">
       <el-table
           :data="tableData"
           :default-sort="{ prop: 'date', order: 'descending' }"
@@ -29,6 +48,18 @@
             <el-link type="success">{{ scope.row.openEmail }}</el-link>
           </template>
         </el-table-column>
+        <el-table-column label="会员等级" prop="openVip" width="100">
+          <template #default="scope">
+            <el-tag
+                :effect="tagEffect"
+                :round="tagRound"
+                :size="tagSize"
+                :type="getVipType(scope.row.openVip)"
+                style="margin-left: 5px; margin-right: 8px">
+              {{ getVipLabel(scope.row.openVip) }}
+            </el-tag>
+          </template>
+        </el-table-column>
         <el-table-column label="归属程序" prop="projectName" width="120">
           <template #default="scope">
             <el-tag type="primary">{{ scope.row.projectName }}</el-tag>
@@ -42,18 +73,7 @@
             </el-text>
           </template>
         </el-table-column>
-        <el-table-column label="会员等级" prop="openVip" width="100">
-          <template #default="scope">
-            <el-tag
-                :effect="tagEffect"
-                :round="tagRound"
-                :size="tagSize"
-                :type="getVipType(scope.row.openVip)"
-                style="margin-left: 5px; margin-right: 8px">
-              {{ getVipLabel(scope.row.openVip) }}
-            </el-tag>
-          </template>
-        </el-table-column>
+
         <el-table-column label="注册日期" prop="openCreateTime" sortable width="140"/>
 
         <el-table-column label="操作" width="500">
@@ -87,13 +107,16 @@
 </template>
 
 <script lang="ts" setup>
-
-import {Search} from "@element-plus/icons-vue";
-import {onMounted, ref} from "vue";
+import {onMounted, onUnmounted, ref} from "vue";
 import {ComponentSize} from "element-plus";
 import {get_project_user_list_services} from "@/api/project.ts";
-import {phone_bool} from "@/main.ts";
+import phone_size from "@/utils/phone_size.ts";
+import {Search} from "@element-plus/icons-vue";
+const {phone_bool,remove_phone_size} = phone_size();
 
+onUnmounted(()=>{
+  remove_phone_size()
+})
 interface Project_User {
   openUserId: number
   projectName: string

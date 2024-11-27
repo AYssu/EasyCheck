@@ -10,7 +10,13 @@ console.log(user_data)
 import {aside_status} from "@/stores/aside.ts";
 import breadcrumb from "@/components/breadcrumb.vue";
 import {computed} from "vue";
-import {phone_bool} from "@/main.ts";
+import phone_size from "@/utils/phone_size.ts";
+import {onUnmounted} from "vue";
+const {phone_bool,remove_phone_size} = phone_size();
+
+onUnmounted(() => {
+  remove_phone_size()
+})
 const aside_data = aside_status()
 
 const change_aside_status = () => {
@@ -50,7 +56,7 @@ const top_user_info = computed(() => {
         </template>
       </el-dropdown>
       <span>{{top_user_info}}</span>
-      <el-tag v-if="user_data.token.level===1" size="small" round effect="light" type="info" style="margin-left: 5px;margin-right: 8px"><span>小萌新</span></el-tag>
+      <el-tag v-if="user_data.token.level===1" size="small" round effect="light" type="info" style="margin-left: 5px;margin-right: 8px"><span >小萌新</span></el-tag>
       <el-tag v-else-if="user_data.token.level===2" size="small" round effect="light" type="warning" style="margin-left: 5px;margin-right: 8px"><span>进阶用户</span></el-tag>
       <el-tag v-else-if="user_data.token.level===3" size="small" round effect="light" type="primary" style="margin-left: 5px;margin-right: 8px"><span>核心用户</span></el-tag>
       <el-tag v-else-if="user_data.token.level===4" size="small" round effect="light" type="success" style="margin-left: 5px;margin-right: 8px"><span>资深用户</span></el-tag>
@@ -58,7 +64,7 @@ const top_user_info = computed(() => {
       <el-icon>
         <svg  class="icon" viewBox="0 0 1024 1024"  xmlns="http://www.w3.org/2000/svg"  width="200" height="200"><path d="M976.394 400.901L811.794 86.08a43.357 43.357 0 0 0-38.415-23.265h-532.67a43.357 43.357 0 0 0-38.416 23.265L37.693 400.9a43.35 43.35 0 0 0 5.845 48.704l430.935 490.412a43.35 43.35 0 0 0 65.127 0l430.935-490.412a43.35 43.35 0 0 0 5.86-48.704zM792.2 421.471L539.217 701.685a43.336 43.336 0 0 1-64.346 0L221.873 421.471a43.35 43.35 0 1 1 64.36-58.097l220.81 244.574 220.811-244.574a43.35 43.35 0 1 1 64.346 58.097z" ></path></svg>
       </el-icon>
-        <span>超级管理员</span>
+        <span style="font-size: 0.65rem;"   >超级管理员</span>
       </el-tag>
     </div>
   </div>

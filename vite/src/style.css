@@ -52,10 +52,5 @@ a:hover {
 }
 
 
-.el-text,span {
-  transition: all 0.3s ease;
-}
-.el-text:hover,span:hover {
-  transform: scale(1.05);
-}
+
 
