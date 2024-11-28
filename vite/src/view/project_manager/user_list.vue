@@ -28,7 +28,7 @@
         </el-form-item>
 
         <el-form-item v-if="!phone_bool">
-          <el-button type="primary" >搜索</el-button>
+          <el-button color="#42b983" plain :icon="Search" type="primary" >搜索</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -45,7 +45,7 @@
         <el-table-column label="UID" prop="openUserId" width="60px"/>
         <el-table-column label="用户邮箱" prop="openEmail" width="190">
           <template #default="scope">
-            <el-link type="success">{{ scope.row.openEmail }}</el-link>
+            <el-link style="font-size: 0.8rem" type="success">{{ scope.row.openEmail }}</el-link>
           </template>
         </el-table-column>
         <el-table-column label="会员等级" prop="openVip" width="100">
@@ -68,7 +68,7 @@
 
         <el-table-column align="left" label="会员到期" prop="openSvipTime" width="200">
           <template #default="scope">
-            <el-text style="margin-left: 5px" type="danger">
+            <el-text :size="phone_bool?'small':''" style="margin-left: 5px" type="danger">
               {{ scope.row.openSvipTime == null ? "未激活" : scope.row.openSvipTime }}
             </el-text>
           </template>

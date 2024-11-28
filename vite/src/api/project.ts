@@ -132,6 +132,12 @@ export const add_project_link_services = (params: any)=>{
     return request.post('/project/project_add_link', params);
 }
 
+
+/**
+ * 更新项目链接
+ * @param params
+ * @return Promise
+ */
 export const update_project_link_services = (params: any)=>{
     return request.post('/project/project_update_link', params);
 }

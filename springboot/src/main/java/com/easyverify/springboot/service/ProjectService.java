@@ -134,9 +134,9 @@ public interface ProjectService {
      * 添加项目链接
      *
      * @param projectLinkDTO 结构封装
-     * @return boolean
+     * @return String
      */
-    boolean add_project_link(ProjectLinkDTO projectLinkDTO);
+    String add_project_link(ProjectLinkDTO projectLinkDTO);
 
     /**
      * 绑定项目

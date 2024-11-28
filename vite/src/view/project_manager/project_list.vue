@@ -87,7 +87,7 @@
                     公告管理
                   </el-text>
                 </a-menu-item>
-                <a-menu-item key="2">
+                <a-menu-item key="2" @click="show_project_info = JSON.parse(JSON.stringify(item)) as Project;open_url_controller(item.projectId)">
 
                   <el-text size="small">
                     <el-icon style="color: #515151;margin-right: 3px;">
@@ -329,15 +329,53 @@
       </a-form>
     </a-modal>
 
-    <a-modal width="60%" :open="false" :footer="null" :closable="false" >
+    <a-modal :width="phone_bool?'':'60%'" :open="url_visible" :footer="null" :closable="false" @cancel="url_visible=false" >
       <template #title>
         <div style="display: flex;justify-content: space-between">
           <span style="font-weight: bold">接口管理</span>
-          <a-button type="primary" >添加</a-button>
+          <div style="display:flex;">
+            <el-select
+                v-model="value"
+                size="small"
+                multiple
+                clearable
+                collapse-tags
+                placeholder="添加接口"
+                popper-class="custom-header"
+                :max-collapse-tags="1"
+                style="width: 120px;margin-right: 5px"
+            >
+              <template #header>
+                <el-checkbox
+                    :size="phone_bool?'small':''"
+                    v-model="checkAll"
+                    :indeterminate="indeterminate"
+                    @change="handleCheckAll"
+                >
+                  <el-text :size="phone_bool?'small':''">全选</el-text>
+                </el-checkbox>
+              </template>
+              <el-option
+                  v-for="item in cities_filter"
+                  :key="item.value"
+                  :value="item.value"
+                  :label="item.label"
+                  :disabled="item.checked"
+              >
+                <el-text :size="phone_bool?'small':''">{{item.label}}</el-text>
+              </el-option>
+            </el-select>
+            <el-button :icon="CirclePlusFilled" size="small" type="primary" @click="add_url" >添加</el-button>
+
+          </div>
         </div>
       </template>
+
       <el-table :data="data" size="small" >
-        <el-table-column prop="type" label="接口名称" width="180">
+        <template #empty>
+         <el-empty description="请先添加接口"  :image-size="100"></el-empty>
+        </template>
+        <el-table-column prop="type" label="接口名称" width="130">
           <template #default="scope:any">
             <span v-if="scope.row.type==1">单码卡密登录</span>
             <span v-else-if="scope.row.type==2">解绑或换机器码</span>
@@ -351,7 +389,7 @@
         </el-table-column>
         <el-table-column prop="link" label="接口地址" width="130">
           <template #default="scope">
-           <el-link type="success" style="font-size: 0.65rem">/{{scope.row.link}}</el-link>
+           <el-link type="success" style="font-size: 0.65rem" @click="copy_text('/'+scope.row.link)">/{{scope.row.link}}</el-link>
           </template>
         </el-table-column>
         <el-table-column prop="code" label="返回值" width="100">
@@ -367,7 +405,7 @@
         <el-table-column prop="desc" label="描述" show-overflow-tooltip>
           <el-text size="small">所谓永恒的爱，是从花开一直到花落，从红颜一直爱到白发。</el-text>
         </el-table-column>
-        <el-table-column  fixed="right" label="操作" width="140" >
+        <el-table-column   label="操作" width="140" >
           <el-button type="primary" size="small" plain>编辑</el-button>
           <el-button type="danger" size="small" plain>删除</el-button>
         </el-table-column>
@@ -377,10 +415,11 @@
 </template>
 
 <script lang="ts" setup>
-import {FolderAdd, Search} from "@element-plus/icons-vue";
-import {createVNode, onMounted, reactive, ref, UnwrapRef} from "vue";
+import {CirclePlusFilled, FolderAdd, Search} from "@element-plus/icons-vue";
+import {createVNode, onMounted, reactive, ref, UnwrapRef, watch} from "vue";
 import {
-  create_project_services,
+  add_project_link_services,
+  create_project_services, get_project_links_services,
   get_project_list_services,
   get_project_update_info_services,
   get_project_variable_services,
@@ -396,7 +435,100 @@ import {ComponentSize, ElMessage} from "element-plus";
 
 import project_background from '@/assets/svg/project_background.svg'
 
-const data = [
+const url_visible = ref(false);
+
+
+import type { CheckboxValueType } from 'element-plus'
+
+const open_url_controller = async (pid:number)=>{
+  data.value = []
+  value.value = []
+  url_visible.value = true
+  const result = await get_project_links_services(pid)
+  try {
+    if (result.data.code==200)
+    {
+      let links:any = result.data.data
+      console.log(result.data)
+      if (links!=null) {
+        cities_filter.value = cities.value.filter((item: link_option) => {
+          return !links.some((link: any) => link.type === item.value);
+        });
+      }else {
+        cities_filter.value = cities.value
+      }
+      data.value = links
+
+    }
+  }catch (e){
+    ElMessage.error('获取接口失败')
+    console.log(e)}
+}
+const checkAll = ref(false)
+const indeterminate = ref(false)
+const value = ref<CheckboxValueType[]>([])
+interface link_option {
+  value: number
+  label: string
+  checked?: boolean
+}
+
+const cities = ref<link_option[]>([
+  {
+    value: 1,
+    label: '单码卡密登录',
+  },
+  {
+    value: 2,
+    label: '解绑或换机器码',
+  },
+  {
+    value: 3,
+    label: '用户登录',
+  },
+  {
+    value: 4,
+    label: '获取程序公告',
+  },
+  {
+    value: 5,
+    label: '更新查询',
+  },
+  {
+    value: 6,
+    label: '获取程序变量列表',
+  },
+  {
+    value: 7,
+    label: '单码心跳',
+  },
+  {
+    value: 8,
+    label: '用户心跳',
+  },
+]);
+const cities_filter = ref<link_option[]>();
+watch(value, (val) => {
+  if (val.length === 0) {
+    checkAll.value = false
+    indeterminate.value = false
+  } else if (val.length === cities_filter.value.length) {
+    checkAll.value = true
+    indeterminate.value = false
+  } else {
+    indeterminate.value = true
+  }
+})
+
+const handleCheckAll = (val: CheckboxValueType) => {
+  indeterminate.value = false
+  if (val) {
+    value.value = cities_filter.value.map((_) => _.value)
+  } else {
+    value.value = []
+  }
+}
+const data = ref([
   {
     type: 1,
     link:'AB1U7UYD5T',
@@ -436,7 +568,7 @@ const data = [
     safeType:1,
   }
   ,
-];
+]);
 
 const drawer = ref<boolean>(false);
 const a_drawer = ref<boolean>(false);
@@ -696,7 +828,49 @@ const handleCancel = () => {
   drawer.value = false;
 };
 
+const add_url = async ()=> {
+  const params = {
+    projectId: show_project_info.value.projectId,
+    type: JSON.parse(JSON.stringify(value.value)),
+    code: 200,
+    codeType: 1,
+    safeType: 1,
+    returnTime: 1
+  }
+  const result = await add_project_link_services(params);
+  try {
+    if (result.data.code === 200) {
+      url_visible.value = false
+      const contentString = result.data.data.replace(/\\n/g, '\n');
 
+      const contentVNode = createVNode('div', {}, contentString.split('\n').map((line, index) => {
+        // 为每一行创建一个 span 元素
+        return createVNode('span', {}, line + (index < contentString.split('\n').length - 1 ? '\n' : ''));
+      }).flatMap((node) => {
+        // 如果不是最后一行，添加一个 br 元素
+        if (node.children) {
+          return [node, createVNode('br')];
+        }
+        return [node];
+      }).flat());
+
+      Modal.info({
+        title: "返回信息",
+        content: contentVNode,
+        okText: "确定",
+        cancelText: "取消",
+        okCancel: true,
+        onOk: () => {
+        }
+      });
+
+    } else {
+      message.error(result.data.message)
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 const on_update_project = async () => {
   const params = {
     projectId: show_project_info.value.projectId,
@@ -888,6 +1062,7 @@ const copy_text = (key: string) => {
     content: `${displayKey}`,
     okText: '复制',
     cancelText: '取消',
+    maskClosable: true,
     okCancel: true,
     onOk: () => {
       // 复制文本到剪贴板
