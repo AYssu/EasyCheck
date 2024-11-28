@@ -27,7 +27,7 @@ public class ProjectLinkDTO {
      * 8.用户心跳
      */
     @NotNull(message = "链接类型不能为空")
-    private Integer type;
+    private Integer[] type;
 
     /**
      * 返回校验码

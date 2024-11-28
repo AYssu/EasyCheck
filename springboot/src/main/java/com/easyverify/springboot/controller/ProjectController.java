@@ -139,10 +139,8 @@ public class ProjectController {
     @PostMapping("project_add_link")
     public ResponseResult<?> project_add_link(@RequestBody @Validated ProjectLinkDTO projectLinkDTO){
         log.info("project_add_link_form: {}", projectLinkDTO);
-        boolean is_success = projectService.add_project_link(projectLinkDTO);
-        if (!is_success)
-            return ResponseResult.fail("添加失败");
-        return ResponseResult.success("添加成功");
+        String is_success = projectService.add_project_link(projectLinkDTO);
+        return ResponseResult.success("添加成功", is_success);
     }
     @PostMapping("project_update_link")
     public ResponseResult<?> project_update_link(@RequestBody ProjectLinkDTO projectLinkDTO){

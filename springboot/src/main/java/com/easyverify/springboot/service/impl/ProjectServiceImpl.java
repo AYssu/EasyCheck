@@ -23,8 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -357,15 +356,50 @@ public class ProjectServiceImpl implements ProjectService {
         return easyLinks;
     }
     @Override
-    public boolean add_project_link(ProjectLinkDTO projectLinkDTO) {
+    public String add_project_link(ProjectLinkDTO projectLinkDTO) {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(projectLinkDTO.getProjectId(), user.getUserId());
 
         List<EasyLink> links = get_project_links_redis(project.getProjectId());
 
-        boolean exists = links.stream().anyMatch(link -> link.getType().equals(projectLinkDTO.getType()));
-        if (exists) {
-            throw new RuntimeException("项目已存在该类型链接");
+        Integer[] types = projectLinkDTO.getType();
+        int size = types.length;
+        int errors = 0;
+        StringBuilder returnMessage = new StringBuilder();
+        for (Integer type : types) {
+            Return_Vo return_vo = insert_link(project.getProjectId(), type, links);
+            if (return_vo.getSuccess())
+            {
+                returnMessage.append(return_vo.getMessage()).append("\n");
+            }else {
+                returnMessage.append(get_link_name(type)).append(":").append(return_vo.getMessage()).append("\n");
+                errors++;
+            }
+        }
+        if (errors == 0)
+        {
+            returnMessage.append("全部").append(size).append("条数据添加完成!未发送错误!\n");
+        }else {
+            returnMessage.append("添加").append(size).append("条完成!捕获").append(errors).append("条异常数据!");
+        }
+
+        // 因为缓存过加入数据之前的数据 直接释放
+        redisTemplate.delete("project_links_" + project.getProjectId());
+
+        return returnMessage.toString();
+    }
+
+    Return_Vo insert_link(Integer pid, Integer type, List<EasyLink> links){
+
+        Return_Vo result = new Return_Vo();
+
+        if (links != null){
+            boolean exists = links.stream().anyMatch(link -> link.getType().equals(type));
+            if (exists) {
+                result.setSuccess(false);
+                result.setMessage("项目已存在该类型链接");
+                return result;
+            }
         }
 
         // 完成程序查询
@@ -380,23 +414,39 @@ public class ProjectServiceImpl implements ProjectService {
             easy_link_temp = get_link_by_key(link_key);
             log.info("key create errors:" + errors);
             errors++;
-            if (errors > 3)
-                throw new RuntimeException("生成项目key失败");
+            if (errors > 3) {
+                result.setSuccess(false);
+                result.setMessage("生成项目key失败");
+                return result;
+            }
         }
 
         // 删除缓存
-        redisTemplate.delete("project_links_"+project.getProjectId());
         easyLink.setLink(link_key);
-        easyLink.setProjectId(project.getProjectId());
-        easyLink.setType(projectLinkDTO.getType());
-        easyLink.setCode(projectLinkDTO.getCode());
-        easyLink.setCodeType(projectLinkDTO.getCodeType());
-        easyLink.setSafeType(projectLinkDTO.getSafeType());
-        easyLink.setReturnTime(projectLinkDTO.getReturnTime());
-        return linkMapper.insert(easyLink) > 0 ;
+        easyLink.setProjectId(pid);
+        easyLink.setType(type);
+        boolean success =  linkMapper.insert(easyLink) > 0 ;
+        if (!success){
+            result.setSuccess(false);
+            result.setMessage("插入数据失败!");
+            return result;
+        }
+        return new Return_Vo(true,get_link_name(type)+": 新增成功!");
     }
 
-
+    public String get_link_name(Integer type) {
+        return switch (type) {
+            case 1 -> "单码卡密登录";
+            case 2 -> "解绑或换机器码";
+            case 3 -> "用户登录";
+            case 4 -> "获取程序公告";
+            case 5 -> "更新查询";
+            case 6 -> "获取程序变量列表";
+            case 7 -> "单码心跳";
+            case 8 -> "用户心跳";
+            default -> "未知类型";
+        };
+    }
     EasyProjectUpdate get_project_update_by_pid(Integer pid) {
         LambdaQueryWrapper<EasyProjectUpdate> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyProjectUpdate::getProjectId, pid);
@@ -430,12 +480,15 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public boolean update_project_link(ProjectLinkDTO projectLinkDTO) {
+        Integer type = projectLinkDTO.getType()[0];
+        if (type == null || type == 0)
+            throw new RuntimeException("参数错误");
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(projectLinkDTO.getProjectId(), user.getUserId());
 
         LambdaQueryWrapper<EasyLink> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyLink::getProjectId, project.getProjectId());
-        queryWrapper.eq(EasyLink::getType, projectLinkDTO.getType());
+        queryWrapper.eq(EasyLink::getType, type);
         EasyLink easyLink = linkMapper.selectOne(queryWrapper);
         if (easyLink == null) {
             throw new RuntimeException("项目不存在该类型链接");
