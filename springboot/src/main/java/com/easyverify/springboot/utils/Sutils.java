@@ -1,28 +1,35 @@
 package com.easyverify.springboot.utils;
 
-import java.util.Locale;
+import lombok.extern.slf4j.Slf4j;
 
-public class Base64Util {
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+@Slf4j
+public class Sutils {
     private static final int BASE = 3;
     private static final int EXPAND = 4;
     private static final int SIGN = -128;
     private static final char END = '=';
-    //base64的基准字符，可以自定义，不过最好是可打印字符
-    public static String str = "";
 
-    public static void setBase64(String str) {
-        if(str.length()!=64){
-            throw new IllegalArgumentException("base64 string length must be 64");
-        }
-        Base64Util.str = str;
+    public static String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+    public static void set_base64(String str) {
+        if(str.isEmpty())
+            Sutils.str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        else
+            Sutils.str = str;
     }
 
-    public static String encodeBase64Str(String str){
+    public static String base64_encode(String str){
         return new String(encodeBase64(str));
     }
-
+    public static String base64_encode(String str,String base64){
+        set_base64(base64);
+        return new String(encodeBase64(str));
+    }
     public static byte[] encodeBase64(String str){
-        return encodeBase64(str.getBytes());
+        return encodeBase64(str.getBytes(StandardCharsets.UTF_8));
     }
 
     public static byte[] encodeBase64(byte[] data){
@@ -30,7 +37,7 @@ public class Base64Util {
         int overBytes = len%BASE;
         int lenBytes = len/BASE;
 
-        int encodeBytesLen = 0;
+        int encodeBytesLen;
         if(overBytes == 0){
             encodeBytesLen = lenBytes*EXPAND;
         }else{
@@ -38,7 +45,7 @@ public class Base64Util {
         }
 
         byte[] encodeBytes = new byte[encodeBytesLen];
-        int step = 0;
+        int step;
         int encodeIndex = 0;
         byte b1,b2,b3,m0,m1;
         for(int i=0;i<lenBytes;i++){
@@ -64,7 +71,7 @@ public class Base64Util {
                 encodeBytes[encodeIndex+3]= (byte) str.charAt(b3&0x3f);
 
                 encodeIndex+=4;
-            }catch (IndexOutOfBoundsException th){
+            }catch (IndexOutOfBoundsException ignored){
 
             }
         }
@@ -93,7 +100,11 @@ public class Base64Util {
         return encodeBytes;
     }
 
-    public static String decodeBase64str(String str){
+    public static String base64_decode(String str){
+        return new String(decodeBase64(str));
+    }
+    public static String base64_decode(String str,String base64){
+        set_base64(base64);
         return new String(decodeBase64(str));
     }
 
@@ -106,14 +117,20 @@ public class Base64Util {
         if(data.length == 0){
             return new byte[0];
         }
-        int len = 0;
-        if((len = data.length%EXPAND)!=0){
-            throw new IllegalArgumentException("data is not base 64 bytes");
+
+        int missingPadding = 4 - (data.length % 4);
+        if (missingPadding != 4) {
+            byte[] newData = new byte[data.length + missingPadding];
+            System.arraycopy(data, 0, newData, 0, data.length);
+            for (int i = data.length; i < newData.length; i++) {
+                newData[i] = END; // PAD是'='的字符
+            }
+            data = newData;
         }
-        len = data.length/EXPAND;
+        int len = data.length/EXPAND;
         byte[] decodeBytes = new byte[len*BASE];
         int byteLen = 0;
-        int decodeIndex = 0;
+        int decodeIndex;
         byte b1,b2,b3,b4;
         for(int i=0;i<len;i++){
             decodeIndex = i*4;
@@ -134,7 +151,7 @@ public class Base64Util {
                 b1 = (byte) str.indexOf(b1);
                 b2 = (byte) str.indexOf(b2);
                 decodeBytes[byteLen++] = (byte) (b1<<2|b2>>4);
-            }else if(b4==END){
+            }else {
                 b1 = (byte) str.indexOf(b1);
                 b2 = (byte) str.indexOf(b2);
                 b3 = (byte) str.indexOf(b3);
@@ -147,90 +164,43 @@ public class Base64Util {
         return retBytes;
     }
 
-    public static byte[] headAndTailEncodeBase64(String str){
-        return headAndTailEncodeBase64(str.getBytes());
-    }
-    //头尾字节交叉后的编码处理
-    public static byte[] headAndTailEncodeBase64(byte[] data){
-        int len = data.length;
-        if(len==0){
-            return new byte[0];
+
+    public static String to_hex(String str) {
+        if (str == null || str.isEmpty()) {
+            return "";
         }
-        int half = data.length/2;
-        int over = data.length%2;
-        byte[] newByte = new byte[len];
-        for(int i=0;i<half;){
-            newByte[i*2] = data[i];
-            newByte[((++i)*2-1)] = data[len-i];
+        StringBuilder hexString = new StringBuilder();
+        // 使用UTF-8编码将字符串转换为字节序列
+        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+        // 遍历字节序列，将每个字节转换为两位的十六进制字符串
+        for (byte b : bytes) {
+            String hex = Integer.toHexString(b & 0xFF);
+            hexString.append(hex.length() == 1 ? "0" + hex : hex);
         }
-        if(over!=0){
-            newByte[len-1] = data[half];
-        }
-        return encodeBase64(newByte);
+        return hexString.toString().toUpperCase();
     }
 
-    public static byte[] headAndTailDecodeBase64(byte[] data){
-        byte[] ret = decodeBase64(data);
-        if(ret.length==0){
-            return new byte[0];
-        }
-        int len = ret.length;
-        int half = ret.length/2;
-        int over = ret.length%2;
-        byte[] newByte = new byte[len];
-        for(int i=0;i<half;){
-            newByte[i] = ret[i*2];
-            newByte[len-(++i)] = ret[(i*2-1)];
-        }
-        if(over!=0){
-            newByte[half] = data[len-1];
-        }
-        return newByte;
-    }
-
-
-
-    public static String strTo16(String s) {
-        String str = "";
-        for (int i = 0; i < s.length(); i++) {
-            int ch = (int) s.charAt(i);
-            String s4 = Integer.toHexString(ch);
-            str = str + s4;
-        }
-        return str;
-    }
-
-
-    public static String str2HexStr(String str) {
-        char[] chars = "0123456789abcdef".toCharArray();
-        StringBuilder sb = new StringBuilder("");
-        byte[] bs = str.getBytes();
-        int bit;
-        for (int i = 0; i < bs.length; i++) {
-            bit = (bs[i] & 0x0f0) >> 4;
-            sb.append(chars[bit]);
-            bit = bs[i] & 0x0f;
-            sb.append(chars[bit]);
-            // sb.append(' ');
-        }
-        return sb.toString().toUpperCase(Locale.ROOT);
-    }
-
-    public static String hexStringToString(String hex) {
+    public static String hex_to_string(String hex) {
         int len = hex.length();
+
         if (len % 2 != 0) {
             throw new IllegalArgumentException("数据异常");
         }
         byte[] bytes = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
-            // 将16进制的两位字符转换为一个字节
+            // 获取两个字符的子字符串
             String byteString = hex.substring(i, i + 2);
-            int byteValue = Integer.parseInt(byteString, 16);
-            bytes[i / 2] = (byte) byteValue;
+            try {
+                // 尝试将子字符串转换为16进制数
+                int byteValue = Integer.parseInt(byteString, 16);
+                bytes[i / 2] = (byte) byteValue;
+            } catch (Exception e) {
+                log.info("hex: {}",hex);
+                // 如果转换失败，抛出自定义异常或处理错误
+                e.printStackTrace();
+            }
         }
-        // 使用平台默认的字符集将字节数组转换为字符串
-        return new String(bytes);
+        // 使用UTF-8编码将字节数组转换为字符串
+        return new String(bytes, StandardCharsets.UTF_8);
     }
-
-
 }

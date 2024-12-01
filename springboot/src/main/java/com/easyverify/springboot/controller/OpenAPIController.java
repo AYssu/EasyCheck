@@ -2,7 +2,13 @@ package com.easyverify.springboot.controller;
 
 import com.easyverify.springboot.dto.OpenAPIDTO;
 import com.easyverify.springboot.dto.UserProjectBindDTO;
+import com.easyverify.springboot.entity.EasyLink;
+import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.service.OpenAPIService;
+import com.easyverify.springboot.service.ProjectService;
+import com.easyverify.springboot.utils.MD5Util;
+import com.easyverify.springboot.utils.StringUtil;
+import com.easyverify.springboot.utils.Sutils;
 import com.easyverify.springboot.vo.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +25,8 @@ public class OpenAPIController {
 
     @Autowired
     private OpenAPIService openAPIService;
-
+    @Autowired
+    private ProjectService projectService;
 
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -76,7 +83,68 @@ public class OpenAPIController {
     public ResponseResult<?> open_api(@PathVariable String base,@RequestBody @Validated OpenAPIDTO openAPIDTO)
     {
         log.info("open_api object: {}",openAPIDTO);
-        return ResponseResult.fail("");
+        // 还原pid
+        try {
+            String pid = Sutils.hex_to_string(Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getPid()),""));
+            log.info("解析项目pid: {}",pid);
+            EasyLink link = openAPIService.open_link_type(Integer.parseInt(pid),base);
+            if (link == null)
+                return ResponseResult.fail("客户端接口异常");
+
+            log.info("open_api type: {}",projectService.get_link_name(link.getType()));
+
+            EasyProject project = projectService.get_project_by_id(Integer.parseInt(pid));
+            long now_time = System.currentTimeMillis() / 1000;
+            String send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()),project.getProjectBase64());
+            long alive_time = Math.abs(now_time - Long.parseLong(send_time));
+            log.info("alive_time: {}",alive_time);
+            if (alive_time > 10)
+            {
+                return ResponseResult.fail("客户端请求超时");
+            }
+
+            // 以上为基础信息校验 基础信息
+            switch(link.getType()) {
+                case 1:
+                {
+                }
+                break;
+                case 2:
+                {
+                }
+                break;
+                case 3:
+                {
+                }
+                break;
+                case 4:
+                {
+                    return openAPIService.get_project_notice(project,openAPIDTO,link);
+                }
+                case 5:
+                {
+                }
+                break;
+                case 6:
+                {
+                }
+                break;
+                case 7:
+                {
+                }
+                break;
+                default:
+                {
+                    // 前面已经判断 这边是可能后期新增接口忘记实现功能了
+                    return ResponseResult.fail("客户端未知接口异常");
+                }
+            }
+        }catch (Exception exception){
+            exception.printStackTrace();
+            return ResponseResult.fail("客户端解析异常");
+        }
+
+        return ResponseResult.fail("客户端异常");
     }
 
 }

@@ -217,6 +217,13 @@
           <el-input v-model="show_project_info.projectName" placeholder="请输入项目名称">
           </el-input>
         </a-form-item>
+        <a-form-item label="项目ID">
+          <el-input v-model="show_project_info.projectId" readonly>
+            <template #append>
+              <el-button @click="copy_text(show_project_info.projectId)">复制</el-button>
+            </template>
+          </el-input>
+        </a-form-item>
         <a-form-item>
           <template #label>
             <span>项目key</span>

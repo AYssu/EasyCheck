@@ -10,7 +10,7 @@ import com.easyverify.springboot.mapper.ProjectMapper;
 import com.easyverify.springboot.mapper.UpdateMapper;
 import com.easyverify.springboot.mapper.VariableMapper;
 import com.easyverify.springboot.service.UserService;
-import com.easyverify.springboot.utils.Base64Util;
+import com.easyverify.springboot.utils.Sutils;
 import com.easyverify.springboot.vo.*;
 import com.easyverify.springboot.service.ProjectService;
 import com.easyverify.springboot.utils.StringUtil;
@@ -124,14 +124,14 @@ public class ProjectServiceImpl implements ProjectService {
         Page<EasyProject> guardPage1 = projectMapper.selectPage(guardPage, queryWrapper);
         List<EasyProject> records = guardPage1.getRecords();
 
-        Base64Util.setBase64(encrypt_base64);
+        Sutils.set_base64(encrypt_base64);
         // 转换为VO
         List<ProjectListVO> projectListVOS = records.stream().map(record -> {
             ProjectListVO projectListVO = new ProjectListVO();
             BeanUtils.copyProperties(record, projectListVO);
 
             // 生成绑定key 程序默认 生成不可改变
-            String bind_key = Base64Util.encodeBase64Str(String.valueOf(record.getProjectId()));
+            String bind_key = Sutils.base64_encode(String.valueOf(record.getProjectId()));
             projectListVO.setBindKey(bind_key);
             return projectListVO;
         }).toList();
@@ -157,6 +157,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyProject project = get_project_by_id_with_uid(id, user.getUserId());
         // 切换状态
         project.setProjectStatus(project.getProjectStatus() == 0 ? 1 : 0);
+        redisTemplate.delete("open_project_" + id);
         return projectMapper.updateById(project) > 0;
     }
 
@@ -187,7 +188,7 @@ public class ProjectServiceImpl implements ProjectService {
         project.setProjectKey(project_key);
 
         boolean success = projectMapper.updateById(project) > 0;
-
+        redisTemplate.delete("open_project_" + pid);
         // 返回值 封装结构体
         ProjectResetVo projectResetVo = new ProjectResetVo();
         projectResetVo.setSuccess(success);
@@ -205,6 +206,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         project.setProjectName(projectInfoDTO.getProjectName());
         project.setProjectMessage(projectInfoDTO.getProjectMessage());
+        redisTemplate.delete("open_project_" + projectInfoDTO.getProjectId());
         return projectMapper.updateById(project) > 0;
     }
 
@@ -291,6 +293,7 @@ public class ProjectServiceImpl implements ProjectService {
         // 插入一条记录
         EasyProjectUpdate new_projectUpdate = new EasyProjectUpdate();
         new_projectUpdate.setProjectId(project.getProjectId());
+        redisTemplate.delete("open_project_" + pid);
         return updateMapper.insert(new_projectUpdate) > 0;
     }
 
@@ -307,6 +310,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectUpdate.setUpdateUrl(projectUpdateDTO.getUpdateUrl());
         projectUpdate.setUpdateVersion(projectUpdateDTO.getUpdateVersion());
         projectUpdate.setMustUpdate(projectUpdateDTO.getMustUpdate());
+        redisTemplate.delete("open_project_" + project.getProjectId());
         return updateMapper.updateById(projectUpdate) > 0;
     }
 
@@ -316,6 +320,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
         project.setProjectNotice(notice);
+        redisTemplate.delete("open_project_" + pid);
         return projectMapper.updateById(project) > 0;
     }
 
@@ -337,7 +342,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     // 获取项目链接列表 使用redis缓存 减少数据库查询
-    List<EasyLink> get_project_links_redis(Integer pid) {
+    @Override
+    public List<EasyLink> get_project_links_redis(Integer pid) {
         Object object = redisTemplate.opsForValue().get("project_links_" + pid);
         if (object instanceof List<?> list) {
             if (!list.isEmpty() && list.get(0) instanceof EasyLink) {
@@ -434,6 +440,7 @@ public class ProjectServiceImpl implements ProjectService {
         return new Return_Vo(true,get_link_name(type)+": 新增成功!");
     }
 
+    @Override
     public String get_link_name(Integer type) {
         return switch (type) {
             case 1 -> "单码卡密登录";
@@ -457,18 +464,24 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public EasyProject get_project_by_id_with_uid(Integer pid, Integer uid) {
 
-        LambdaQueryWrapper<EasyProject> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(EasyProject::getProjectId, pid);
-        queryWrapper.eq(EasyProject::getProjectUser, uid);
-        EasyProject project = projectMapper.selectOne(queryWrapper);
+        EasyProject project = get_project_by_id(pid);
         if (project == null)
             throw new RuntimeException("项目不存在");
+        if (!Objects.equals(project.getProjectUser(), uid))
+            throw new RuntimeException("该用户无权访问或修改");
         return project;
     }
 
     @Override
     public EasyProject get_project_by_id(Integer id) {
-        return projectMapper.selectById(id);
+        EasyProject project = (EasyProject)redisTemplate.opsForValue().get("open_project_" + id);
+        if (project != null) {
+            log.info("redis get project temp {}",id);
+            return project;
+        }
+        project = projectMapper.selectById(id);
+        redisTemplate.opsForValue().set("open_project_" + id, project, 30, TimeUnit.MINUTES);
+        return project;
     }
 
     @Override

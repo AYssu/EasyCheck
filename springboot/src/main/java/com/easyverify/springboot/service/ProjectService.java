@@ -30,6 +30,13 @@ public interface ProjectService {
     EasyProject get_project_by_key(String projectKey);
 
     /**
+     * 根据项目链接类型获取项目链接名称
+     * @param type 项目链接类型
+     * @return 项目链接名称
+     */
+    String get_link_name(Integer type);
+
+    /**
      * 根据项目id获取项目信息
      * @param pid 项目id
      * @return EasyProject
@@ -130,6 +137,12 @@ public interface ProjectService {
      */
     List<LinksVo> get_project_links(Integer pid);
 
+    /**
+     * 获取项目链接从缓存
+     * @param pid 项目id
+     * @return LinksVo
+     */
+    List<EasyLink> get_project_links_redis(Integer pid);
     /**
      * 添加项目链接
      *
