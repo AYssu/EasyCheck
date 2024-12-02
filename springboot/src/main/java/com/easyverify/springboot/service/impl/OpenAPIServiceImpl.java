@@ -1,5 +1,6 @@
 package com.easyverify.springboot.service.impl;
 
+import cn.hutool.crypto.digest.DigestUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.easyverify.springboot.dto.OpenAPIDTO;
@@ -13,7 +14,6 @@ import com.easyverify.springboot.service.OpenAPIService;
 import com.easyverify.springboot.service.ProjectService;
 import com.easyverify.springboot.service.SendMailService;
 import com.easyverify.springboot.service.UserService;
-import com.easyverify.springboot.utils.MD5Util;
 import com.easyverify.springboot.utils.Sutils;
 import com.easyverify.springboot.utils.Bcrypt;
 import com.easyverify.springboot.vo.ResponseResult;
@@ -151,9 +151,8 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     @Override
     public ResponseResult<?> get_project_notice(EasyProject project, OpenAPIDTO openAPIDTO, EasyLink link) {
         String origin = "pid="+openAPIDTO.getPid()+"&time="+openAPIDTO.getTime()+"&"+project.getProjectKey();
-        String md5_origin = MD5Util.getMD5(Sutils.base64_encode(origin,project.getProjectBase64())).toUpperCase();
+        String md5_origin = DigestUtil.sha256Hex(Sutils.base64_encode(origin,project.getProjectBase64())).toUpperCase();
         String sign = Sutils.hex_to_string(openAPIDTO.getSign()).toUpperCase();
-        log.info("md5: {} vs {}",md5_origin,sign);
         if (!md5_origin.equals(sign))
         {
             return ResponseResult.fail("客户端被篡改!");
@@ -171,8 +170,13 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             json.put("time",now_time);
         if (link.getSafeType()!=1)
             return ResponseResult.success("获取成功",json);
-        log.info("公告 json 对象: {}",json.toJSONString());
+
         String safe_result = Sutils.to_hex(Sutils.base64_encode(json.toJSONString(),project.getProjectBase64()));
-        return ResponseResult.success("获取成功",safe_result);
+        String token = DigestUtil.sha256Hex(Sutils.base64_encode(safe_result+"&"+project.getProjectKey(),project.getProjectBase64())).toUpperCase();
+        JSONObject result_object =  new JSONObject();
+        result_object.put("notice",safe_result);
+        result_object.put("token",token);
+
+        return ResponseResult.success("获取成功",result_object);
     }
 }

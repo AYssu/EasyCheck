@@ -22,7 +22,7 @@ public class Sutils {
     }
 
     public static String base64_encode(String str){
-        return new String(encodeBase64(str));
+       return base64_encode(str, "");
     }
     public static String base64_encode(String str,String base64){
         set_base64(base64);
@@ -101,7 +101,7 @@ public class Sutils {
     }
 
     public static String base64_decode(String str){
-        return new String(decodeBase64(str));
+        return base64_decode(str, "");
     }
     public static String base64_decode(String str,String base64){
         set_base64(base64);

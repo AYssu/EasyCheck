@@ -6,8 +6,6 @@ import com.easyverify.springboot.entity.EasyLink;
 import com.easyverify.springboot.entity.EasyProject;
 import com.easyverify.springboot.service.OpenAPIService;
 import com.easyverify.springboot.service.ProjectService;
-import com.easyverify.springboot.utils.MD5Util;
-import com.easyverify.springboot.utils.StringUtil;
 import com.easyverify.springboot.utils.Sutils;
 import com.easyverify.springboot.vo.ResponseResult;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +83,7 @@ public class OpenAPIController {
         log.info("open_api object: {}",openAPIDTO);
         // 还原pid
         try {
-            String pid = Sutils.hex_to_string(Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getPid()),""));
+            String pid = Sutils.hex_to_string(Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getPid())));
             log.info("解析项目pid: {}",pid);
             EasyLink link = openAPIService.open_link_type(Integer.parseInt(pid),base);
             if (link == null)

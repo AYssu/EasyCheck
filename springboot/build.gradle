@@ -31,6 +31,8 @@ dependencies {
     implementation 'com.alibaba.fastjson2:fastjson2-extension:2.0.53'
     implementation 'com.alibaba.fastjson2:fastjson2-extension-spring6:2.0.53'
 
+    implementation 'cn.hutool:hutool-all:5.8.26'
+
 
     implementation 'org.springframework.boot:spring-boot-starter-security:3.3.5'
     implementation 'org.springframework.boot:spring-boot-starter-mail'

@@ -333,7 +333,7 @@ import top_bar from '@/components/top_bar.vue'
 import {useRouter} from "vue-router";
 import {computed, onUnmounted, ref, watch} from "vue";
 import {aside_status} from "@/stores/aside.ts";
-import icon_translate from '@/assets/icon_translate.png'
+import icon_translate from '@/assets/icon.png'
 import tab_view from "@/components/tab_view.vue";
 import {tabs_status} from "@/stores/tabs/tabs.ts";
 import phone_size from "@/utils/phone_size.ts";
