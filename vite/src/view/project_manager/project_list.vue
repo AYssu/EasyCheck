@@ -220,7 +220,7 @@
         <a-form-item label="项目ID">
           <el-input v-model="show_project_info.projectId" readonly>
             <template #append>
-              <el-button @click="copy_text(show_project_info.projectId)">复制</el-button>
+              <el-button @click="copy_text(show_project_info.projectId.toString())">复制</el-button>
             </template>
           </el-input>
         </a-form-item>
@@ -384,14 +384,7 @@
         </template>
         <el-table-column prop="type" label="接口名称" width="130">
           <template #default="scope:any">
-            <span v-if="scope.row.type==1">单码卡密登录</span>
-            <span v-else-if="scope.row.type==2">解绑或换机器码</span>
-            <span v-else-if="scope.row.type==3">用户登录</span>
-            <span v-else-if="scope.row.type==4">获取程序公告</span>
-            <span v-else-if="scope.row.type==5">更新查询</span>
-            <span v-else-if="scope.row.type==6">获取程序变量列表</span>
-            <span v-else-if="scope.row.type==7">单码心跳</span>
-            <span v-else-if="scope.row.type==8">用户心跳</span>
+            <span>{{ get_url_name(scope.row.type) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="link" label="接口地址" width="130">
@@ -409,14 +402,52 @@
             <a-switch size="small" disabled="disabled" v-model:checked="scope.row.safeType" :checked-value="1" checked-children="开" un-checked-children="关" />
           </template>
         </el-table-column>
-        <el-table-column prop="desc" label="描述" show-overflow-tooltip>
-          <el-text size="small">所谓永恒的爱，是从花开一直到花落，从红颜一直爱到白发。</el-text>
+        <el-table-column prop="desc" label="描述" show-overflow-tooltip min-width="200">
+          <el-text size="small">回首过往,我过的很开心。</el-text>
         </el-table-column>
         <el-table-column   label="操作" width="140" >
-          <el-button type="primary" size="small" plain>编辑</el-button>
+          <template #default="scope">
+          <el-button type="primary" size="small" plain @click="()=>{
+            update_link_form = JSON.parse(JSON.stringify(scope.row))
+            console.log(update_link_form)
+            update_link_visible = true
+          }">编辑</el-button>
           <el-button type="danger" size="small" plain>删除</el-button>
+          </template>
         </el-table-column>
       </el-table>
+    </a-modal>
+
+    <a-modal :open="update_link_visible"  :confirm-loading="update_link_loading" title="更新接口信息" @cancel="update_link_visible=false" cancel-text="取消" ok-text="修改" @ok="update_link_from_info">
+      <el-form :size="phone_bool?'small':''" label-position="top" style="margin-top: 20px"   status-icon>
+        <el-form-item label="接口名称">
+          <el-input readonly disabled :value="get_url_name(update_link_form.type)"></el-input>
+        </el-form-item>
+        <el-form-item label="接口链接">
+          <el-input readonly disabled :value="update_link_form.link"></el-input>
+        </el-form-item>
+        <el-form-item label="返回code">
+          <el-input clearable v-model="update_link_form.code"></el-input>
+        </el-form-item>
+        <el-form-item label="code返回类型">
+          <el-select v-model="update_link_form.codeType" placeholder="请选择返回类型">
+            <el-option label="int (整形)" :value="1" />
+            <el-option label="string (字符串)" :value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="加密传输">
+          <el-select v-model="update_link_form.safeType" placeholder="请选择">
+            <el-option label="加密传输" :value="1" />
+            <el-option label="无加密" :value="2" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="返回时间戳">
+          <el-select v-model="update_link_form.returnTime" placeholder="请选择">
+            <el-option label="开启" :value="1" />
+            <el-option label="关闭" :value="2" />
+          </el-select>
+        </el-form-item>
+      </el-form>
     </a-modal>
   </div>
 </template>
@@ -433,7 +464,7 @@ import {
   set_project_default_update_services,
   set_project_notice_services,
   set_project_update_info_services,
-  set_project_variable_services,
+  set_project_variable_services, update_project_link_services,
   update_project_normal_info_services,
   update_project_reset_key_services,
   update_project_status_services
@@ -442,11 +473,61 @@ import {ComponentSize, ElMessage} from "element-plus";
 
 import project_background from '@/assets/svg/project_background.svg'
 
+interface url_link {
+  aid: any
+  code: any
+  codeType: any
+  link:any
+  projectId: any
+  returnTime:any
+  safeType: any
+  type: any
+}
 const url_visible = ref(false);
 
 
 import type { CheckboxValueType } from 'element-plus'
 
+const update_link_visible = ref(false)
+const update_link_form = ref<url_link>({
+  aid: 1,
+  code: 200,
+  codeType: 1,
+  link: "",
+  projectId: 10000,
+  returnTime: 1,
+  safeType: 1,
+  type: 1
+});
+const update_link_loading = ref(false)
+const update_link_from_info = async () => {
+  update_link_loading.value = true
+  let params = {
+    code: update_link_form.value.code,
+    codeType: update_link_form.value.codeType,
+    projectId: update_link_form.value.projectId,
+    returnTime: update_link_form.value.returnTime,
+    safeType: update_link_form.value.safeType,
+    type: [update_link_form.value.type]
+  }
+  const result = await update_project_link_services(params)
+  try {
+    if (result.data.code==200)
+    {
+      ElMessage.success('修改成功')
+      update_link_visible.value = false
+      url_visible.value = false
+    }else {
+      ElMessage.error(result.data.message)
+    }
+  }catch (e)
+  {
+    update_link_loading.value = false
+    console.log(e)
+  }
+  update_link_loading.value = false
+
+}
 const open_url_controller = async (pid:number)=>{
   data.value = []
   value.value = []
@@ -480,6 +561,16 @@ interface link_option {
   checked?: boolean
 }
 
+const get_url_name = (type: number) => {
+  if (type === undefined) {
+    return ''; // 返回空字符串或其他默认值
+  }
+  const item = cities.value.find(item => item.value === type);
+  if (item) {
+    return item.label;
+  }
+  return ''; // 如果没有找到匹配项，返回空字符串或其他默认值
+}
 const cities = ref<link_option[]>([
   {
     value: 1,
@@ -519,7 +610,7 @@ watch(value, (val) => {
   if (val.length === 0) {
     checkAll.value = false
     indeterminate.value = false
-  } else if (val.length === cities_filter.value.length) {
+  } else if (cities_filter.value!=undefined && val.length === cities_filter.value.length) {
     checkAll.value = true
     indeterminate.value = false
   } else {
@@ -529,53 +620,15 @@ watch(value, (val) => {
 
 const handleCheckAll = (val: CheckboxValueType) => {
   indeterminate.value = false
+  if (cities_filter.value==undefined)
+    return
   if (val) {
     value.value = cities_filter.value.map((_) => _.value)
   } else {
     value.value = []
   }
 }
-const data = ref([
-  {
-    type: 1,
-    link:'AB1U7UYD5T',
-    code: 200,
-    safeType:1,
-  },
-  {
-    type: 2,
-    link:'AB1U7UYD5T',
-    code: 200,
-    safeType:2,
-  },
-  {
-    type: 3,
-    link:'AB1U7UYD5T',
-    code: 200,
-    safeType:2,
-  },
-  {
-    type: 4,
-    link:'AB1U7UYD5T',
-    code: 200,
-    safeType:1,
-  }
-  ,
-  {
-    type: 5,
-    link:'AB1U7UYD5T',
-    code: 200,
-    safeType:1,
-  }
-  ,
-  {
-    type: 6,
-    link:'AB1U7UYD5T',
-    code: 200,
-    safeType:1,
-  }
-  ,
-]);
+const data = ref<url_link[]>();
 
 const drawer = ref<boolean>(false);
 const a_drawer = ref<boolean>(false);
@@ -850,10 +903,10 @@ const add_url = async ()=> {
       url_visible.value = false
       const contentString = result.data.data.replace(/\\n/g, '\n');
 
-      const contentVNode = createVNode('div', {}, contentString.split('\n').map((line, index) => {
+      const contentVNode = createVNode('div', {}, contentString.split('\n').map(function (line:any, index:any) {
         // 为每一行创建一个 span 元素
         return createVNode('span', {}, line + (index < contentString.split('\n').length - 1 ? '\n' : ''));
-      }).flatMap((node) => {
+      }).flatMap((node:any) => {
         // 如果不是最后一行，添加一个 br 元素
         if (node.children) {
           return [node, createVNode('br')];

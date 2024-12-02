@@ -362,7 +362,7 @@ const to_register = async () => {
 
 };
 
-import icon from "@/assets/icon_translate.png"
+import icon from "@/assets/icon.png"
 import safe from "@/assets/index/safe.svg";
 import fast from "@/assets/index/fast.svg";
 import lock from "@/assets/index/lock.svg";
