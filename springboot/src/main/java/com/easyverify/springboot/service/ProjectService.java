@@ -164,4 +164,11 @@ public interface ProjectService {
      * @return boolean
      */
     boolean update_project_link(ProjectLinkDTO projectLinkDTO);
+
+    /**
+     * 删除项目链接
+     * @param id 项目链接id
+     * @return boolean
+     */
+    boolean delete_project_link(Integer id);
 }

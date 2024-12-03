@@ -132,7 +132,8 @@ public class UserServiceImpl implements UserService {
         if (Bcrypt.checkpw(userLoginDTO.getPassword(), user.getUserPassword())) {
             // 判断是否已登录
             String redis_token = (String) redisTemplate.opsForValue().get("easy_user_" + user.getUserId());
-            if (StringUtils.hasText(redis_token)) {
+            Long expiration = redisTemplate.getExpire("easy_user_" + user.getUserId(), TimeUnit.SECONDS);
+            if (StringUtils.hasText(redis_token) && expiration!=null && expiration > 60) {
                 try {
                     // 判断ip是否一致
                     Map<String, Object> map = JwtUtil.parseToken(redis_token);
@@ -148,6 +149,8 @@ public class UserServiceImpl implements UserService {
                      redisTemplate.expire(redis_token, 1, TimeUnit.DAYS);
                      redisTemplate.expire("easy_user_" + user.getUserId(), 1, TimeUnit.DAYS);
                     */
+
+
                     UserLoginVO userLogin = new UserLoginVO();
                     // 拷贝用户信息
                     BeanUtils.copyProperties(user, userLogin);
@@ -162,6 +165,10 @@ public class UserServiceImpl implements UserService {
                 }
 
             }
+
+            // 删除token低于1小时的认证
+            redisTemplate.delete("easy_user_" + user.getUserId());
+            // 不删除对应的token 防止其他设备在线 token用处很大后面会完善 ---插桩
             // 生成token
             Map<String, Object> map = new HashMap<>();
             map.put("username", user.getUserName());

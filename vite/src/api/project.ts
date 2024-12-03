@@ -141,3 +141,12 @@ export const add_project_link_services = (params: any)=>{
 export const update_project_link_services = (params: any)=>{
     return request.post('/project/project_update_link', params);
 }
+
+/**
+ * 删除项目链接
+ * @param aid 链接ID
+ * @return Promise
+ */
+export const delete_project_link_services = (aid: number)=>{
+    return request.get('/project/project_link_delete?aid='+aid);
+}

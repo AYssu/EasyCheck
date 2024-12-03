@@ -1,5 +1,9 @@
 package com.easyverify.springboot.service.impl;
 
+import cn.hutool.core.util.CharsetUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -197,6 +201,57 @@ public class ProjectServiceImpl implements ProjectService {
         return projectResetVo;
     }
 
+    /**
+     * 验证公钥格式是否正确
+     * @param publicKeyStr 公钥字符串
+     * @return 验证结果
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static boolean isValidPublicKey(String publicKeyStr) {
+        try {
+            RSA rsa = new RSA(null, publicKeyStr);
+            // 尝试获取公钥对象，如果失败则格式不正确
+            rsa.getPublicKey();
+            return true;
+        } catch (Exception e) {
+            // 任何异常都表示公钥格式不正确
+            return false;
+        }
+    }
+
+    /**
+     * 验证私钥格式是否正确
+     * @param privateKeyStr 私钥字符串
+     * @return 验证结果
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+
+    public static boolean isValidPrivateKey(String privateKeyStr) {
+        try {
+            RSA rsa = new RSA(privateKeyStr, null);
+            // 尝试获取私钥对象，如果失败则格式不正确
+            rsa.getPrivateKey();
+            return true;
+        } catch (Exception e) {
+            // 任何异常都表示私钥格式不正确
+            return false;
+        }
+    }
+
+    public static boolean isValidKeys(String publicKeyStr, String privateKeyStr){
+        try {
+            RSA rsa = new RSA(privateKeyStr, publicKeyStr);
+            byte[] encrypt = rsa.encrypt(StrUtil.bytes("test测试", CharsetUtil.CHARSET_UTF_8), KeyType.PublicKey);
+            byte[] decrypt = rsa.decrypt(encrypt, KeyType.PrivateKey);
+            if (!StrUtil.equals(StrUtil.str(decrypt, CharsetUtil.CHARSET_UTF_8), "test测试"))
+                return false;
+        }catch (Exception e)
+        {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean update_normal_info(ProjectInfoDTO projectInfoDTO) {
         EasyUser user = userService.get_user_by_jwt();
@@ -204,8 +259,52 @@ public class ProjectServiceImpl implements ProjectService {
         // 获取项目
         EasyProject project = get_project_by_id_with_uid(projectInfoDTO.getProjectId(), user.getUserId());
 
+        EasyProject project_temp = get_project_by_name(projectInfoDTO.getProjectName());
+        if (project_temp != null && !project_temp.getProjectId().equals(project.getProjectId()))
+            throw new RuntimeException("项目名已存在");
         project.setProjectName(projectInfoDTO.getProjectName());
+
         project.setProjectMessage(projectInfoDTO.getProjectMessage());
+        project.setReturnUpdate(projectInfoDTO.getReturnUpdate());
+        project.setReturnVerify(projectInfoDTO.getReturnVerify());
+        project.setProjectEncryption(projectInfoDTO.getProjectEncryption());
+
+        String public_key = projectInfoDTO.getProjectRsaPublic();
+        String private_key = projectInfoDTO.getProjectRsaPrivate();
+        if (projectInfoDTO.getProjectEncryption()==2)
+        {
+            // 校验公钥私钥是否正确
+            if (private_key.contains("-----BEGIN PRIVATE KEY-----")&&private_key.contains("-----END PRIVATE KEY-----"))
+            {
+                if (public_key.contains("-----BEGIN PUBLIC KEY-----")&&public_key.contains("-----END PUBLIC KEY-----"))
+                {
+                    String public_key_base64 = public_key.replace("-----BEGIN PUBLIC KEY-----", "")
+                            .replace("-----END PUBLIC KEY-----", "")
+                            .replaceAll("\\s+", "");
+
+                    String private_key_base64 = private_key.replace("-----BEGIN PRIVATE KEY-----", "")
+                            .replace("-----END PRIVATE KEY-----", "")
+                            .replaceAll("\\s+", "");
+
+                    if (!isValidPublicKey(public_key_base64)){
+                        throw new RuntimeException("公钥格式错误");
+                    }
+                    if (!isValidPrivateKey(private_key_base64)){
+                        throw new RuntimeException("私钥格式错误");
+                    }
+
+                    if (!isValidKeys(public_key_base64, private_key_base64))
+                        throw new RuntimeException("公钥私钥不匹配");
+                }else {
+                    throw new RuntimeException("公钥格式错误");
+                }
+            }else {
+                throw new RuntimeException("私钥格式错误");
+            }
+        }
+
+        project.setProjectRsaPrivate(private_key);
+        project.setProjectRsaPublic(public_key);
         redisTemplate.delete("open_project_" + projectInfoDTO.getProjectId());
         return projectMapper.updateById(project) > 0;
     }
@@ -513,5 +612,18 @@ public class ProjectServiceImpl implements ProjectService {
         easyLink.setSafeType(projectLinkDTO.getSafeType());
         easyLink.setReturnTime(projectLinkDTO.getReturnTime());
         return linkMapper.updateById(easyLink) > 0;
+    }
+
+    @Override
+    public boolean delete_project_link(Integer id) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyLink link = linkMapper.selectById(id);
+        if (link == null)
+            throw new RuntimeException("链接不存在");
+        EasyProject project = get_project_by_id_with_uid(link.getProjectId(), user.getUserId());
+        if (project == null)
+            throw new RuntimeException("链接越权删除");
+        redisTemplate.delete("project_links_"+project.getProjectId());
+        return linkMapper.deleteById(id) > 0;
     }
 }
