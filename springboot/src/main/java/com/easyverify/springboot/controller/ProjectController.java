@@ -150,4 +150,14 @@ public class ProjectController {
             return ResponseResult.fail("更新失败");
         return ResponseResult.success("更新成功");
     }
+
+    @GetMapping("project_link_delete")
+    public ResponseResult<?> project_link_delete(@RequestParam Integer aid)
+    {
+        log.info("project_link_delete_form: {}", aid);
+        boolean is_success = projectService.delete_project_link(aid);
+        if (is_success)
+            return ResponseResult.success("删除成功");
+        return ResponseResult.success("删除失败");
+    }
 }

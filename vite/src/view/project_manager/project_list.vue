@@ -209,8 +209,8 @@
         :width="phone_bool?'80%':'40%'"
         @close="()=>a_drawer=false">
       <template #extra>
-        <a-button style="margin-right: 8px" @click="a_drawer = false">取消</a-button>
-        <a-button type="primary" @click="on_update_project()">更新数据</a-button>
+        <a-button :size="phone_bool?'small':''" style="margin-right: 8px" @click="a_drawer = false">取消</a-button>
+        <a-button :size="phone_bool?'small':''"  :loading="project_update_info_loading" type="primary" @click="on_update_project()">更新数据</a-button>
       </template>
       <a-form :model="show_project_info" layout="vertical">
         <a-form-item label="项目名称">
@@ -224,31 +224,7 @@
             </template>
           </el-input>
         </a-form-item>
-        <a-form-item>
-          <template #label>
-            <span>项目key</span>
-            <el-icon size="15" style="margin-left: 4px" @click="click_reset_key(show_project_info.projectId)">
-              <svg class="icon" height="200"
-                   viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M943.8 484.1c-17.5-13.7-42.8-10.7-56.6 6.8-5.7 7.3-8.5 15.8-8.6 24.4h-0.4c-0.6 78.3-26.1 157-78 223.3-124.9 159.2-356 187.1-515.2 62.3-31.7-24.9-58.2-54-79.3-85.9h77.1c22.4 0 40.7-18.3 40.7-40.7v-3c0-22.4-18.3-40.7-40.7-40.7H105.5c-22.4 0-40.7 18.3-40.7 40.7v177.3c0 22.4 18.3 40.7 40.7 40.7h3c22.4 0 40.7-18.3 40.7-40.7v-73.1c24.2 33.3 53 63.1 86 89 47.6 37.3 101 64.2 158.9 79.9 55.9 15.2 113.5 19.3 171.2 12.3 57.7-7 112.7-24.7 163.3-52.8 52.5-29 98-67.9 135.3-115.4 37.3-47.6 64.2-101 79.9-158.9 10.2-37.6 15.4-76 15.6-114.6h-0.1c-0.3-11.6-5.5-23.1-15.5-30.9zM918.7 135.2h-3c-22.4 0-40.7 18.3-40.7 40.7V249c-24.2-33.3-53-63.1-86-89-47.6-37.3-101-64.2-158.9-79.9-55.9-15.2-113.5-19.3-171.2-12.3-57.7 7-112.7 24.7-163.3 52.8-52.5 29-98 67.9-135.3 115.4-37.3 47.5-64.2 101-79.9 158.8-10.2 37.6-15.4 76-15.6 114.6h0.1c0.2 11.7 5.5 23.2 15.4 30.9 17.5 13.7 42.8 10.7 56.6-6.8 5.7-7.3 8.5-15.8 8.6-24.4h0.4c0.6-78.3 26.1-157 78-223.3 124.9-159.2 356-187.1 515.2-62.3 31.7 24.9 58.2 54 79.3 85.9h-77.1c-22.4 0-40.7 18.3-40.7 40.7v3c0 22.4 18.3 40.7 40.7 40.7h177.3c22.4 0 40.7-18.3 40.7-40.7V175.8c0.1-22.3-18.2-40.6-40.6-40.6z"
-                    ></path>
-              </svg>
-            </el-icon>
-          </template>
-          <el-input v-model="show_project_info.projectKey" placeholder="请输入项目key" readonly>
-            <template #append>
-              <el-button @click="copy_text(show_project_info.projectKey)">复制</el-button>
-            </template>
-          </el-input>
-        </a-form-item>
-        <a-form-item label="自定义BASE64">
-          <el-input v-model="show_project_info.projectBase64" placeholder="请输入项目名称" readonly>
-            <template #append>
-              <el-button @click="copy_text(show_project_info.projectBase64)">复制</el-button>
-            </template>
-          </el-input>
-        </a-form-item>
+
         <a-form-item>
           <template #label>
             <span>项目绑定密钥</span>
@@ -267,9 +243,67 @@
             </template>
           </el-input>
         </a-form-item>
+
+
+        <a-form-item label="加密类型">
+          <el-select v-model="show_project_info.projectEncryption" placeholder="请选择加密类型">
+            <el-option label="BASE64自定义编码(对称加密)" :value="1"></el-option>
+            <el-option label="RSA(非对称加密)" :value="2"></el-option>
+          </el-select>
+        </a-form-item>
+        <a-form-item label="更新增强">
+          <el-select v-model="show_project_info.returnUpdate" placeholder="请选择">
+            <el-option label="关闭" :value="1"></el-option>
+            <el-option label="开启" :value="2"></el-option>
+          </el-select>
+        </a-form-item>
+        <a-form-item label="登录增强">
+          <el-select v-model="show_project_info.returnVerify" placeholder="请选择">
+            <el-option label="关闭" :value="1"></el-option>
+            <el-option label="开启" :value="2"></el-option>
+          </el-select>
+        </a-form-item>
+        <a-form-item>
+          <template #label>
+            <span>项目key</span>
+            <el-icon size="15" style="margin-left: 4px" @click="click_reset_key(show_project_info.projectId)">
+              <svg class="icon" height="200"
+                   viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M943.8 484.1c-17.5-13.7-42.8-10.7-56.6 6.8-5.7 7.3-8.5 15.8-8.6 24.4h-0.4c-0.6 78.3-26.1 157-78 223.3-124.9 159.2-356 187.1-515.2 62.3-31.7-24.9-58.2-54-79.3-85.9h77.1c22.4 0 40.7-18.3 40.7-40.7v-3c0-22.4-18.3-40.7-40.7-40.7H105.5c-22.4 0-40.7 18.3-40.7 40.7v177.3c0 22.4 18.3 40.7 40.7 40.7h3c22.4 0 40.7-18.3 40.7-40.7v-73.1c24.2 33.3 53 63.1 86 89 47.6 37.3 101 64.2 158.9 79.9 55.9 15.2 113.5 19.3 171.2 12.3 57.7-7 112.7-24.7 163.3-52.8 52.5-29 98-67.9 135.3-115.4 37.3-47.6 64.2-101 79.9-158.9 10.2-37.6 15.4-76 15.6-114.6h-0.1c-0.3-11.6-5.5-23.1-15.5-30.9zM918.7 135.2h-3c-22.4 0-40.7 18.3-40.7 40.7V249c-24.2-33.3-53-63.1-86-89-47.6-37.3-101-64.2-158.9-79.9-55.9-15.2-113.5-19.3-171.2-12.3-57.7 7-112.7 24.7-163.3 52.8-52.5 29-98 67.9-135.3 115.4-37.3 47.5-64.2 101-79.9 158.8-10.2 37.6-15.4 76-15.6 114.6h0.1c0.2 11.7 5.5 23.2 15.4 30.9 17.5 13.7 42.8 10.7 56.6-6.8 5.7-7.3 8.5-15.8 8.6-24.4h0.4c0.6-78.3 26.1-157 78-223.3 124.9-159.2 356-187.1 515.2-62.3 31.7 24.9 58.2 54 79.3 85.9h-77.1c-22.4 0-40.7 18.3-40.7 40.7v3c0 22.4 18.3 40.7 40.7 40.7h177.3c22.4 0 40.7-18.3 40.7-40.7V175.8c0.1-22.3-18.2-40.6-40.6-40.6z"
+                ></path>
+              </svg>
+            </el-icon>
+          </template>
+          <el-input v-model="show_project_info.projectKey" placeholder="请输入项目key" readonly>
+            <template #append>
+              <el-button @click="copy_text(show_project_info.projectKey)">复制</el-button>
+            </template>
+          </el-input>
+        </a-form-item>
+        <a-form-item label="自定义BASE64">
+          <el-input v-model="show_project_info.projectBase64" placeholder="请输入项目名称" readonly>
+            <template #append>
+              <el-button @click="copy_text(show_project_info.projectBase64)">复制</el-button>
+            </template>
+          </el-input>
+        </a-form-item>
+        <a-form-item label="RSA非对称公钥">
+          <el-input v-model='show_project_info.projectRsaPublic' maxlength="4000" placeholder="客户端加密解密: 以“-----BEGIN PUBLIC KEY-----”开头 “-----END PUBLIC KEY-----” 结尾 "
+                    show-word-limit
+                    :autosize="{ minRows: 2, maxRows: 10}"
+                    type="textarea"/>
+        </a-form-item>
+        <a-form-item label="RSA非对称私钥 ">
+          <el-input v-model='show_project_info.projectRsaPrivate' maxlength="4000" placeholder="服务端加密解密: 以“-----BEGIN PRIVATE KEY-----”开头 “-----END PRIVATE KEY-----” 结尾"
+                    show-word-limit
+                    :autosize="{ minRows: 2, maxRows: 10}"
+                    type="textarea"/>
+        </a-form-item>
         <a-form-item label="项目简绍">
           <el-input v-model='show_project_info.projectMessage' maxlength="100" placeholder="请输入项目名称"
                     show-word-limit
+                    :autosize="{ minRows: 3, maxRows: 5}"
                     type="textarea"/>
         </a-form-item>
       </a-form>
@@ -412,7 +446,7 @@
             console.log(update_link_form)
             update_link_visible = true
           }">编辑</el-button>
-          <el-button type="danger" size="small" plain>删除</el-button>
+          <el-button type="danger" size="small" plain @click="link_delete_click(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -449,6 +483,7 @@
         </el-form-item>
       </el-form>
     </a-modal>
+
   </div>
 </template>
 
@@ -457,7 +492,7 @@ import {CirclePlusFilled, FolderAdd, Search} from "@element-plus/icons-vue";
 import {createVNode, onMounted, reactive, ref, UnwrapRef, watch} from "vue";
 import {
   add_project_link_services,
-  create_project_services, get_project_links_services,
+  create_project_services, delete_project_link_services, get_project_links_services,
   get_project_list_services,
   get_project_update_info_services,
   get_project_variable_services,
@@ -500,6 +535,8 @@ const update_link_form = ref<url_link>({
   type: 1
 });
 const update_link_loading = ref(false)
+
+// 更新接口
 const update_link_from_info = async () => {
   update_link_loading.value = true
   let params = {
@@ -528,6 +565,8 @@ const update_link_from_info = async () => {
   update_link_loading.value = false
 
 }
+
+// 获取接口
 const open_url_controller = async (pid:number)=>{
   data.value = []
   value.value = []
@@ -552,6 +591,31 @@ const open_url_controller = async (pid:number)=>{
     ElMessage.error('获取接口失败')
     console.log(e)}
 }
+
+// 删除接口
+const link_delete_click = async (row: url_link) => {
+  Modal.confirm({
+    title: '提示',
+    content: '是否删除该接口?',
+    onOk: async () => {
+      const result = await delete_project_link_services(row.aid)
+      try {
+        if (result.data.code==200)
+        {
+          ElMessage.success('删除成功')
+          url_visible.value = false
+        }else {
+          ElMessage.error(result.data.message)
+        }
+      }catch (e)
+      {
+        console.log(e)
+      }
+    }
+  })
+}
+
+
 const checkAll = ref(false)
 const indeterminate = ref(false)
 const value = ref<CheckboxValueType[]>([])
@@ -649,6 +713,11 @@ const show_project_info = ref<Project>({
   projectStatus: 0,
   projectIcon: "",
   projectBase64: "",
+  returnUpdate: 0,
+  returnVerify: 0,
+  projectEncryption: 0,
+  projectRsaPublic: "",
+  projectRsaPrivate: "",
   bindKey: ""
 });
 import {SettingOutlined, EditOutlined, EllipsisOutlined} from '@ant-design/icons-vue';
@@ -861,6 +930,12 @@ export interface Project {
   projectStatus: number
   projectIcon: string
   projectBase64: string
+  returnUpdate: number
+  returnVerify: number
+  projectEncryption: number
+
+  projectRsaPrivate: string
+  projectRsaPublic: string
   bindKey: string
 }
 
@@ -931,25 +1006,36 @@ const add_url = async ()=> {
     console.log(e)
   }
 }
+
+const project_update_info_loading = ref(false)
 const on_update_project = async () => {
   const params = {
     projectId: show_project_info.value.projectId,
     projectName: show_project_info.value.projectName,
-    projectMessage: show_project_info.value.projectMessage
+    projectMessage: show_project_info.value.projectMessage,
+    returnUpdate: show_project_info.value.returnUpdate,
+    returnVerify: show_project_info.value.returnVerify,
+    projectEncryption: show_project_info.value.projectEncryption,
+    projectRsaPrivate: show_project_info.value.projectRsaPrivate,
+    projectRsaPublic: show_project_info.value.projectRsaPublic
   }
-
+  project_update_info_loading.value = true
   try {
     const result = await update_project_normal_info_services(params)
     if (result.data.code === 200) {
       message.success(result.data.message)
       await get_project_list(search_params.value)
       a_drawer.value = false
+      project_update_info_loading.value = false
     } else {
+      project_update_info_loading.value = false
       message.error(result.data.message)
     }
   } catch (e) {
+    project_update_info_loading.value = false
     console.log(e)
   }
+
 }
 
 const on_click_open_show = (data: any) => {
