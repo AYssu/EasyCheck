@@ -1,5 +1,7 @@
 package com.easyverify.springboot.controller;
 
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import com.easyverify.springboot.dto.OpenAPIDTO;
 import com.easyverify.springboot.dto.UserProjectBindDTO;
 import com.easyverify.springboot.entity.EasyLink;
@@ -93,7 +95,31 @@ public class OpenAPIController {
 
             EasyProject project = projectService.get_project_by_id(Integer.parseInt(pid));
             long now_time = System.currentTimeMillis() / 1000;
-            String send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()),project.getProjectBase64());
+            String send_time = "";
+
+            // 初始化rsa
+            RSA rsa = null;
+
+            if (project.getProjectEncryption()==2)
+            {
+                // 如果是rsa 那就初始化Rsa
+                String public_key_base64 = project.getProjectRsaPublic().replace("-----BEGIN PUBLIC KEY-----", "")
+                        .replace("-----END PUBLIC KEY-----", "")
+                        .replaceAll("\\s+", "");
+
+                String private_key_base64 = project.getProjectRsaPrivate().replace("-----BEGIN PRIVATE KEY-----", "")
+                        .replace("-----END PRIVATE KEY-----", "")
+                        .replaceAll("\\s+", "");
+
+                rsa= new RSA(private_key_base64, public_key_base64);
+            }
+
+            // 分开的目的是简化后续添加其他加密的逻辑
+            if(project.getProjectEncryption()==1)
+                send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()),project.getProjectBase64());
+            else if (project.getProjectEncryption()==2)
+                send_time = rsa.decryptStr(Sutils.hex_to_string(openAPIDTO.getTime()), KeyType.PrivateKey);
+
             long alive_time = Math.abs(now_time - Long.parseLong(send_time));
             log.info("alive_time: {}",alive_time);
             if (alive_time > 10)
@@ -117,7 +143,7 @@ public class OpenAPIController {
                 break;
                 case 4:
                 {
-                    return openAPIService.get_project_notice(project,openAPIDTO,link);
+                    return openAPIService.get_project_notice(project,openAPIDTO,link,rsa);
                 }
                 case 5:
                 {

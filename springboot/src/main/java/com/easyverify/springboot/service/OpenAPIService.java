@@ -1,5 +1,6 @@
 package com.easyverify.springboot.service;
 
+import cn.hutool.crypto.asymmetric.RSA;
 import com.easyverify.springboot.dto.OpenAPIDTO;
 import com.easyverify.springboot.dto.UserProjectBindDTO;
 import com.easyverify.springboot.entity.EasyLink;
@@ -44,8 +45,9 @@ public interface OpenAPIService {
      *
      * @param project    项目信息
      * @param openAPIDTO 请求参数
-     * @param link
+     * @param link        链接类型
+     * @param rsa        RSA加密工具
      * @return 项目公告信息
      */
-    ResponseResult<?> get_project_notice(EasyProject project, OpenAPIDTO openAPIDTO, EasyLink link);
+    ResponseResult<?> get_project_notice(EasyProject project, OpenAPIDTO openAPIDTO, EasyLink link, RSA rsa);
 }
