@@ -92,14 +92,7 @@ public class OpenAPIController {
             log.info("open_api type: {}",projectService.get_link_name(link.getType()));
 
             EasyProject project = projectService.get_project_by_id(Integer.parseInt(pid));
-            long now_time = System.currentTimeMillis() / 1000;
-            String send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()),project.getProjectBase64());
-            long alive_time = Math.abs(now_time - Long.parseLong(send_time));
-            log.info("alive_time: {}",alive_time);
-            if (alive_time > 10)
-            {
-                return ResponseResult.fail("客户端请求超时");
-            }
+
 
             // 以上为基础信息校验 基础信息
             switch(link.getType()) {
