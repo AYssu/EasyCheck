@@ -52,7 +52,8 @@ public class OpenAPIServiceImpl implements OpenAPIService {
     private UserService userService;
 
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
+
     @Override
     public boolean user_project_bind(UserProjectBindDTO userProjectBindDTO) {
 
@@ -61,26 +62,24 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         String project_id = "";
         try {
             project_id = Sutils.base64_decode(bind_url);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             throw new RuntimeException(exception);
         }
-        log.info("user bind: {}",project_id);
+        log.info("user bind: {}", project_id);
 
         EasyProject project = projectService.get_project_by_id(Integer.parseInt(project_id));
-        if (project == null)
-        {
+        if (project == null) {
             throw new RuntimeException("绑定项目不存在");
         }
 
         OpenUser openUser = get_user_by_email(userProjectBindDTO.getEmail());
-        if (openUser !=null)
-        {
+        if (openUser != null) {
             throw new RuntimeException("用户已注册,请前往控制台绑定");
         }
 
         // 判断验证码是否正确 验证码校验要求低 确保绑定程序以及open user 不存在 优先级高一些
-        String code = (String) redisTemplate.opsForValue().get(userProjectBindDTO.getEmail()+"_code");
-        if (code == null||!code.equals(userProjectBindDTO.getCode())) {
+        String code = (String) redisTemplate.opsForValue().get(userProjectBindDTO.getEmail() + "_code");
+        if (code == null || !code.equals(userProjectBindDTO.getCode())) {
             throw new RuntimeException("验证码错误");
         }
 
@@ -121,15 +120,15 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         if (user != null)
             throw new RuntimeException("用户已注册");
         // 判断是否已发送
-        String code = (String) redisTemplate.opsForValue().get(email+"_code");
+        String code = (String) redisTemplate.opsForValue().get(email + "_code");
         if (code != null) {
             Long expire = redisTemplate.getExpire(email + "_code", TimeUnit.SECONDS);
             throw new RuntimeException("请于" + expire + "秒后再试");
         }
         try {
-            int random_code = (int)((Math.random()*9+1)*100000);
-            sendMailService.sendCodeMail(email,random_code);
-            redisTemplate.opsForValue().set(email+"_code", Integer.toString(random_code),5, TimeUnit.MINUTES);
+            int random_code = (int) ((Math.random() * 9 + 1) * 100000);
+            sendMailService.sendCodeMail(email, random_code);
+            redisTemplate.opsForValue().set(email + "_code", Integer.toString(random_code), 5, TimeUnit.MINUTES);
             return true;
         } catch (MessagingException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);
@@ -152,47 +151,39 @@ public class OpenAPIServiceImpl implements OpenAPIService {
 
 
     @Override
-    public ResponseResult<?> get_project_notice(EasyProject project, OpenAPIDTO openAPIDTO, EasyLink link) {
+    public ResponseResult<?> get_project_notice(EasyProject project, OpenAPIDTO openAPIDTO, EasyLink link, RSA rsa) {
 
         JSONObject result_object;
         try {
             long begin_time = System.currentTimeMillis();
             long now_time = System.currentTimeMillis() / 1000;
 
-            RSA rsa = null;
             String send_time;
-            if (project.getProjectEncryption()==1)
-            {
-                send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()),project.getProjectBase64());
+            if (project.getProjectEncryption() == 1) {
+                send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()), project.getProjectBase64());
 
-            } else if (project.getProjectEncryption()==2) {
-                String public_key_base64 = project.getProjectRsaPublic().replace("-----BEGIN PUBLIC KEY-----", "")
-                        .replace("-----END PUBLIC KEY-----", "")
-                        .replaceAll("\\s+", "");
-
-                String private_key_base64 = project.getProjectRsaPrivate().replace("-----BEGIN PRIVATE KEY-----", "")
-                        .replace("-----END PRIVATE KEY-----", "")
-                        .replaceAll("\\s+", "");
-
-                rsa = new RSA(private_key_base64, public_key_base64);
+            } else if (project.getProjectEncryption() == 2) {
 
                 send_time = rsa.decryptStr(Sutils.hex_to_string(openAPIDTO.getTime()), KeyType.PrivateKey);
 
-            }else {
+            } else {
                 throw new RuntimeException("加密方式异常");
             }
             long alive_time = Math.abs(now_time - Long.parseLong(send_time));
-            log.info("alive_time: {}",alive_time);
-            if (alive_time > 10)
-            {
+            log.info("alive_time: {}", alive_time);
+            if (alive_time > 10) {
                 return ResponseResult.fail("客户端请求超时: " + alive_time);
             }
 
-            String origin = "pid="+openAPIDTO.getPid()+"&time="+openAPIDTO.getTime()+"&"+project.getProjectKey();
-            String md5_origin = DigestUtil.sha256Hex(Sutils.base64_encode(origin,project.getProjectBase64())).toUpperCase();
+            String origin = "pid=" + openAPIDTO.getPid() + "&time=" + openAPIDTO.getTime() + "&" + project.getProjectKey();
+
+            String md5_origin = "";
+            if (project.getProjectEncryption() == 1)
+                md5_origin = DigestUtil.sha256Hex(Sutils.base64_encode(origin, project.getProjectBase64())).toUpperCase();
+            else if (project.getProjectEncryption() == 2)
+                md5_origin = DigestUtil.sha256Hex(Sutils.base64_encode(origin)).toUpperCase();
             String sign = Sutils.hex_to_string(openAPIDTO.getSign()).toUpperCase();
-            if (!md5_origin.equals(sign))
-            {
+            if (!md5_origin.equals(sign)) {
                 return ResponseResult.fail("客户端被篡改!");
             }
             // 获取程序公告
@@ -202,26 +193,36 @@ public class OpenAPIServiceImpl implements OpenAPIService {
             Integer code = link.getCode();
 
             JSONObject json = new JSONObject();
-            json.put("code",link.getCodeType()==1?code:code.toString());
-            json.put("notice",notice);
-            if (link.getReturnTime()==1)
-                json.put("time",now_time);
-            if (link.getSafeType()!=1)
-                return ResponseResult.success("获取成功",json);
+            json.put("code", link.getCodeType() == 1 ? code : code.toString());
+            json.put("notice", notice);
+            if (link.getReturnTime() == 1)
+                json.put("time", now_time);
+            if (link.getSafeType() != 1)
+                return ResponseResult.success("获取成功", json);
 
-            String safe_result = Sutils.to_hex(Sutils.base64_encode(json.toJSONString(),project.getProjectBase64()));
-            String token = DigestUtil.sha256Hex(Sutils.base64_encode(safe_result+"&"+project.getProjectKey(),project.getProjectBase64())).toUpperCase();
-            result_object =  new JSONObject();
-            result_object.put("notice",safe_result);
-            result_object.put("token",token);
+            String safe_result = "";
+            String token = "";
+            if (project.getProjectEncryption() == 1) {
+                safe_result = Sutils.to_hex(Sutils.base64_encode(json.toJSONString(), project.getProjectBase64()));
+
+                token = DigestUtil.sha256Hex(Sutils.base64_encode(safe_result + "&" + project.getProjectKey(), project.getProjectBase64())).toUpperCase();
+
+            } else if (project.getProjectEncryption() == 2) {
+                safe_result = Sutils.to_hex(rsa.encryptBase64(json.toJSONString(), KeyType.PrivateKey));
+
+                token = DigestUtil.sha256Hex(Sutils.base64_encode(safe_result + "&" + project.getProjectKey())).toUpperCase();
+            }
+            result_object = new JSONObject();
+            result_object.put("notice", safe_result);
+            result_object.put("token", token);
 
             long end_time = System.currentTimeMillis();
-            log.info("get_project_notice: {}ms",(end_time-begin_time));
-        }catch (Exception exception)
-        {
+            log.info("get_project_notice: {}ms", (end_time - begin_time));
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
             return ResponseResult.fail("客户端解析异常");
         }
 
-        return ResponseResult.success("获取成功",result_object);
+        return ResponseResult.success("获取成功", result_object);
     }
 }
