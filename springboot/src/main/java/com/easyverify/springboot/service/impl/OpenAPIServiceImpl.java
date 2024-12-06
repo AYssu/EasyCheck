@@ -1,5 +1,7 @@
 package com.easyverify.springboot.service.impl;
 
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -148,34 +150,77 @@ public class OpenAPIServiceImpl implements OpenAPIService {
         return null;
     }
 
+
     @Override
     public ResponseResult<?> get_project_notice(EasyProject project, OpenAPIDTO openAPIDTO, EasyLink link) {
-        String origin = "pid="+openAPIDTO.getPid()+"&time="+openAPIDTO.getTime()+"&"+project.getProjectKey();
-        String md5_origin = DigestUtil.sha256Hex(Sutils.base64_encode(origin,project.getProjectBase64())).toUpperCase();
-        String sign = Sutils.hex_to_string(openAPIDTO.getSign()).toUpperCase();
-        if (!md5_origin.equals(sign))
+
+        JSONObject result_object;
+        try {
+            long begin_time = System.currentTimeMillis();
+            long now_time = System.currentTimeMillis() / 1000;
+
+            RSA rsa = null;
+            String send_time;
+            if (project.getProjectEncryption()==1)
+            {
+                send_time = Sutils.base64_decode(Sutils.hex_to_string(openAPIDTO.getTime()),project.getProjectBase64());
+
+            } else if (project.getProjectEncryption()==2) {
+                String public_key_base64 = project.getProjectRsaPublic().replace("-----BEGIN PUBLIC KEY-----", "")
+                        .replace("-----END PUBLIC KEY-----", "")
+                        .replaceAll("\\s+", "");
+
+                String private_key_base64 = project.getProjectRsaPrivate().replace("-----BEGIN PRIVATE KEY-----", "")
+                        .replace("-----END PRIVATE KEY-----", "")
+                        .replaceAll("\\s+", "");
+
+                rsa = new RSA(private_key_base64, public_key_base64);
+
+                send_time = rsa.decryptStr(Sutils.hex_to_string(openAPIDTO.getTime()), KeyType.PrivateKey);
+
+            }else {
+                throw new RuntimeException("加密方式异常");
+            }
+            long alive_time = Math.abs(now_time - Long.parseLong(send_time));
+            log.info("alive_time: {}",alive_time);
+            if (alive_time > 10)
+            {
+                return ResponseResult.fail("客户端请求超时: " + alive_time);
+            }
+
+            String origin = "pid="+openAPIDTO.getPid()+"&time="+openAPIDTO.getTime()+"&"+project.getProjectKey();
+            String md5_origin = DigestUtil.sha256Hex(Sutils.base64_encode(origin,project.getProjectBase64())).toUpperCase();
+            String sign = Sutils.hex_to_string(openAPIDTO.getSign()).toUpperCase();
+            if (!md5_origin.equals(sign))
+            {
+                return ResponseResult.fail("客户端被篡改!");
+            }
+            // 获取程序公告
+
+            now_time = System.currentTimeMillis() / 1000;
+            String notice = project.getProjectNotice();
+            Integer code = link.getCode();
+
+            JSONObject json = new JSONObject();
+            json.put("code",link.getCodeType()==1?code:code.toString());
+            json.put("notice",notice);
+            if (link.getReturnTime()==1)
+                json.put("time",now_time);
+            if (link.getSafeType()!=1)
+                return ResponseResult.success("获取成功",json);
+
+            String safe_result = Sutils.to_hex(Sutils.base64_encode(json.toJSONString(),project.getProjectBase64()));
+            String token = DigestUtil.sha256Hex(Sutils.base64_encode(safe_result+"&"+project.getProjectKey(),project.getProjectBase64())).toUpperCase();
+            result_object =  new JSONObject();
+            result_object.put("notice",safe_result);
+            result_object.put("token",token);
+
+            long end_time = System.currentTimeMillis();
+            log.info("get_project_notice: {}ms",(end_time-begin_time));
+        }catch (Exception exception)
         {
-            return ResponseResult.fail("客户端被篡改!");
+            return ResponseResult.fail("客户端解析异常");
         }
-        // 获取程序公告
-
-        long now_time = System.currentTimeMillis() / 1000;
-        String notice = project.getProjectNotice();
-        Integer code = link.getCode();
-
-        JSONObject json = new JSONObject();
-        json.put("code",link.getCodeType()==1?code:code.toString());
-        json.put("notice",notice);
-        if (link.getReturnTime()==1)
-            json.put("time",now_time);
-        if (link.getSafeType()!=1)
-            return ResponseResult.success("获取成功",json);
-
-        String safe_result = Sutils.to_hex(Sutils.base64_encode(json.toJSONString(),project.getProjectBase64()));
-        String token = DigestUtil.sha256Hex(Sutils.base64_encode(safe_result+"&"+project.getProjectKey(),project.getProjectBase64())).toUpperCase();
-        JSONObject result_object =  new JSONObject();
-        result_object.put("notice",safe_result);
-        result_object.put("token",token);
 
         return ResponseResult.success("获取成功",result_object);
     }
