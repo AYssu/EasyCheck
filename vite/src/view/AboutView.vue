@@ -33,7 +33,14 @@
       </div>
     </div>
   </el-collapse-transition>
-
+  <a-config-provider
+      :theme="{
+        token: {
+          colorPrimary: '#17926c',
+        },
+      }"
+  >
+  </a-config-provider>
   <main class="main">
     <header class="top-title-header">
       <div class="header-container" style="display:flex;justify-content: space-between;align-items: center;">
@@ -45,7 +52,7 @@
           <el-menu
               :ellipsis=false
               active-text-color="#53e3a6"
-              background-color="#FFFFFF01"
+              background-color="#FFFFFF"
               class="el-menu-popper-demo"
               default-active="1"
               mode="horizontal"
@@ -104,7 +111,7 @@
           </button>
           <button class="main-show-content-button-button" type="button" @click="register_dialog_show=true">开发者注册
           </button>
-          <button class="main-show-content-button-button" style="background: white;color: rgb(128,128,128)"
+          <button class="main-show-content-button-button user-login" style="background-color: white;"
                   type="button">用户登录
           </button>
 
@@ -151,8 +158,7 @@
 
     <template #footer>
       <div >
-        <a-button type="default" @click="()=>{login_dialog_show = false;register_dialog_show = true;}"
-                  style="margin-right: 20px">没有账号？前往注册
+        <a-button @click="()=>{login_dialog_show = false;register_dialog_show = true;}">没有账号？前往注册
         </a-button>
         <a-button type="primary" :loading="confirmLoading" @click="to_login">登录</a-button>
       </div>
@@ -166,7 +172,7 @@
                   @keyup.enter="to_login"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox v-model="login_form.agree">同意协议</el-checkbox>
+        <el-checkbox style="--el-checkbox-checked-bg-color: #17926c;--el-checkbox-checked-text-color: #17926c"  v-model="login_form.agree">同意协议</el-checkbox>
       </el-form-item>
 
     </el-form>
@@ -178,8 +184,7 @@
       :width="phone_bool ? '90%' : '40%'">
     <template #footer>
       <div >
-        <a-button type="default" @click="()=>{register_dialog_show = false;login_dialog_show = true;}"
-                  style="margin-right: 20px">已有账号？前往登录
+        <a-button type="default" @click="()=>{register_dialog_show = false;login_dialog_show = true;}">已有账号？前往登录
         </a-button>
         <a-button type="primary" :loading="confirmLoading" @click="to_login">注册</a-button>
       </div>
@@ -204,7 +209,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-checkbox v-model="register_form.agree">同意协议</el-checkbox>
+        <el-checkbox style="--el-checkbox-checked-bg-color: #17926c;--el-checkbox-checked-text-color: #17926c"  v-model="register_form.agree">同意协议</el-checkbox>
       </el-form-item>
 
     </el-form>
@@ -435,6 +440,10 @@ const bottom_message = ref([{
 
 <style lang="scss" scoped>
 
+:deep(.el-checkbox__inner:hover) {
+  border-color: gray !important;
+}
+
 .transition-box {
   position: fixed;
   top: 60px;
@@ -556,7 +565,7 @@ const bottom_message = ref([{
     .main-show-content-title-text {
       font-size: 3rem;
       font-weight: bold;
-      background-image: linear-gradient(to right, #7375cc, #427551, #35b25e);
+      background-image: linear-gradient(to right, #165e58, #427551, #369091);
       background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -570,8 +579,7 @@ const bottom_message = ref([{
 
     .main-show-content-message-text {
       font-size: 1.5rem;
-
-      color: #7375cc;
+      color: #22594f;
     }
 
     .main-show-content-button-button {
@@ -644,10 +652,11 @@ const bottom_message = ref([{
     .el-card-list:hover {
       animation: moveUp 1s ease-in-out forwards; /* 鼠标悬停时触发动画，持续时间1秒，向前填充模式 */
       opacity: 1; /* 鼠标悬停时改变透明度 */
-      box-shadow: 3px 3px 10px 1px rgb(115, 204, 157), /* 右下方的阴影 */
-      -3px -3px 10px 1px rgb(115, 204, 157), /* 左上方的阴影 */
-      3px -3px 10px 1px rgb(115, 204, 157), /* 右上方的阴影 */
-      -3px 3px 10px 1px rgb(115, 204, 157); /* 左下方的阴影 */
+      box-shadow: 3px 3px 10px 1px rgb(255, 255, 255), /* 右下方的阴影 */
+      -3px -3px 10px 1px rgb(255, 255, 255), /* 左上方的阴影 */
+      3px -3px 10px 1px rgb(255, 255, 255), /* 右上方的阴影 */
+      -3px 3px 10px 1px rgb(255, 255, 255); /* 左下方的阴影 */
+      border: none;
     }
 
     .el-card-list:not(:hover) {
@@ -679,6 +688,11 @@ const bottom_message = ref([{
   .self-hidden-sm-and-down {
     display: none !important
   }
+
+  .user-login {
+    color: gray !important;
+  }
+
   .main {
     .bottom-content {
       grid-template-columns: 1fr;

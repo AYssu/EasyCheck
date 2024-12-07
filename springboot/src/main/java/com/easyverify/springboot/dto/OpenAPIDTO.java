@@ -7,8 +7,10 @@ import lombok.Data;
 public class OpenAPIDTO {
     @NotBlank(message = "前端配置异常")
     private String pid; // 程序ID
+
+    private String version; // 程序版本
     @NotBlank(message = "前端配置异常")
-    private String time;
+    private String time; // 时间戳
     @NotBlank(message = "前端配置异常")
-    private String sign;
+    private String sign; // 签名
 }

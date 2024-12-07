@@ -56,7 +56,8 @@ public class ProjectServiceImpl implements ProjectService {
     private LinkMapper linkMapper;
 
     @Autowired
-    private RedisTemplate<String,Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
+
     // 创建项目
     @Override
     public boolean create_project(ProjectCreateDTO projectCreateDTO) {
@@ -203,6 +204,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     /**
      * 验证公钥格式是否正确
+     *
      * @param publicKeyStr 公钥字符串
      * @return 验证结果
      */
@@ -221,6 +223,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     /**
      * 验证私钥格式是否正确
+     *
      * @param privateKeyStr 私钥字符串
      * @return 验证结果
      */
@@ -238,15 +241,14 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-    public static boolean isValidKeys(String publicKeyStr, String privateKeyStr){
+    public static boolean isValidKeys(String publicKeyStr, String privateKeyStr) {
         try {
             RSA rsa = new RSA(privateKeyStr, publicKeyStr);
             byte[] encrypt = rsa.encrypt(StrUtil.bytes("test测试", CharsetUtil.CHARSET_UTF_8), KeyType.PublicKey);
             byte[] decrypt = rsa.decrypt(encrypt, KeyType.PrivateKey);
             if (!StrUtil.equals(StrUtil.str(decrypt, CharsetUtil.CHARSET_UTF_8), "test测试"))
                 return false;
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             return false;
         }
         return true;
@@ -271,13 +273,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         String public_key = projectInfoDTO.getProjectRsaPublic();
         String private_key = projectInfoDTO.getProjectRsaPrivate();
-        if (projectInfoDTO.getProjectEncryption()==2)
-        {
+        if (projectInfoDTO.getProjectEncryption() == 2) {
             // 校验公钥私钥是否正确
-            if (private_key.contains("-----BEGIN PRIVATE KEY-----")&&private_key.contains("-----END PRIVATE KEY-----"))
-            {
-                if (public_key.contains("-----BEGIN PUBLIC KEY-----")&&public_key.contains("-----END PUBLIC KEY-----"))
-                {
+            if (private_key.contains("-----BEGIN PRIVATE KEY-----") && private_key.contains("-----END PRIVATE KEY-----")) {
+                if (public_key.contains("-----BEGIN PUBLIC KEY-----") && public_key.contains("-----END PUBLIC KEY-----")) {
                     String public_key_base64 = public_key.replace("-----BEGIN PUBLIC KEY-----", "")
                             .replace("-----END PUBLIC KEY-----", "")
                             .replaceAll("\\s+", "");
@@ -286,19 +285,19 @@ public class ProjectServiceImpl implements ProjectService {
                             .replace("-----END PRIVATE KEY-----", "")
                             .replaceAll("\\s+", "");
 
-                    if (!isValidPublicKey(public_key_base64)){
+                    if (!isValidPublicKey(public_key_base64)) {
                         throw new RuntimeException("公钥格式错误");
                     }
-                    if (!isValidPrivateKey(private_key_base64)){
+                    if (!isValidPrivateKey(private_key_base64)) {
                         throw new RuntimeException("私钥格式错误");
                     }
 
                     if (!isValidKeys(public_key_base64, private_key_base64))
                         throw new RuntimeException("公钥私钥不匹配");
-                }else {
+                } else {
                     throw new RuntimeException("公钥格式错误");
                 }
-            }else {
+            } else {
                 throw new RuntimeException("私钥格式错误");
             }
         }
@@ -329,14 +328,8 @@ public class ProjectServiceImpl implements ProjectService {
     public Object get_project_variable(Integer pid) {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
-        LambdaQueryWrapper<EasyVariable> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(EasyVariable::getProjectId, project.getProjectId());
-        EasyVariable variable = variableMapper.selectOne(queryWrapper);
-        if (variable == null)
-            return null;
-        String variableJson = variable.getVariableJson();
-        Object json = JSON.parse(variableJson);
-        log.info("{}=>{}", variableJson, json);
+
+        Object json = JSON.parse(get_project_variable_pid_redis(project.getProjectId()));
         try {
             return json;
         } catch (Exception e) {
@@ -346,12 +339,27 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public String  get_project_variable_pid_redis(Integer pid) {
+        String variable_redis = (String)redisTemplate.opsForValue().get("easy_variable_"+pid);
+        if (variable_redis != null)
+            return variable_redis;
+        LambdaQueryWrapper<EasyVariable> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyVariable::getProjectId, pid);
+        EasyVariable variable = variableMapper.selectOne(queryWrapper);
+        if (variable == null)
+            return null;
+        String variableJson = variable.getVariableJson();
+        redisTemplate.opsForValue().set("easy_variable_"+pid, variableJson, 60, TimeUnit.MINUTES);
+        return variableJson;
+    }
+    @Override
     public boolean set_project_variable(Integer pid, Object json) {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
         LambdaQueryWrapper<EasyVariable> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(EasyVariable::getProjectId, project.getProjectId());
         EasyVariable variable = variableMapper.selectOne(queryWrapper);
+        redisTemplate.delete("easy_variable_" + pid);
         if (variable == null) {
             variable = new EasyVariable();
             variable.setProjectId(project.getProjectId());
@@ -370,7 +378,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
 
-        EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
+        EasyProjectUpdate projectUpdate = get_project_update_by_id(project.getProjectId());
         if (projectUpdate == null) {
             return null;
         }
@@ -381,18 +389,29 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public EasyProjectUpdate get_project_update_by_id(Integer id) {
+        EasyProjectUpdate update = (EasyProjectUpdate) redisTemplate.opsForValue().get("easy_project_update_" + id);
+        if (update != null)
+            return update;
+        LambdaQueryWrapper<EasyProjectUpdate> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(EasyProjectUpdate::getProjectId, id);
+        EasyProjectUpdate projectUpdate = updateMapper.selectOne(queryWrapper);
+        redisTemplate.opsForValue().set("easy_project_update_" + id, projectUpdate, 10, TimeUnit.MINUTES);
+        return projectUpdate;
+    }
+
+    @Override
     public boolean set_project_default_update(Integer pid) {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
 
 
-        EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
+        EasyProjectUpdate projectUpdate = get_project_update_by_id(project.getProjectId());
         if (projectUpdate != null)
             throw new RuntimeException("项目已存在更新");
         // 插入一条记录
         EasyProjectUpdate new_projectUpdate = new EasyProjectUpdate();
         new_projectUpdate.setProjectId(project.getProjectId());
-        redisTemplate.delete("open_project_" + pid);
         return updateMapper.insert(new_projectUpdate) > 0;
     }
 
@@ -400,7 +419,7 @@ public class ProjectServiceImpl implements ProjectService {
     public boolean update_update_info(ProjectUpdateDTO projectUpdateDTO) {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(projectUpdateDTO.getPid(), user.getUserId());
-        EasyProjectUpdate projectUpdate = get_project_update_by_pid(project.getProjectId());
+        EasyProjectUpdate projectUpdate = get_project_update_by_id(project.getProjectId());
         if (projectUpdate == null) {
             throw new RuntimeException("项目不存在更新功能");
         }
@@ -409,13 +428,13 @@ public class ProjectServiceImpl implements ProjectService {
         projectUpdate.setUpdateUrl(projectUpdateDTO.getUpdateUrl());
         projectUpdate.setUpdateVersion(projectUpdateDTO.getUpdateVersion());
         projectUpdate.setMustUpdate(projectUpdateDTO.getMustUpdate());
-        redisTemplate.delete("open_project_" + project.getProjectId());
+        redisTemplate.delete("easy_project_update_" + project.getProjectId());
         return updateMapper.updateById(projectUpdate) > 0;
     }
 
     // 更新通知
     @Override
-    public boolean update_update_notice_info(Integer pid, String notice) {
+    public boolean update_project_notice_info(Integer pid, String notice) {
         EasyUser user = userService.get_user_by_jwt();
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
         project.setProjectNotice(notice);
@@ -429,7 +448,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyProject project = get_project_by_id_with_uid(pid, user.getUserId());
 
         List<EasyLink> links = get_project_links_redis(project.getProjectId());
-        if (links == null|| links.isEmpty() )
+        if (links == null || links.isEmpty())
             return null;
         return links.stream()
                 .map(link -> {
@@ -446,20 +465,20 @@ public class ProjectServiceImpl implements ProjectService {
         Object object = redisTemplate.opsForValue().get("project_links_" + pid);
         if (object instanceof List<?> list) {
             if (!list.isEmpty() && list.get(0) instanceof EasyLink) {
-                log.info("redis get project links temp {}",pid);
+                log.info("redis get project links temp {}", pid);
                 return (List<EasyLink>) list;
             }
         }
         LambdaQueryWrapper<EasyLink> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(EasyLink::getProjectId,pid);
+        queryWrapper.eq(EasyLink::getProjectId, pid);
         List<EasyLink> easyLinks = linkMapper.selectList(queryWrapper);
-        if (easyLinks.isEmpty())
-        {
+        if (easyLinks.isEmpty()) {
             return null;
         }
-        redisTemplate.opsForValue().set("project_links_"+pid,easyLinks,30, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set("project_links_" + pid, easyLinks, 30, TimeUnit.MINUTES);
         return easyLinks;
     }
+
     @Override
     public String add_project_link(ProjectLinkDTO projectLinkDTO) {
         EasyUser user = userService.get_user_by_jwt();
@@ -473,18 +492,16 @@ public class ProjectServiceImpl implements ProjectService {
         StringBuilder returnMessage = new StringBuilder();
         for (Integer type : types) {
             Return_Vo return_vo = insert_link(project.getProjectId(), type, links);
-            if (return_vo.getSuccess())
-            {
+            if (return_vo.getSuccess()) {
                 returnMessage.append(return_vo.getMessage()).append("\n");
-            }else {
+            } else {
                 returnMessage.append(get_link_name(type)).append(":").append(return_vo.getMessage()).append("\n");
                 errors++;
             }
         }
-        if (errors == 0)
-        {
+        if (errors == 0) {
             returnMessage.append("全部").append(size).append("条数据添加完成!未发送错误!\n");
-        }else {
+        } else {
             returnMessage.append("添加").append(size).append("条完成!捕获").append(errors).append("条异常数据!");
         }
 
@@ -494,11 +511,11 @@ public class ProjectServiceImpl implements ProjectService {
         return returnMessage.toString();
     }
 
-    Return_Vo insert_link(Integer pid, Integer type, List<EasyLink> links){
+    Return_Vo insert_link(Integer pid, Integer type, List<EasyLink> links) {
 
         Return_Vo result = new Return_Vo();
 
-        if (links != null){
+        if (links != null) {
             boolean exists = links.stream().anyMatch(link -> link.getType().equals(type));
             if (exists) {
                 result.setSuccess(false);
@@ -530,13 +547,13 @@ public class ProjectServiceImpl implements ProjectService {
         easyLink.setLink(link_key);
         easyLink.setProjectId(pid);
         easyLink.setType(type);
-        boolean success =  linkMapper.insert(easyLink) > 0 ;
-        if (!success){
+        boolean success = linkMapper.insert(easyLink) > 0;
+        if (!success) {
             result.setSuccess(false);
             result.setMessage("插入数据失败!");
             return result;
         }
-        return new Return_Vo(true,get_link_name(type)+": 新增成功!");
+        return new Return_Vo(true, get_link_name(type) + ": 新增成功!");
     }
 
     @Override
@@ -553,11 +570,7 @@ public class ProjectServiceImpl implements ProjectService {
             default -> "未知类型";
         };
     }
-    EasyProjectUpdate get_project_update_by_pid(Integer pid) {
-        LambdaQueryWrapper<EasyProjectUpdate> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(EasyProjectUpdate::getProjectId, pid);
-        return updateMapper.selectOne(queryWrapper);
-    }
+
 
     // 获取项目 根据用户ID
     @Override
@@ -573,9 +586,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public EasyProject get_project_by_id(Integer id) {
-        EasyProject project = (EasyProject)redisTemplate.opsForValue().get("open_project_" + id);
+        EasyProject project = (EasyProject) redisTemplate.opsForValue().get("open_project_" + id);
         if (project != null) {
-            log.info("redis get project temp {}",id);
+            log.info("redis get project temp {}", id);
             return project;
         }
         project = projectMapper.selectById(id);
@@ -606,7 +619,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RuntimeException("项目不存在该类型链接");
         }
 
-        redisTemplate.delete("project_links_"+project.getProjectId());
+        redisTemplate.delete("project_links_" + project.getProjectId());
         easyLink.setCode(projectLinkDTO.getCode());
         easyLink.setCodeType(projectLinkDTO.getCodeType());
         easyLink.setSafeType(projectLinkDTO.getSafeType());
@@ -623,7 +636,7 @@ public class ProjectServiceImpl implements ProjectService {
         EasyProject project = get_project_by_id_with_uid(link.getProjectId(), user.getUserId());
         if (project == null)
             throw new RuntimeException("链接越权删除");
-        redisTemplate.delete("project_links_"+project.getProjectId());
+        redisTemplate.delete("project_links_" + project.getProjectId());
         return linkMapper.deleteById(id) > 0;
     }
 }

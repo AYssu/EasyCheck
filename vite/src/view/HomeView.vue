@@ -1,8 +1,16 @@
 <template>
+  <a-config-provider
+      :theme="{
+        token: {
+          colorPrimary: '#17926c',
+        },
+      }"
+  >
+  </a-config-provider>
   <el-container class="layout-container-demo">
 
     <el-container>
-      <el-aside v-if="!phone_bool" style="max-width: 200px" width="auto">
+      <el-aside v-if="!phone_bool" style="max-width: 250px" width="200px">
         <div>
           <logo_view v-if="show_aside&&!phone_bool"/>
           <div style="width: 100%;display: flex;justify-content: center;margin-top: 18px;margin-bottom: 10px">

@@ -1,4 +1,5 @@
 <template>
+
   <div>
     <div style="margin-top: 10px">
       <div v-if="phone_bool" style="display:flex;justify-content: space-between;margin-right: 10px" >
@@ -161,9 +162,7 @@
           </template>
           <template #description>
             <div>
-              <div>
-                <el-text size="small" type="info">创建时间: {{ item.projectCreateTime }}</el-text>
-              </div>
+              <el-text size="small" :style="phone_bool?'font-size: 0.7rem':'font-size: 0.9rem'" type="info">{{ item.projectCreateTime }}</el-text>
             </div>
           </template>
         </a-card-meta>
@@ -209,8 +208,8 @@
         :width="phone_bool?'80%':'40%'"
         @close="()=>a_drawer=false">
       <template #extra>
-        <a-button :size="phone_bool?'small':''" style="margin-right: 8px" @click="a_drawer = false">取消</a-button>
-        <a-button :size="phone_bool?'small':''"  :loading="project_update_info_loading" type="primary" @click="on_update_project()">更新数据</a-button>
+        <el-button  style="--el-button-hover-bg-color: #FFFFFF00;--el-button-hover-text-color: grey;--el-button-hover-border-color: #17926c;--el-button-active-border-color:#17926c;margin-right: 8px" :size="phone_bool?'small':''"  @click="a_drawer = false">取消</el-button>
+        <el-button color="#17926c" :size="phone_bool?'small':''"  :loading="project_update_info_loading" type="primary" @click="on_update_project()">更新数据</el-button>
       </template>
       <a-form :model="show_project_info" layout="vertical">
         <a-form-item label="项目名称">
@@ -342,13 +341,19 @@
             </el-icon>
             <el-text style="color: white">格式化</el-text>
           </el-button>
-          <el-button :loading="update_variable_loading" type="primary" @click="update_variable">更新变量</el-button>
+          <el-button color="#17926c" :loading="update_variable_loading" type="primary" @click="update_variable">更新变量</el-button>
         </el-row>
       </template>
     </a-modal>
 
-    <a-modal v-model:open="show_project_update" cancel-text="取消" ok-text="修改" title="编辑项目更新"
-             @ok="update_project_update_info">
+    <a-modal v-model:open="show_project_update" title="编辑项目更新"
+            >
+      <template #footer>
+
+        <a-button @click="show_project_update=false" >取消</a-button>
+        <a-button type="primary" :loading="project_update_loading" @click="update_project_update_info">修改</a-button>
+
+      </template>
       <a-form :model="project_update_info">
         <a-form-item label="更新版本" style="margin-top: 20px">
           <a-input v-model:value="project_update_info.updateVersion" placeholder="请输入项目名称"></a-input>
@@ -406,7 +411,7 @@
                 <el-text :size="phone_bool?'small':''">{{item.label}}</el-text>
               </el-option>
             </el-select>
-            <el-button :icon="CirclePlusFilled" size="small" type="primary" @click="add_url" >添加</el-button>
+            <el-button color="#17926c" :icon="CirclePlusFilled" size="small" type="primary" @click="add_url" >添加</el-button>
 
           </div>
         </div>
@@ -835,17 +840,24 @@ const on_click_update_project = async (pid: number) => {
   }
 }
 
+const project_update_loading = ref(false);
 const update_project_update_info = async () => {
+  project_update_loading.value = true
   const result = await set_project_update_info_services(project_update_info.value);
   console.log(project_update_info.value)
   try {
     if (result.data.code === 200) {
       message.success('更新成功')
       show_project_update.value = false
+      project_update_loading.value = false
     } else {
       message.error(result.data.message)
+      project_update_loading.value = false
+
     }
   } catch (e) {
+    project_update_loading.value = false
+
     console.log(e)
   }
 }
