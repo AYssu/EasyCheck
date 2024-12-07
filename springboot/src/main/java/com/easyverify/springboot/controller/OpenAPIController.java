@@ -147,12 +147,12 @@ public class OpenAPIController {
                 }
                 case 5:
                 {
+                    return openAPIService.get_project_update(project,openAPIDTO,link,rsa);
                 }
-                break;
                 case 6:
                 {
+                    return openAPIService.get_project_variable(project,openAPIDTO,link,rsa);
                 }
-                break;
                 case 7:
                 {
                 }

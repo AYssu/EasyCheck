@@ -3,6 +3,7 @@ package com.easyverify.springboot.service;
 import com.easyverify.springboot.dto.*;
 import com.easyverify.springboot.entity.EasyLink;
 import com.easyverify.springboot.entity.EasyProject;
+import com.easyverify.springboot.entity.EasyProjectUpdate;
 import com.easyverify.springboot.vo.*;
 
 import java.util.List;
@@ -93,6 +94,12 @@ public interface ProjectService {
     Object get_project_variable(Integer pid);
 
     /**
+     * 获取项目变量从缓存
+     * @param pid 项目id
+     * @return Json结构
+     */
+    String get_project_variable_pid_redis(Integer pid);
+    /**
      * 设置项目变量
      * @param pid 项目id
      * @param json Json结构
@@ -107,6 +114,12 @@ public interface ProjectService {
      */
     ProjectUpdateVo get_project_update(Integer pid);
 
+    /**
+     * 根据项目更新id获取项目更新信息
+     * @param id 项目更新id
+     * @return EasyProjectUpdate
+     */
+    EasyProjectUpdate get_project_update_by_id(Integer id);
     /**
      * 设置项目默认更新信息
      * @param pid 项目id
@@ -127,7 +140,7 @@ public interface ProjectService {
      * @param notice 通知内容
      * @return boolean
      */
-    boolean update_update_notice_info(Integer pid, String notice);
+    boolean update_project_notice_info(Integer pid, String notice);
 
     /**
      * 获取项目链接
