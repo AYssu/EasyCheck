@@ -2,8 +2,17 @@
 .CodeMirror-lint-tooltip {
   z-index: 100000 !important;
 }
+.ant-input:focus, .ant-input-focused {
+  box-shadow: none;
+}
 .el-input ,.el-textarea{
   --el-input-focus-border-color: #17926c !important;
+}
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px #17926c inset !important;
+}
+.el-select-dropdown__item.is-selected {
+  color: #17926c !important;
 }
 :root {
   line-height: 1.5; /* 1 */

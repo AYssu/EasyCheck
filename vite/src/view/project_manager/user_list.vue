@@ -7,7 +7,7 @@
             <el-text size="small">用户列表</el-text>
           </div>
         <div>
-          <el-button color="#42b983"  size="small" :icon="Search" plain>搜索</el-button>
+          <el-button  color="#42b983"  size="small" :icon="Search" style="color:white;">搜索</el-button>
         </div>
       </div>
       <el-form :size="phone_bool?'small':''" style="margin-left: 10px;max-width: calc(100% - 20px); " :inline="!phone_bool">
@@ -28,7 +28,7 @@
         </el-form-item>
 
         <el-form-item v-if="!phone_bool">
-          <el-button color="#42b983" plain :icon="Search" type="primary" >搜索</el-button>
+          <el-button style="color: white" color="#42b983" :icon="Search" type="primary" >搜索</el-button>
         </el-form-item>
       </el-form>
     </div>

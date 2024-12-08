@@ -20,6 +20,7 @@ public class EasyProject {
 
     private LocalDateTime projectCreateTime; // 项目创建时间
 
+    private Integer projectModel ;// 程序的模式 1. 收费模式 2. 免费模式 3. 加时模式
     private String projectKey; // 项目密钥
     private String projectMessage; // 项目描述
     private String projectNotice; // 项目公告

@@ -52,7 +52,7 @@
           <el-menu
               :ellipsis=false
               active-text-color="#53e3a6"
-              background-color="#FFFFFF"
+              background-color="#ffffff00"
               class="el-menu-popper-demo"
               default-active="1"
               mode="horizontal"
@@ -111,7 +111,7 @@
           </button>
           <button class="main-show-content-button-button" type="button" @click="register_dialog_show=true">开发者注册
           </button>
-          <button class="main-show-content-button-button user-login" style="background-color: white;"
+          <button class="main-show-content-button-button user-login" style="background-color: white;color: grey"
                   type="button">用户登录
           </button>
 
@@ -153,14 +153,14 @@
   </div>
 
   <a-modal v-model:open="login_dialog_show"
-           title="用户登录"
-           :width="phone_bool ? '90%' : '40%'">
+           :width="phone_bool ? '90%' : '40%'"
+           title="用户登录">
 
     <template #footer>
-      <div >
+      <div>
         <a-button @click="()=>{login_dialog_show = false;register_dialog_show = true;}">没有账号？前往注册
         </a-button>
-        <a-button type="primary" :loading="confirmLoading" @click="to_login">登录</a-button>
+        <a-button :loading="confirmLoading" type="primary" @click="to_login">登录</a-button>
       </div>
     </template>
     <el-form ref="loginForm" :model="login_form" :rules="login_rules" label-width="60px" style="margin-top: 20px">
@@ -172,7 +172,9 @@
                   @keyup.enter="to_login"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-checkbox style="--el-checkbox-checked-bg-color: #17926c;--el-checkbox-checked-text-color: #17926c"  v-model="login_form.agree">同意协议</el-checkbox>
+        <el-checkbox v-model="login_form.agree"
+                     style="--el-checkbox-checked-bg-color: #17926c;--el-checkbox-checked-text-color: #17926c">同意协议
+        </el-checkbox>
       </el-form-item>
 
     </el-form>
@@ -180,26 +182,28 @@
   </a-modal>
   <a-modal
       v-model:open="register_dialog_show"
-      title="用户注册"
-      :width="phone_bool ? '90%' : '40%'">
+      :width="phone_bool ? '90%' : '40%'"
+      title="用户注册">
     <template #footer>
-      <div >
+      <div>
         <a-button type="default" @click="()=>{register_dialog_show = false;login_dialog_show = true;}">已有账号？前往登录
         </a-button>
-        <a-button type="primary" :loading="confirmLoading" @click="to_login">注册</a-button>
+        <a-button :loading="confirmLoading" type="primary" @click="to_login">注册</a-button>
       </div>
     </template>
-    <el-form ref="loginForm" label-position="top" :model="register_form" :rules="register_rules" label-width="60px" style="margin-top: 20px">
+    <el-form ref="loginForm" :model="register_form" :rules="register_rules" label-position="top" label-width="60px"
+             style="margin-top: 20px">
       <el-form-item label="账号" prop="username">
         <el-input v-model="register_form.username" clearable placeholder="请输入账号" type="text"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="register_form.email" clearable placeholder="请输入邮箱" type="text"></el-input>
       </el-form-item>
-      <el-form-item label="验证码" prop="code" >
+      <el-form-item label="验证码" prop="code">
         <el-input v-model="register_form.code" clearable placeholder="请输入验证码" type="text">
           <template #append>
-            <el-button type="primary" :loading="send_loading" @click="send_code(register_form.email)">{{ send_text }}</el-button>
+            <el-button :loading="send_loading" type="primary" @click="send_code(register_form.email)">{{ send_text }}
+            </el-button>
           </template>
         </el-input>
       </el-form-item>
@@ -209,13 +213,17 @@
       </el-form-item>
 
       <el-form-item>
-        <el-checkbox style="--el-checkbox-checked-bg-color: #17926c;--el-checkbox-checked-text-color: #17926c"  v-model="register_form.agree">同意协议</el-checkbox>
+        <el-checkbox v-model="register_form.agree"
+                     style="--el-checkbox-checked-bg-color: #17926c;--el-checkbox-checked-text-color: #17926c">同意协议
+        </el-checkbox>
       </el-form-item>
 
     </el-form>
 
   </a-modal>
-  <el-backtop :bottom="20" :right="20"/>
+  <el-backtop  :bottom="20" :right="20">
+    <el-icon color="#17926c"><CaretTop /></el-icon>
+  </el-backtop>
 </template>
 
 
@@ -292,7 +300,7 @@ const validateEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
-const send_code = async (email: string)=> {
+const send_code = async (email: string) => {
   if (!validateEmail(email))
     return message.error("邮箱格式不正确")
   send_loading.value = true;
@@ -300,18 +308,16 @@ const send_code = async (email: string)=> {
   message.loading("请等待片刻,邮箱酱在全力发送...")
   const result = await user_register_code_services(email);
   try {
-    if (result.data.code === 200)
-    {
+    if (result.data.code === 200) {
       message.success(result.data.message);
       send_text.value = "再次发送";
       send_loading.value = false;
-    }else {
+    } else {
       message.error(result.data.message);
       send_loading.value = false;
       send_text.value = "发送验证码";
     }
-  }catch (e)
-  {
+  } catch (e) {
     console.log(e)
   }
 }
@@ -363,7 +369,7 @@ const to_register = async () => {
     login_dialog_show.value = true;
   } else
     confirmLoading.value = false
-    ElMessage.error(register_request.data.message);
+  ElMessage.error(register_request.data.message);
 
 };
 
@@ -376,7 +382,8 @@ import {ArrowRight} from "@element-plus/icons-vue";
 import {message} from "ant-design-vue";
 import phone_size from "@/utils/phone_size.ts";
 import {onUnmounted} from "vue";
-const {phone_bool,remove_phone_size} = phone_size();
+
+const {phone_bool, remove_phone_size} = phone_size();
 
 onUnmounted(() => {
   remove_phone_size()
@@ -441,7 +448,7 @@ const bottom_message = ref([{
 <style lang="scss" scoped>
 
 :deep(.el-checkbox__inner:hover) {
-  border-color: gray !important;
+  color: gray !important;
 }
 
 .transition-box {
@@ -648,14 +655,9 @@ const bottom_message = ref([{
       }
     }
 
-
     .el-card-list:hover {
       animation: moveUp 1s ease-in-out forwards; /* 鼠标悬停时触发动画，持续时间1秒，向前填充模式 */
       opacity: 1; /* 鼠标悬停时改变透明度 */
-      box-shadow: 3px 3px 10px 1px rgb(255, 255, 255), /* 右下方的阴影 */
-      -3px -3px 10px 1px rgb(255, 255, 255), /* 左上方的阴影 */
-      3px -3px 10px 1px rgb(255, 255, 255), /* 右上方的阴影 */
-      -3px 3px 10px 1px rgb(255, 255, 255); /* 左下方的阴影 */
       border: none;
     }
 
@@ -689,9 +691,6 @@ const bottom_message = ref([{
     display: none !important
   }
 
-  .user-login {
-    color: gray !important;
-  }
 
   .main {
     .bottom-content {

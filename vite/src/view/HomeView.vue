@@ -10,10 +10,10 @@
   <el-container class="layout-container-demo">
 
     <el-container>
-      <el-aside v-if="!phone_bool" style="max-width: 250px" width="200px">
+      <el-aside v-if="!phone_bool"  :width="!show_aside?'auto':'200px'" >
         <div>
           <logo_view v-if="show_aside&&!phone_bool"/>
-          <div style="width: 100%;display: flex;justify-content: center;margin-top: 18px;margin-bottom: 10px">
+          <div style="width: 100%;display: flex;justify-content: center;">
             <img v-if="!show_aside||phone_bool" :src="icon_translate" alt="icon" style="width: 25px;height: 25px">
           </div>
           <el-menu :collapse="!show_aside||phone_bool"
@@ -21,6 +21,7 @@
                    :default-openeds="['1', '2']"
                    class="el-menu-vertical-demo"
                    router
+                   style="margin-top: 18px;margin-bottom: 10px"
                    @close="handleClose"
                    @open="handleOpen">
 
@@ -136,7 +137,7 @@
         </div>
       </el-aside>
       <el-container>
-        <el-header  :style="phone_bool?'font-size: 14px;position: fixed;width: 100%;background-color: white;z-index: 999':'font-size: 12px;'">
+        <el-header  :style="phone_bool?'backdrop-filter: blur(0.1rem);font-size: 14px;position: fixed;width: 100%;z-index: 999':'font-size: 12px;'">
           <top_bar/>
         </el-header>
         <div v-if="phone_bool" style="height: 40px;"></div>
@@ -164,6 +165,7 @@
                    :default-openeds="['1', '2']"
                    class="el-menu-vertical-demo"
                    router
+                   style="margin-top: 18px;margin-bottom: 10px"
                    @close="handleClose"
                    @open="handleOpen">
 
