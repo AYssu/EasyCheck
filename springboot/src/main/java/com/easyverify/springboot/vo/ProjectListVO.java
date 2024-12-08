@@ -19,7 +19,7 @@ public class ProjectListVO {
     private String projectMessage; // 项目描述
     private String projectNotice; // 项目公告
     private String projectBase64; // 项目自定义BASE64
-
+    private Integer projectModel ;// 程序的模式 1. 收费模式 2. 免费模式 3. 加时模式
     private Integer returnUpdate; // 验证程序更新为最新版本返回公告
     private Integer returnVerify; // 用户登录或卡密登录成功返回变量
     private Integer projectEncryption; // 程序加密方式 1. base64自定义编码 2. rsa非对称加密

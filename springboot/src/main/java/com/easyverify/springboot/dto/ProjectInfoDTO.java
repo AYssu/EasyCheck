@@ -23,8 +23,13 @@ public class ProjectInfoDTO {
     @Max(value = 2, message = "输入异常")
     private Integer returnUpdate; // 验证程序更新为最新版本返回公告
 
-    @NotNull(message = "项目更新方式不能为空")
 
+    @NotNull(message = "项目更新方式不能为空")
+    @Min(value = 1, message = "输入异常")
+    @Max(value = 3, message = "输入异常")
+    private Integer projectModel ;// 程序的模式 1. 收费模式 2. 免费模式 3. 加时模式
+
+    @NotNull(message = "项目更新方式不能为空")
     @Min(value = 1, message = "输入异常")
     @Max(value = 2, message = "输入异常")
     private Integer returnVerify; // 用户登录或卡密登录成功返回变量
