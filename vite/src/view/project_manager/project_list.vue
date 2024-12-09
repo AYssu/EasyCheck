@@ -67,10 +67,10 @@
                            version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M512 64c247.424 0 448 200.576 448 448S759.424 960 512 960 64 759.424 64 512 264.576 64 512 64z m0 72c-207.66 0-376 168.34-376 376s168.34 376 376 376 376-168.34 376-376-168.34-376-376-376z"
-                            fill="#333333" p-id="9276"></path>
+                             p-id="9276"></path>
                         <path
                             d="M511.552 274.003l0.185-0.002 0.158-0.001h0.21a36.364 36.364 0 0 1 0.426 0.004L512 274c0.206 0 0.41 0.002 0.615 0.005l0.043 0.001 0.182 0.003a36.207 36.207 0 0 1 1.746 0.082l0.101 0.008c0.15 0.01 0.299 0.023 0.448 0.036l0.203 0.018c0.095 0.008 0.19 0.017 0.284 0.027l0.277 0.03c0.118 0.011 0.236 0.025 0.354 0.039l0.126 0.016c0.154 0.017 0.307 0.037 0.46 0.057l0.05 0.009a35.674 35.674 0 0 1 8.426 2.211l0.054 0.022 0.015 0.006 0.222 0.09 0.101 0.042 0.195 0.08c0.245 0.103 0.49 0.208 0.734 0.317l0.025 0.011 0.112 0.05a35.694 35.694 0 0 1 1.168 0.55l0.134 0.068c0.128 0.063 0.254 0.127 0.38 0.192l0.132 0.068a35.817 35.817 0 0 1 8.11 5.767l168.889 157.898 0.431 0.41c14.106 13.623 14.723 36.094 1.28 50.473-13.578 14.523-36.359 15.29-50.883 1.711L548 392.94V726c0 19.882-16.118 36-36 36-19.683 0-35.677-15.797-35.995-35.405L476 726V392.939L367.586 494.297c-14.524 13.579-37.305 12.812-50.883-1.711-13.443-14.379-12.826-36.85 1.28-50.473l0.431-0.41 168.89-157.898a35.844 35.844 0 0 1 8.11-5.767l0.117-0.06a33.602 33.602 0 0 1 1.35-0.66 35.758 35.758 0 0 1 10.791-3.06l0.024-0.002c0.15-0.02 0.301-0.036 0.453-0.052l0.164-0.017 0.345-0.034 0.23-0.02c0.132-0.012 0.265-0.022 0.398-0.032l0.112-0.008-0.112 0.008a36.32 36.32 0 0 1 1.452-0.08c0.042 0 0.083-0.002 0.125-0.003 0.122-0.004 0.244-0.008 0.366-0.01h0.015l0.128-0.003h0.033l0.083-0.002h0.064z"
-                            fill="#333333" p-id="9277"></path>
+                             p-id="9277"></path>
                       </svg>
                     </el-icon>
                     更新管理
@@ -84,7 +84,7 @@
                            version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M774.447309 893.981872 246.411717 893.981872c-64.806461 0-117.349037-52.542376-117.349037-117.349237L129.06268 248.580654c0-64.789473 52.542776-117.331649 117.349037-117.331649l528.035592 0c64.806861 0 117.349237 52.542176 117.349237 117.331649l0 528.052181C891.796546 841.439696 839.25437 893.981872 774.447309 893.981872zM833.138516 248.580654c0-32.386042-26.288177-58.657031-58.691207-58.657031L246.411717 189.923624c-32.386042 0-58.674619 26.271188-58.674619 58.657031l0 528.052181c0 32.386042 26.288576 58.675018 58.674619 58.675018l528.035592 0c32.403031 0 58.691207-26.289176 58.691207-58.675018L833.138516 248.580654zM715.789279 717.958816l-410.703543 0c-16.218404 0-29.337109-13.135094-29.337109-29.337109 0-16.219004 13.118506-29.338109 29.337109-29.338109l410.703543 0c16.185027 0 29.338109 13.119105 29.338109 29.338109C745.127388 704.823722 731.974305 717.958816 715.789279 717.958816zM715.789279 365.94668c-16.235992 0-29.33691-13.153082-29.33691-29.355097 0-16.219004 13.101117-29.319521 29.33691-29.319521 16.185027 0 29.338109 13.100518 29.338109 29.319521C745.127388 352.793798 731.974305 365.94668 715.789279 365.94668zM587.796458 541.93556 305.085736 541.93556c-16.218404 0-29.337109-13.136094-29.337109-29.320121 0-16.219004 13.118506-29.337509 29.337109-29.337509l282.710522 0c16.202015 0 29.338109 13.118506 29.338109 29.337509C617.134367 528.799466 603.963497 541.93556 587.796458 541.93556zM510.446102 365.94668c-16.235992 0-29.33651-13.153082-29.33651-29.355097 0-16.219004 13.100518-29.319521 29.33651-29.319521 16.203014 0 29.320121 13.100518 29.320121 29.319521C539.766023 352.793798 526.649116 365.94668 510.446102 365.94668zM305.085736 365.94668c-16.218404 0-29.337109-13.153082-29.337109-29.355097 0-16.219004 13.118506-29.319521 29.337109-29.319521 16.236991 0 29.337509 13.100518 29.337509 29.319521C334.423445 352.793798 321.322727 365.94668 305.085736 365.94668z"
-                            fill="#262535" p-id="14604"></path>
+                            p-id="14604"></path>
                       </svg>
                     </el-icon>
                     公告管理
@@ -99,13 +99,13 @@
                            version="1.1" viewBox="0 0 1246 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M303.339977 664.942675l106.011591-276.040855h39.350086l112.971638 276.040855h-41.612716l-32.193289-83.618933h-115.431018l-30.311864 83.618933h-38.784428z m79.647033-113.352842h93.579424l-28.811641-76.44984q-13.182279-34.775639-19.576668-57.242078a351.974224 351.974224 0 0 1-14.879251 52.716819zM590.853841 664.942675V388.90182h104.130165q27.483576 0 41.99392 2.631537 20.339076 3.393945 34.074715 12.89945t22.134424 26.647387a84.578091 84.578091 0 0 1 8.37419 37.653114q0 35.20603-22.404955 59.590786t-80.962803 24.384757H627.387936v112.221527h-36.534095z m36.534095-144.796021h71.322031q35.402781 0 50.269735-13.182278t14.916142-37.087457q0-17.314038-8.755394-29.660127a40.936387 40.936387 0 0 0-23.068988-16.281098q-9.222676-2.45938-34.087012-2.459381H627.387936v98.670341zM854.278074 664.942675V388.90182h36.534095v276.040855h-36.534095z"
-                            fill="#231815" p-id="19137"></path>
+                            p-id="19137"></path>
                         <path
                             d="M914.938691 915.270707H623.108614a32.857322 32.857322 0 0 1 0-65.702347h291.830077c146.443805 0 265.613082-119.144683 265.613081-265.613081 0-133.728808-99.912328-247.020166-232.411446-263.522609l-23.364114-2.914365-4.734307-23.081285c-27.213044-132.560603-145.361678-228.722376-280.922724-228.722376-158.138159 0-286.788347 128.650188-286.788347 286.788347 0 3.209491 0.073781 6.62803 0.221344 10.772086l1.340362 37.739192-37.616223-3.910415a230.751365 230.751365 0 0 0-23.745317-1.22969c-125.071789 0-226.828653 101.756863-226.828653 226.828653s101.756863 226.828653 226.828653 226.828652h79.032189a32.857322 32.857322 0 0 1 0 65.702347h-79.032189C131.232537 915.270707 0.049188 784.03817 0.049188 622.739707c0-159.540006 128.379656-289.653525 287.255629-292.481812A352.515287 352.515287 0 0 1 863.205624 80.434035a353.941728 353.941728 0 0 1 115.775332 178.464938c153.858837 30.12741 267.223976 166.008176 267.223976 325.080899a331.290835 331.290835 0 0 1-331.266241 331.290835z"
-                            fill="#231815" p-id="19138"></path>
+                             p-id="19138"></path>
                         <path
                             d="M698.033638 1023.999914a32.734353 32.734353 0 0 1-22.195908-8.607831L532.505041 883.913607l135.684016-141.315997a32.857322 32.857322 0 0 1 47.39226 45.498537l-89.115648 92.829313 93.776174 86.016829a32.857322 32.857322 0 0 1-22.208205 57.057625z"
-                            fill="#231815" p-id="19139"></path>
+                             p-id="19139"></path>
                       </svg>
                     </el-icon>
                     接口管理
@@ -206,19 +206,15 @@
       </el-form>
     </a-modal>
 
-    <el-drawer
-        :show-close="false"
-        @close="a_drawer = false"
-        :model-value="a_drawer"
-        :size="phone_bool?'80%':'40%'"
+
+        <a-drawer
+        :closable="false"
+        :open="a_drawer"
+        :width="phone_bool?'80%':'40%'"
         placement="right"
-        :with-header="true"
-        style="padding: 4px 20px 0 20px"
-        title="项目详情">
-      <template #header>
-        <div>
-          <el-text size="large">项目详情</el-text>
-        </div>
+        title="项目详情"
+        @close="()=>a_drawer=false">
+      <template #extra>
         <el-button
             :size="phone_bool?'small':''"
             style="--el-button-hover-bg-color: #FFFFFF00;--el-button-hover-text-color: grey;--el-button-hover-border-color: #17926c;--el-button-active-border-color:#17926c;margin-right: 8px" @click="a_drawer = false">取消
@@ -227,20 +223,20 @@
                    @click="on_update_project()">更新数据
         </el-button>
       </template>
-      <el-form :model="show_project_info" label-position="top">
-        <el-form-item label="项目名称">
+      <a-form :model="show_project_info" layout="vertical">
+        <a-form-item label="项目名称">
           <el-input v-model="show_project_info.projectName" placeholder="请输入项目名称">
           </el-input>
-        </el-form-item>
-        <el-form-item label="项目ID">
+        </a-form-item>
+        <a-form-item label="项目ID">
           <el-input v-model="show_project_info.projectId" readonly>
             <template #append>
               <el-button @click="copy_text(show_project_info.projectId.toString())">复制</el-button>
             </template>
           </el-input>
-        </el-form-item>
+        </a-form-item>
 
-        <el-form-item>
+        <a-form-item>
           <template #label>
             <span>项目绑定密钥</span>
             <el-icon size="15" style="margin-left: 4px" @click="help_show">
@@ -248,7 +244,7 @@
                    version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M878.08 731.274667a32 32 0 0 1-54.88-32.938667A360.789333 360.789333 0 0 0 874.666667 512c0-200.298667-162.368-362.666667-362.666667-362.666667S149.333333 311.701333 149.333333 512s162.368 362.666667 362.666667 362.666667a360.789333 360.789333 0 0 0 186.314667-51.445334 32 32 0 0 1 32.928 54.88A424.778667 424.778667 0 0 1 512 938.666667C276.362667 938.666667 85.333333 747.637333 85.333333 512S276.362667 85.333333 512 85.333333s426.666667 191.029333 426.666667 426.666667c0 78.293333-21.152 153.568-60.586667 219.274667zM650.666667 437.333333c0 65.898667-46.72 120.853333-109.194667 135.082667V608a32 32 0 0 1-64 0v-64a32 32 0 0 1 32-32C552.266667 512 586.666667 478.4 586.666667 437.333333s-34.4-74.666667-77.194667-74.666666c-26.773333 0-51.082667 13.248-65.173333 34.624a73.088 73.088 0 0 0-8.522667 17.717333 32 32 0 0 1-60.885333-19.690667c3.797333-11.754667 9.173333-22.933333 15.978666-33.237333 25.856-39.253333 70.186667-63.413333 118.613334-63.413333C587.274667 298.666667 650.666667 360.576 650.666667 437.333333zM512 736a32 32 0 1 1 0-64 32 32 0 0 1 0 64z"
-                    fill="#000000" p-id="1595"></path>
+                    p-id="1595"></path>
               </svg>
             </el-icon>
           </template>
@@ -257,28 +253,28 @@
               <el-button @click="copy_text(show_project_info.bindKey)">复制</el-button>
             </template>
           </el-input>
-        </el-form-item>
+        </a-form-item>
 
 
-        <el-form-item label="加密类型">
+        <a-form-item label="加密类型">
           <el-select v-model="show_project_info.projectEncryption" placeholder="请选择加密类型">
             <el-option :value="1" label="BASE64自定义编码(对称加密)"></el-option>
             <el-option :value="2" label="RSA(非对称加密)"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="更新增强">
+        </a-form-item>
+        <a-form-item label="更新增强">
           <el-select v-model="show_project_info.returnUpdate" placeholder="请选择">
             <el-option :value="1" label="关闭"></el-option>
             <el-option :value="2" label="开启"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="登录增强">
+        </a-form-item>
+        <a-form-item label="登录增强">
           <el-select v-model="show_project_info.returnVerify" placeholder="请选择">
             <el-option :value="1" label="关闭"></el-option>
             <el-option :value="2" label="开启"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item>
+        </a-form-item>
+        <a-form-item>
           <template #label>
             <span>项目key</span>
             <el-icon size="15" style="margin-left: 4px" @click="click_reset_key(show_project_info.projectId)">
@@ -295,165 +291,43 @@
               <el-button @click="copy_text(show_project_info.projectKey)">复制</el-button>
             </template>
           </el-input>
-        </el-form-item>
-        <el-form-item label="自定义BASE64">
+        </a-form-item>
+        <a-form-item label="自定义BASE64">
           <el-input v-model="show_project_info.projectBase64" placeholder="请输入项目名称" readonly>
             <template #append>
               <el-button @click="copy_text(show_project_info.projectBase64)">复制</el-button>
             </template>
           </el-input>
-        </el-form-item>
-        <el-form-item label="RSA非对称公钥">
+        </a-form-item>
+        <a-form-item label="RSA非对称公钥">
           <el-input v-model='show_project_info.projectRsaPublic' :autosize="{ minRows: 2, maxRows: 10}"
                     maxlength="4000"
                     placeholder="客户端加密解密: 以“-----BEGIN PUBLIC KEY-----”开头 “-----END PUBLIC KEY-----” 结尾 "
                     show-word-limit
                     type="textarea"/>
-        </el-form-item>
-        <el-form-item label="RSA非对称私钥 ">
+        </a-form-item>
+        <a-form-item label="RSA非对称私钥 ">
           <el-input v-model='show_project_info.projectRsaPrivate' :autosize="{ minRows: 2, maxRows: 10}"
                     maxlength="4000"
                     placeholder="服务端加密解密: 以“-----BEGIN PRIVATE KEY-----”开头 “-----END PRIVATE KEY-----” 结尾"
                     show-word-limit
                     type="textarea"/>
-        </el-form-item>
-        <el-form-item label="项目模式">
+        </a-form-item>
+        <a-form-item label="项目模式">
           <el-select v-model="show_project_info.projectModel" placeholder="请选择">
             <el-option :value="1" label="收费模式"></el-option>
             <el-option :value="2" label="免费模式"></el-option>
             <el-option :value="3" label="加时模式"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="项目简绍">
+        </a-form-item>
+        <a-form-item label="项目简绍">
           <el-input v-model='show_project_info.projectMessage' :autosize="{ minRows: 3, maxRows: 5}" maxlength="100"
                     placeholder="请输入项目名称"
                     show-word-limit
                     type="textarea"/>
-        </el-form-item>
-      </el-form>
-    </el-drawer>
-
-    <!--    <a-drawer-->
-<!--        :closable="false"-->
-<!--        :open="a_drawer"-->
-<!--        :width="phone_bool?'80%':'40%'"-->
-<!--        placement="right"-->
-<!--        title="项目详情"-->
-<!--        @close="()=>a_drawer=false">-->
-<!--      <template #extra>-->
-<!--        <el-button-->
-<!--            :size="phone_bool?'small':''"-->
-<!--            style="&#45;&#45;el-button-hover-bg-color: #FFFFFF00;&#45;&#45;el-button-hover-text-color: grey;&#45;&#45;el-button-hover-border-color: #17926c;&#45;&#45;el-button-active-border-color:#17926c;margin-right: 8px" @click="a_drawer = false">取消-->
-<!--        </el-button>-->
-<!--        <el-button :loading="project_update_info_loading" :size="phone_bool?'small':''" color="#17926c" type="primary"-->
-<!--                   @click="on_update_project()">更新数据-->
-<!--        </el-button>-->
-<!--      </template>-->
-<!--      <a-form :model="show_project_info" layout="vertical">-->
-<!--        <a-form-item label="项目名称">-->
-<!--          <el-input v-model="show_project_info.projectName" placeholder="请输入项目名称">-->
-<!--          </el-input>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="项目ID">-->
-<!--          <el-input v-model="show_project_info.projectId" readonly>-->
-<!--            <template #append>-->
-<!--              <el-button @click="copy_text(show_project_info.projectId.toString())">复制</el-button>-->
-<!--            </template>-->
-<!--          </el-input>-->
-<!--        </a-form-item>-->
-
-<!--        <a-form-item>-->
-<!--          <template #label>-->
-<!--            <span>项目绑定密钥</span>-->
-<!--            <el-icon size="15" style="margin-left: 4px" @click="help_show">-->
-<!--              <svg class="icon" height="200" p-id="1594" t="1731378682079"-->
-<!--                   version="1.1" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">-->
-<!--                <path-->
-<!--                    d="M878.08 731.274667a32 32 0 0 1-54.88-32.938667A360.789333 360.789333 0 0 0 874.666667 512c0-200.298667-162.368-362.666667-362.666667-362.666667S149.333333 311.701333 149.333333 512s162.368 362.666667 362.666667 362.666667a360.789333 360.789333 0 0 0 186.314667-51.445334 32 32 0 0 1 32.928 54.88A424.778667 424.778667 0 0 1 512 938.666667C276.362667 938.666667 85.333333 747.637333 85.333333 512S276.362667 85.333333 512 85.333333s426.666667 191.029333 426.666667 426.666667c0 78.293333-21.152 153.568-60.586667 219.274667zM650.666667 437.333333c0 65.898667-46.72 120.853333-109.194667 135.082667V608a32 32 0 0 1-64 0v-64a32 32 0 0 1 32-32C552.266667 512 586.666667 478.4 586.666667 437.333333s-34.4-74.666667-77.194667-74.666666c-26.773333 0-51.082667 13.248-65.173333 34.624a73.088 73.088 0 0 0-8.522667 17.717333 32 32 0 0 1-60.885333-19.690667c3.797333-11.754667 9.173333-22.933333 15.978666-33.237333 25.856-39.253333 70.186667-63.413333 118.613334-63.413333C587.274667 298.666667 650.666667 360.576 650.666667 437.333333zM512 736a32 32 0 1 1 0-64 32 32 0 0 1 0 64z"-->
-<!--                    fill="#000000" p-id="1595"></path>-->
-<!--              </svg>-->
-<!--            </el-icon>-->
-<!--          </template>-->
-<!--          <el-input v-model="show_project_info.bindKey" placeholder="项目绑定密钥" readonly>-->
-<!--            <template #append>-->
-<!--              <el-button @click="copy_text(show_project_info.bindKey)">复制</el-button>-->
-<!--            </template>-->
-<!--          </el-input>-->
-<!--        </a-form-item>-->
-
-
-<!--        <a-form-item label="加密类型">-->
-<!--          <el-select v-model="show_project_info.projectEncryption" placeholder="请选择加密类型">-->
-<!--            <el-option :value="1" label="BASE64自定义编码(对称加密)"></el-option>-->
-<!--            <el-option :value="2" label="RSA(非对称加密)"></el-option>-->
-<!--          </el-select>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="更新增强">-->
-<!--          <el-select v-model="show_project_info.returnUpdate" placeholder="请选择">-->
-<!--            <el-option :value="1" label="关闭"></el-option>-->
-<!--            <el-option :value="2" label="开启"></el-option>-->
-<!--          </el-select>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="登录增强">-->
-<!--          <el-select v-model="show_project_info.returnVerify" placeholder="请选择">-->
-<!--            <el-option :value="1" label="关闭"></el-option>-->
-<!--            <el-option :value="2" label="开启"></el-option>-->
-<!--          </el-select>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item>-->
-<!--          <template #label>-->
-<!--            <span>项目key</span>-->
-<!--            <el-icon size="15" style="margin-left: 4px" @click="click_reset_key(show_project_info.projectId)">-->
-<!--              <svg class="icon" height="200"-->
-<!--                   viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">-->
-<!--                <path-->
-<!--                    d="M943.8 484.1c-17.5-13.7-42.8-10.7-56.6 6.8-5.7 7.3-8.5 15.8-8.6 24.4h-0.4c-0.6 78.3-26.1 157-78 223.3-124.9 159.2-356 187.1-515.2 62.3-31.7-24.9-58.2-54-79.3-85.9h77.1c22.4 0 40.7-18.3 40.7-40.7v-3c0-22.4-18.3-40.7-40.7-40.7H105.5c-22.4 0-40.7 18.3-40.7 40.7v177.3c0 22.4 18.3 40.7 40.7 40.7h3c22.4 0 40.7-18.3 40.7-40.7v-73.1c24.2 33.3 53 63.1 86 89 47.6 37.3 101 64.2 158.9 79.9 55.9 15.2 113.5 19.3 171.2 12.3 57.7-7 112.7-24.7 163.3-52.8 52.5-29 98-67.9 135.3-115.4 37.3-47.6 64.2-101 79.9-158.9 10.2-37.6 15.4-76 15.6-114.6h-0.1c-0.3-11.6-5.5-23.1-15.5-30.9zM918.7 135.2h-3c-22.4 0-40.7 18.3-40.7 40.7V249c-24.2-33.3-53-63.1-86-89-47.6-37.3-101-64.2-158.9-79.9-55.9-15.2-113.5-19.3-171.2-12.3-57.7 7-112.7 24.7-163.3 52.8-52.5 29-98 67.9-135.3 115.4-37.3 47.5-64.2 101-79.9 158.8-10.2 37.6-15.4 76-15.6 114.6h0.1c0.2 11.7 5.5 23.2 15.4 30.9 17.5 13.7 42.8 10.7 56.6-6.8 5.7-7.3 8.5-15.8 8.6-24.4h0.4c0.6-78.3 26.1-157 78-223.3 124.9-159.2 356-187.1 515.2-62.3 31.7 24.9 58.2 54 79.3 85.9h-77.1c-22.4 0-40.7 18.3-40.7 40.7v3c0 22.4 18.3 40.7 40.7 40.7h177.3c22.4 0 40.7-18.3 40.7-40.7V175.8c0.1-22.3-18.2-40.6-40.6-40.6z"-->
-<!--                ></path>-->
-<!--              </svg>-->
-<!--            </el-icon>-->
-<!--          </template>-->
-<!--          <el-input v-model="show_project_info.projectKey" placeholder="请输入项目key" readonly>-->
-<!--            <template #append>-->
-<!--              <el-button @click="copy_text(show_project_info.projectKey)">复制</el-button>-->
-<!--            </template>-->
-<!--          </el-input>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="自定义BASE64">-->
-<!--          <el-input v-model="show_project_info.projectBase64" placeholder="请输入项目名称" readonly>-->
-<!--            <template #append>-->
-<!--              <el-button @click="copy_text(show_project_info.projectBase64)">复制</el-button>-->
-<!--            </template>-->
-<!--          </el-input>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="RSA非对称公钥">-->
-<!--          <el-input v-model='show_project_info.projectRsaPublic' :autosize="{ minRows: 2, maxRows: 10}"-->
-<!--                    maxlength="4000"-->
-<!--                    placeholder="客户端加密解密: 以“-&#45;&#45;&#45;&#45;BEGIN PUBLIC KEY-&#45;&#45;&#45;&#45;”开头 “-&#45;&#45;&#45;&#45;END PUBLIC KEY-&#45;&#45;&#45;&#45;” 结尾 "-->
-<!--                    show-word-limit-->
-<!--                    type="textarea"/>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="RSA非对称私钥 ">-->
-<!--          <el-input v-model='show_project_info.projectRsaPrivate' :autosize="{ minRows: 2, maxRows: 10}"-->
-<!--                    maxlength="4000"-->
-<!--                    placeholder="服务端加密解密: 以“-&#45;&#45;&#45;&#45;BEGIN PRIVATE KEY-&#45;&#45;&#45;&#45;”开头 “-&#45;&#45;&#45;&#45;END PRIVATE KEY-&#45;&#45;&#45;&#45;” 结尾"-->
-<!--                    show-word-limit-->
-<!--                    type="textarea"/>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="项目模式">-->
-<!--          <el-select v-model="show_project_info.projectModel" placeholder="请选择">-->
-<!--            <el-option :value="1" label="收费模式"></el-option>-->
-<!--            <el-option :value="2" label="免费模式"></el-option>-->
-<!--            <el-option :value="3" label="加时模式"></el-option>-->
-<!--          </el-select>-->
-<!--        </a-form-item>-->
-<!--        <a-form-item label="项目简绍">-->
-<!--          <el-input v-model='show_project_info.projectMessage' :autosize="{ minRows: 3, maxRows: 5}" maxlength="100"-->
-<!--                    placeholder="请输入项目名称"-->
-<!--                    show-word-limit-->
-<!--                    type="textarea"/>-->
-<!--        </a-form-item>-->
-<!--      </a-form>-->
-<!--    </a-drawer>-->
+        </a-form-item>
+      </a-form>
+    </a-drawer>
 
     <a-modal v-model:open="show_notice" cancel-text="取消" ok-text="修改" title="修改程序公告"
              @ok="update_project_notice">
@@ -469,8 +343,8 @@
       <Codemirror
           ref="cmRef"
           v-model:value="code"
-          :border="true"
           :height="'400px'"
+          style="border-radius: 7px"
           :options="cmOptions"
           @ready="onReady"
       >
@@ -653,7 +527,7 @@
 
 <script lang="ts" setup>
 import {CirclePlusFilled, FolderAdd, Message, Search} from "@element-plus/icons-vue";
-import {createVNode, onMounted, reactive, ref, UnwrapRef, watch} from "vue";
+import {computed, createVNode, onMounted, reactive, ref, UnwrapRef, watch} from "vue";
 import {
   add_project_link_services,
   create_project_services, delete_project_link_services, get_project_links_services,
@@ -894,8 +768,15 @@ import "codemirror/mode/javascript/javascript.js";
 import "codemirror/addon/lint/lint.css";
 import "codemirror/addon/lint/lint.js";
 import "codemirror/addon/lint/json-lint";
-
+import "codemirror/theme/base16-dark.css"
 const show_project_update = ref(false)
+
+import {theme_status} from "@/stores/theme.ts";
+const theme_store = theme_status()
+
+const codemirror_theme = computed(()=>{
+  return theme_store.dark?"base16-dark":"default"
+})
 const project_update_info = ref({
   pid: 0,
   mustUpdate: 1,
@@ -928,6 +809,7 @@ const cmOptions: EditorConfiguration = reactive({
   lineWrapping: false,
   gutters: ["CodeMirror-lint-markers"],
   lint: true,
+  theme: codemirror_theme
 });
 
 const cm_instance = ref<Editor | null>(null);
@@ -1220,15 +1102,12 @@ const on_click_open_show = (data: any) => {
   show_project_info.value = JSON.parse(JSON.stringify(data));
   a_drawer.value = true
 
-  ElMessageBox.confirm(
-      '请妥善保管项目的配置信息,请勿泄露,泄露后传输就不安全了,请格式化程序key或替换密钥!',
-      'Warning',
-      {
-        confirmButtonText: '知道了',
-        showCancelButton: false,
-        type: 'warning',
-      }
-  )
+  Modal.success({
+    zIndex: 100000,
+    title: "温馨提示",
+    content: "请妥善保管项目的配置信息,请勿泄露,泄露后传输就不安全了,请格式化程序key或替换密钥!",
+
+  })
 }
 const create_rules = ref({
   projectName: [
