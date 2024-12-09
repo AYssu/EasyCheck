@@ -317,7 +317,7 @@ const login_rules = ref({
   ],
 });
 
-// 注册表单校验规则
+// 注册表单 校验规则
 const register_rules = ref({
   username: [
     {required: true, message: '请输入账号', trigger: 'blur'},
