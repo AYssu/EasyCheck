@@ -188,7 +188,7 @@
       <div>
         <a-button type="default" @click="()=>{register_dialog_show = false;login_dialog_show = true;}">已有账号？前往登录
         </a-button>
-        <a-button :loading="confirmLoading" type="primary" @click="to_login">注册</a-button>
+        <a-button :loading="confirmLoading" type="primary" @click="to_register">注册</a-button>
       </div>
     </template>
     <el-form ref="loginForm" :model="register_form" :rules="register_rules" label-position="top" label-width="60px"
