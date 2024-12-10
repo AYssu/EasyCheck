@@ -10,7 +10,7 @@ import request from '@/utils/request.ts'
  * @return Promise
  */
 export const user_register_services = (params: any) => {
-    return request.post('/user/register', params)
+  return request.post('/user/register', params)
 }
 
 /*
@@ -22,7 +22,7 @@ export const user_register_services = (params: any) => {
  * @return Promise
  */
 export const user_login_services = (params: any) => {
-    return request.post('/user/login', params)
+  return request.post('/user/login', params)
 }
 
 /*
@@ -32,5 +32,5 @@ export const user_login_services = (params: any) => {
  * @return Promise
  */
 export const user_register_code_services = (email: any) => {
-    return request.get('/open/send_register_code?email='+ email)
+  return request.get('/open/send_register_code?email=' + email)
 }

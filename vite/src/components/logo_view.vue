@@ -1,6 +1,6 @@
 <template>
   <div class="logo_container">
-    <img :src="logo" alt="logo" class="object-cover"/>
+    <img :src="logo" alt="logo" class="object-cover" />
     <div class="logo-text">
       <span class="logo-text-title">Easy Verify</span>
       <span class="logo-text-message">network manager</span>

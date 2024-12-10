@@ -1,6 +1,5 @@
 import request from '@/utils/request.ts'
 
-
 /**
  * 获取项目列表
  * @params params
@@ -9,7 +8,7 @@ import request from '@/utils/request.ts'
  * projectName 项目名称
  */
 export const get_project_list_services = (params: any) => {
-    return request.post('/project/project_list', params)
+  return request.post('/project/project_list', params)
 }
 
 /**
@@ -20,7 +19,7 @@ export const get_project_list_services = (params: any) => {
  */
 
 export const create_project_services = (params: any) => {
-    return request.post('/project/project_create', params)
+  return request.post('/project/project_create', params)
 }
 
 /**
@@ -29,7 +28,7 @@ export const create_project_services = (params: any) => {
  * @return Promise
  */
 export const update_project_status_services = (id: any) => {
-    return request.get('/project/project_set_status?id='+id)
+  return request.get('/project/project_set_status?id=' + id)
 }
 
 /**
@@ -38,7 +37,7 @@ export const update_project_status_services = (id: any) => {
  * @return Promise
  */
 export const update_project_normal_info_services = (params: any) => {
-    return request.post('/project/project_update_info', params)
+  return request.post('/project/project_update_info', params)
 }
 
 /**
@@ -46,8 +45,8 @@ export const update_project_normal_info_services = (params: any) => {
  * @params params
  * @return Promise
  */
-export const update_project_reset_key_services = (pid:number)=>{
-    return request.get('/project/project_reset_key?pid='+pid)
+export const update_project_reset_key_services = (pid: number) => {
+  return request.get('/project/project_reset_key?pid=' + pid)
 }
 
 /**
@@ -55,8 +54,8 @@ export const update_project_reset_key_services = (pid:number)=>{
  * @params params
  * @return Promise
  */
-export const get_project_user_list_services = (params: any)=>{
-    return request.post('/project/project_bind_list', params)
+export const get_project_user_list_services = (params: any) => {
+  return request.post('/project/project_bind_list', params)
 }
 
 /**
@@ -64,8 +63,8 @@ export const get_project_user_list_services = (params: any)=>{
  * @params params
  * @return Promise
  */
-export const get_project_variable_services = (pid: number)=>{
-    return request.get('/project/project_get_variable?pid=' + pid)
+export const get_project_variable_services = (pid: number) => {
+  return request.get('/project/project_get_variable?pid=' + pid)
 }
 
 /**
@@ -73,8 +72,8 @@ export const get_project_variable_services = (pid: number)=>{
  * @params params
  * @return Promise
  */
-export const set_project_variable_services = (params: any)=>{
-    return request.post('/project/project_set_variable', params)
+export const set_project_variable_services = (params: any) => {
+  return request.post('/project/project_set_variable', params)
 }
 
 /**
@@ -82,8 +81,8 @@ export const set_project_variable_services = (params: any)=>{
  * @params params
  * @return Promise
  */
-export const set_project_default_update_services = (pid: number)=>{
-    return request.get('/project/project_set_default_update?pid='+pid);
+export const set_project_default_update_services = (pid: number) => {
+  return request.get('/project/project_set_default_update?pid=' + pid)
 }
 
 /**
@@ -91,18 +90,17 @@ export const set_project_default_update_services = (pid: number)=>{
  * @params params
  * @return Promise
  */
-export const get_project_update_info_services = (pid: number)=>{
-    return request.get('/project/project_get_update?pid='+pid);
+export const get_project_update_info_services = (pid: number) => {
+  return request.get('/project/project_get_update?pid=' + pid)
 }
-
 
 /**
  * 设置项目更新信息
  * @param params
  * @return Promise
  */
-export const set_project_update_info_services = (params: any)=>{
-    return request.post('/project/project_update_update', params);
+export const set_project_update_info_services = (params: any) => {
+  return request.post('/project/project_update_update', params)
 }
 
 /**
@@ -110,8 +108,8 @@ export const set_project_update_info_services = (params: any)=>{
  * @param params
  * @return Promise
  */
-export const set_project_notice_services = (params: any)=>{
-    return request.post('/project/project_update_notice', params);
+export const set_project_notice_services = (params: any) => {
+  return request.post('/project/project_update_notice', params)
 }
 
 /**
@@ -119,8 +117,8 @@ export const set_project_notice_services = (params: any)=>{
  * @param pid 程序ID
  * @return Promise
  */
-export const get_project_links_services = (pid: number)=>{
-    return request.get('/project/project_get_link?pid='+pid);
+export const get_project_links_services = (pid: number) => {
+  return request.get('/project/project_get_link?pid=' + pid)
 }
 
 /**
@@ -128,18 +126,17 @@ export const get_project_links_services = (pid: number)=>{
  * @param params
  * @return Promise
  */
-export const add_project_link_services = (params: any)=>{
-    return request.post('/project/project_add_link', params);
+export const add_project_link_services = (params: any) => {
+  return request.post('/project/project_add_link', params)
 }
-
 
 /**
  * 更新项目链接
  * @param params
  * @return Promise
  */
-export const update_project_link_services = (params: any)=>{
-    return request.post('/project/project_update_link', params);
+export const update_project_link_services = (params: any) => {
+  return request.post('/project/project_update_link', params)
 }
 
 /**
@@ -147,6 +144,6 @@ export const update_project_link_services = (params: any)=>{
  * @param aid 链接ID
  * @return Promise
  */
-export const delete_project_link_services = (aid: number)=>{
-    return request.get('/project/project_link_delete?aid='+aid);
+export const delete_project_link_services = (aid: number) => {
+  return request.get('/project/project_link_delete?aid=' + aid)
 }
