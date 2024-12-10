@@ -1,2 +1,2 @@
 /// <reference types="vite/client" />
-declare module 'jsonlint-mod-fixed'
+declare module 'jsonlint-mod-fixed';
