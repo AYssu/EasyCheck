@@ -248,9 +248,10 @@
 </template>
 
 <style lang="scss" scoped>
-:deep(.el-menu--collapse .el-sub-menu .is-active .el-sub-menu__title) {
+:deep(.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title) {
 	color: #17926c;
 }
+
 .layout-container-demo .el-header {
 	position: relative;
 	color: var(--el-text-color-primary);
@@ -357,7 +358,13 @@ const router = useRouter();
 const aside_data = aside_status();
 // 监听侧边栏状态
 const show_aside = ref(true);
-const show_aside_error = ref(false);
+show_aside.value = aside_data.status;
+// 防止切换菜单时候状态会消失
+
+const show_aside_error = computed(() => {
+	return !show_aside.value;
+});
+
 // 缓存路由 判断哪些属于该缓存的页面
 const tabs_data = tabs_status();
 
@@ -408,20 +415,11 @@ watch(
 	(new_value: boolean) => {
 		if (!new_value) {
 			setTimeout(() => {
-				show_aside_error.value = true;
 				show_aside.value = false;
 			}, 200);
 		} else {
-			show_aside_error.value = false;
 			show_aside.value = true;
 		}
-	}
-);
-
-watch(
-	() => router.currentRoute.value.path,
-	() => {
-		show_aside_error.value = false;
 	}
 );
 
