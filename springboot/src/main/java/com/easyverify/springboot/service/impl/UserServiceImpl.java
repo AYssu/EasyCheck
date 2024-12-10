@@ -187,12 +187,9 @@ public class UserServiceImpl implements UserService {
             // 这个之前的时候写成了 redis_token 那个要在redis存在才有 修正为 token
             userLogin.setToken(token);
             return userLogin;
+        }else {
+            throw new RuntimeException("密码错误");
         }
-
-        return null;
     }
-
-
-
 
 }
