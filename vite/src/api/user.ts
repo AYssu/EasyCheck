@@ -1,4 +1,4 @@
-import request from '@/utils/request.ts'
+import request from '@/utils/request.ts';
 
 /*
  * 用户注册
@@ -10,8 +10,8 @@ import request from '@/utils/request.ts'
  * @return Promise
  */
 export const user_register_services = (params: any) => {
-    return request.post('/user/register', params)
-}
+	return request.post('/user/register', params);
+};
 
 /*
  * 用户登录
@@ -22,8 +22,8 @@ export const user_register_services = (params: any) => {
  * @return Promise
  */
 export const user_login_services = (params: any) => {
-    return request.post('/user/login', params)
-}
+	return request.post('/user/login', params);
+};
 
 /*
  * 获取邮箱验证码
@@ -32,5 +32,5 @@ export const user_login_services = (params: any) => {
  * @return Promise
  */
 export const user_register_code_services = (email: any) => {
-    return request.get('/open/send_register_code?email='+ email)
-}
+	return request.get('/open/send_register_code?email=' + email);
+};

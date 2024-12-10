@@ -160,4 +160,10 @@ public class ProjectController {
             return ResponseResult.success("删除成功");
         return ResponseResult.success("删除失败");
     }
+
+    @PostMapping("project_create_card")
+    public ResponseResult<?> project_create_card(@RequestBody @Validated ProjectCreateCardDTO projectCreateCardDTO)
+    {
+        return ResponseResult.fail("添加失败");
+    }
 }
