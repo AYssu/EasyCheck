@@ -1,6 +1,6 @@
 <template>
 	<el-tabs
-		v-loading.fullscreen.lock="fullscreenLoading"
+		v-loading.fullscreen.lock="fullscreen_loading"
 		v-model="active_tab"
 		class="tab-view"
 		closable
@@ -72,17 +72,21 @@ import { message } from 'ant-design-vue';
 
 // 获取tabs状态 路由的store
 const tabs_status_data = tabs_status();
-
 const active_tab = ref('');
+const fullscreen_loading = ref(false);
+const route = useRoute();
 
-// 计算属性 获取tabs的列表
+/**
+ * tab列表
+ * @return tab列表
+ */
 const tab_list = computed(() => {
 	return tabs_status_data.get_tab_list();
 });
 
-const fullscreenLoading = ref(false);
-
-// 添加tab
+/**
+ * 添加tab
+ */
 const add_tab = () => {
 	const tab: Tab = {
 		title: route.meta.title as string,
@@ -91,18 +95,10 @@ const add_tab = () => {
 	tabs_status_data.set_tab_list(tab);
 };
 
-// 监听路由变化
-const route = useRoute();
-watch(
-	() => route.path,
-	() => {
-		add_tab();
-		document.title = route.meta.title as string;
-		active_tab.value = route.path;
-	}
-);
-
-// 删除tab
+/**
+ * 删除tab
+ * @param tab_name
+ */
 const tab_remove = (tab_name: string) => {
 	console.log('delete tab:', tab_name);
 	const tabs = tab_list.value;
@@ -129,26 +125,29 @@ const tab_remove = (tab_name: string) => {
 
 	// 更新对应路由的keepAlive属性为false
 	const routes = router.getRoutes();
-	const routeToDeactivate = routes.find((r) => r.path === tab_name);
-	if (routeToDeactivate) {
-		console.log('routeToDeactivate:', routeToDeactivate);
-		routeToDeactivate.meta.keepAlive = false;
+	const route_to_deactivate = routes.find((r) => r.path === tab_name);
+	if (route_to_deactivate) {
+		console.log('routeToDeactivate:', route_to_deactivate);
+		route_to_deactivate.meta.keepAlive = false;
 	}
 
 	tabs_status_data.tab_list = tabs.filter((item) => item.path !== tab_name);
 };
 
-// 切换tab
+/**
+ * tab点击事件
+ * @param tab
+ */
 const tab_click = async (tab: TabsPaneContext) => {
 	if (tab.props.name === active_tab.value) return;
-	fullscreenLoading.value = true;
+	fullscreen_loading.value = true;
 	const old_route = route.name;
 	await router.push({ path: tab.props.name as string });
 	if (old_route === route.name) {
 		message.error('切换失败,刷新浏览器');
 		window.location.reload();
 	}
-	fullscreenLoading.value = false;
+	fullscreen_loading.value = false;
 };
 
 // 初始化路由路径和激活路由样式
@@ -157,4 +156,13 @@ onMounted(() => {
 	document.title = route.meta.title as string;
 	add_tab();
 });
+
+watch(
+	() => route.path,
+	() => {
+		add_tab();
+		document.title = route.meta.title as string;
+		active_tab.value = route.path;
+	}
+);
 </script>

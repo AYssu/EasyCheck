@@ -7,12 +7,14 @@
 <script lang="ts" setup>
 import { ArrowRight } from '@element-plus/icons-vue';
 import { onMounted, ref, Ref, watch } from 'vue';
-import { RouteLocationMatched } from 'vue-router';
+import { RouteLocationMatched, useRoute } from 'vue-router';
 
 const tabs: Ref<RouteLocationMatched[]> = ref([]);
-
-import { useRoute } from 'vue-router';
 const use_route = useRoute();
+
+/**
+ * 获取面包屑路由名称
+ */
 const get_breadcrumb = () => {
 	let matched = use_route.matched.filter((item) => item.meta && item.meta.title);
 	const first = matched[0];

@@ -19,7 +19,7 @@ import logo from '@/assets/icon.png';
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin: 20px 0px 0 0px;
+	margin: 20px 0 0 0;
 }
 
 .object-cover {
