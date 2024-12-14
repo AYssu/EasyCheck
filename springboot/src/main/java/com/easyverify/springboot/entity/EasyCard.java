@@ -47,6 +47,10 @@ public class EasyCard {
     private Integer cardType;
 
     /**
+     * 卡密倍率
+     */
+    private Integer cardTime;
+    /**
      * 绑定设备标识
      */
     private String bindImei;
@@ -94,7 +98,7 @@ public class EasyCard {
     /**
      * 卡密备注
      */
-    private String describe;
+    private String introduction;
 
     /**
      * 核心数据，卡密标记内容

@@ -1,14 +1,20 @@
 package com.easyverify.springboot.controller;
 
+import cn.hutool.core.codec.Base64;
 import com.easyverify.springboot.dto.*;
 import com.easyverify.springboot.vo.*;
 import com.easyverify.springboot.service.ProjectService;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @RestController
@@ -161,9 +167,15 @@ public class ProjectController {
         return ResponseResult.success("删除失败");
     }
 
-    @PostMapping("project_create_card")
-    public ResponseResult<?> project_create_card(@RequestBody @Validated ProjectCreateCardDTO projectCreateCardDTO)
+
+    @PostMapping("project_add_card")
+    public ResponseResult<?> project_add_card(@RequestBody @Validated ProjectAddCardDTO projectAddCardDTO)
     {
-        return ResponseResult.fail("添加失败");
+        log.info("project_add_card_form: {}", projectAddCardDTO);
+        ReturnVo object = projectService.add_project_card(projectAddCardDTO);
+
+        return ResponseResult.success("添加超过",object);
     }
+
+
 }

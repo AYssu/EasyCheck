@@ -7,8 +7,7 @@
 				colorPrimary: '#17926c',
 			},
 		}"
-	>
-	</a-config-provider>
+	/>
 	<div class="toolbar">
 		<!--    顶部左 面包菜单-->
 		<div class="bread_menu">

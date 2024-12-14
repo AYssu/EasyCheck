@@ -9,10 +9,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.easyverify.springboot.dto.*;
 import com.easyverify.springboot.entity.*;
-import com.easyverify.springboot.mapper.LinkMapper;
-import com.easyverify.springboot.mapper.ProjectMapper;
-import com.easyverify.springboot.mapper.UpdateMapper;
-import com.easyverify.springboot.mapper.VariableMapper;
+import com.easyverify.springboot.mapper.*;
+import com.easyverify.springboot.service.CardService;
 import com.easyverify.springboot.service.UserService;
 import com.easyverify.springboot.utils.Sutils;
 import com.easyverify.springboot.vo.*;
@@ -47,6 +45,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private UpdateMapper updateMapper;
+
+
+    @Autowired
+    private CardService cardService;
 
     // 自定义加密base64
     @Value("${encrypt.base64}")
@@ -491,7 +493,7 @@ public class ProjectServiceImpl implements ProjectService {
         int errors = 0;
         StringBuilder returnMessage = new StringBuilder();
         for (Integer type : types) {
-            Return_Vo return_vo = insert_link(project.getProjectId(), type, links);
+            ReturnVo return_vo = insert_link(project.getProjectId(), type, links);
             if (return_vo.getSuccess()) {
                 returnMessage.append(return_vo.getMessage()).append("\n");
             } else {
@@ -511,9 +513,9 @@ public class ProjectServiceImpl implements ProjectService {
         return returnMessage.toString();
     }
 
-    Return_Vo insert_link(Integer pid, Integer type, List<EasyLink> links) {
+    ReturnVo insert_link(Integer pid, Integer type, List<EasyLink> links) {
 
-        Return_Vo result = new Return_Vo();
+        ReturnVo result = new ReturnVo();
 
         if (links != null) {
             boolean exists = links.stream().anyMatch(link -> link.getType().equals(type));
@@ -553,7 +555,7 @@ public class ProjectServiceImpl implements ProjectService {
             result.setMessage("插入数据失败!");
             return result;
         }
-        return new Return_Vo(true, get_link_name(type) + ": 新增成功!");
+        return new ReturnVo(true, get_link_name(type) + ": 新增成功!");
     }
 
     @Override
@@ -638,5 +640,30 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RuntimeException("链接越权删除");
         redisTemplate.delete("project_links_" + project.getProjectId());
         return linkMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public ReturnVo add_project_card(ProjectAddCardDTO projectAddCardDTO) {
+        EasyUser user = userService.get_user_by_jwt();
+        EasyProject project = get_project_by_id_with_uid(projectAddCardDTO.getProjectId(), user.getUserId());
+        List<EasyCard> list = new ArrayList<>();
+        for (int i = 0;i<projectAddCardDTO.getCardNum();i++)
+        {
+            EasyCard card = new EasyCard();
+            card.setCardKey(StringUtil.generateRandomKey());
+            card.setCardType(projectAddCardDTO.getCardType());
+            card.setCardTime(projectAddCardDTO.getCardTime());
+            card.setPid(project.getProjectId());
+            card.setUid(user.getUserId());
+            card.setCreateTime(LocalDateTime.now());
+            card.setIntroduction(projectAddCardDTO.getCardRemark());
+            list.add(card);
+        }
+        cardService.saveBatch(list);
+        StringBuilder result = new StringBuilder();
+        for (EasyCard card : list) {
+            result.append(card.getCardKey()).append("\n");
+        }
+        return new ReturnVo(true, result.toString());
     }
 }

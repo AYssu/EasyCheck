@@ -59,7 +59,7 @@
 				</template>
 				<template #actions>
 					<!--          钥匙-->
-					<el-icon size="15px" @click="add_card_open = true" style="width: 100%; height: 100%">
+					<el-icon size="15px" @click="item_add_card_click(item)" style="width: 100%; height: 100%">
 						<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
 							<path
 								d="M671.43 608.04c-68.21 0-132.33-26.56-180.56-74.79s-74.79-112.35-74.79-180.56 26.56-132.33 74.79-180.56 112.35-74.79 180.56-74.79 132.33 26.56 180.56 74.79 74.79 112.35 74.79 180.56-26.56 132.33-74.79 180.56-112.35 74.79-180.56 74.79z m0-446.69c-105.51 0-191.35 85.84-191.35 191.35s85.84 191.35 191.35 191.35 191.35-85.84 191.35-191.35-85.84-191.35-191.35-191.35z"
@@ -598,34 +598,36 @@
 
 		<a-modal :width="phone_bool ? '' : '60%'" :open="add_card_open" title="添加卡密" :closable="false" @cancel="add_card_open = false">
 			<template #footer>
-				<a-button :size="phone_bool ? 'small' : ''" key="submit" type="primary" :loading="loading" @click="">创建</a-button>
+				<a-button :size="phone_bool ? 'small' : ''" key="submit" type="primary" :loading="loading" @click="add_card_click">创建</a-button>
 			</template>
 			<el-form :size="phone_bool ? 'small' : ''" :label-position="phone_bool ? 'top' : 'left'">
 				<el-form-item style="margin-top: 20px" label="绑定程序">
 					<a-input :size="phone_bool ? 'small' : ''" :value="add_card_form.projectName" disabled />
 				</el-form-item>
 				<el-form-item label="卡密类型">
-					<el-select v-model="add_card_form.cardType" placeholder="请选择卡密类型">
-						<el-option label="天卡" :value="1" key="1" />
-						<el-option label="周卡" :value="2" key="2" />
-						<el-option label="月卡" :value="3" key="3" />
-						<el-option label="半年卡" :value="4" key="4" />
-						<el-option label="年卡" :value="5" key="5" />
-						<el-option label="永久卡" :value="6" key="5" />
-						<el-option label="自定义时间卡" :value="7" key="6" />
-					</el-select>
-				</el-form-item>
-				<el-form-item v-if="add_card_form.cardType <= 5" label="卡密倍数">
-					<a-input-number
-						:size="phone_bool ? 'small' : ''"
-						v-model:value="add_card_form.cardTime"
-						style="width: 100%"
-						type="number"
-						:min="1"
-						:max="9999"
-						:step="1"
-						:disabled="add_card_form.cardType == 7"
-					/>
+					<div style="display: flex; width: 100%">
+						<el-select v-model="add_card_form.cardType" placeholder="请选择卡密类型">
+							<el-option label="天卡" :value="1" key="1" />
+							<el-option label="周卡" :value="2" key="2" />
+							<el-option label="月卡" :value="3" key="3" />
+							<el-option label="半年卡" :value="4" key="4" />
+							<el-option label="年卡" :value="5" key="5" />
+							<el-option label="永久卡" :value="6" key="5" />
+							<el-option label="自定义时间卡" :value="7" key="6" />
+						</el-select>
+
+						<el-input-number
+							v-if="add_card_form.cardType <= 5"
+							:size="phone_bool ? 'small' : ''"
+							v-model="add_card_form.cardTime"
+							style="width: 120px; margin-left: 5px"
+							controls-position="right"
+							:min="1"
+							:max="100"
+							:step="1"
+							:disabled="add_card_form.cardType == 7"
+						/>
+					</div>
 				</el-form-item>
 				<el-form-item v-if="add_card_form.cardType == 7" label="到期时间">
 					<a-date-picker :size="phone_bool ? 'small' : ''" @change="onChange" v-model:value="add_card_form.endTime" style="width: 100%">
@@ -641,15 +643,28 @@
 						style="width: 100%"
 						type="number"
 						:min="1"
-						:max="9999"
+						:max="200"
 						:step="1"
-					/>
+					>
+						<template #addonAfter> <el-text>张</el-text> </template>
+					</a-input-number>
 				</el-form-item>
 				<el-form-item label="卡密备注">
 					<a-textarea :size="phone_bool ? 'small' : ''" placeholder="请输入备注,可用于快速查询卡密创建的批次" v-model="add_card_form.cardRemark" />
 				</el-form-item>
 			</el-form>
 		</a-modal>
+		<el-dialog :title="null" :width="phone_bool ? '90%' : '80%'" style="min-height: 500px" v-model="card_list_show_open">
+			<template #header>
+				<span style="font-size: 14px">卡密生成列表</span>
+			</template>
+			<template #footer>
+				<el-button :size="phone_bool ? 'small' : ''" type="warning" @click="export_text(card_list)">导出</el-button>
+				<el-button :size="phone_bool ? 'small' : ''" type="success" @click="copy_text(card_list)">复制</el-button>
+				<el-button :size="phone_bool ? 'small' : ''" type="primary" @click="card_list_show_open = false">确定</el-button>
+			</template>
+			<el-input :rows="20" type="textarea" v-model="card_list" class="no-wrap-textarea" readonly></el-input>
+		</el-dialog>
 	</div>
 </template>
 
@@ -662,9 +677,11 @@ import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined, SmileOutline
 import { message, Modal } from 'ant-design-vue';
 import { computed, createVNode, onMounted, onUnmounted, reactive, ref, UnwrapRef, watch } from 'vue';
 import {
+	add_project_card_services,
 	add_project_link_services,
 	create_project_services,
 	delete_project_link_services,
+	export_text_services,
 	get_project_links_services,
 	get_project_list_services,
 	get_project_update_info_services,
@@ -688,7 +705,9 @@ import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/json-lint';
 import 'codemirror/theme/base16-dark.css';
+import axios from 'axios';
 
+const card_list_show_open = ref<boolean>(false);
 const add_card_open = ref<boolean>(false);
 const url_visible = ref(false);
 const update_link_visible = ref(false);
@@ -697,6 +716,7 @@ const check_all = ref(false);
 const indeterminate = ref(false);
 const value = ref<CheckboxValueType[]>([]);
 const cities_filter = ref<link_option[]>();
+const card_list = ref();
 const update_link_form = ref<url_link>({
 	aid: 1,
 	code: 200,
@@ -896,6 +916,35 @@ export interface Project {
 	bindKey: string;
 }
 
+/**
+ * 点击创建卡密弹窗
+ * @param item
+ */
+const item_add_card_click = (item: any) => {
+	add_card_open.value = true;
+	add_card_form.value.projectId = item.projectId;
+	add_card_form.value.projectName = item.projectName;
+};
+/**
+ * 创建卡密
+ */
+const add_card_click = async () => {
+	loading.value = true;
+	const result = await add_project_card_services(add_card_form.value);
+	try {
+		if (result.data.code == 200) {
+			message.success('创建成功');
+			card_list.value = result.data.data.message;
+			add_card_open.value = false;
+			card_list_show_open.value = true;
+		} else {
+			message.error(result.data.message);
+		}
+	} catch (e) {
+		console.log(e);
+	}
+	loading.value = false;
+};
 /**
  * 修改接口
  */
@@ -1328,6 +1377,44 @@ const random_type = () => {
 };
 
 /**
+ * 导出文本
+ * @param text
+ */
+const export_text = async (text: any) => {
+	const encoder = new TextEncoder();
+	const uint8r_array = encoder.encode(text);
+
+	// 将Uint8Array转换为二进制字符串
+	const binary_string = String.fromCharCode.apply(null, uint8r_array);
+
+	// 使用btoa函数将二进制字符串编码为Base64
+	const base64 = btoa(binary_string);
+
+	const response = await axios.get('/api/open//export_txt?txt=' + base64, {
+		responseType: 'blob', // 重要：设置响应类型为blob
+	});
+
+	console.log(response);
+	// 从响应中获取Blob对象
+	const blob = response.data;
+
+	// 创建一个链接，指向Blob对象
+	const url = window.URL.createObjectURL(blob);
+	const link = document.createElement('a');
+	link.href = url;
+	link.download = 'export.txt'; // 设置下载文件名
+
+	// 将链接添加到DOM中并模拟点击
+	document.body.appendChild(link);
+	link.click();
+
+	// 从DOM中移除链接
+	document.body.removeChild(link);
+
+	// 释放创建的URL对象
+	window.URL.revokeObjectURL(url);
+};
+/**
  * 创建项目
  */
 const create_project_click = async () => {
@@ -1449,16 +1536,26 @@ const old_copy = (text: string) => {
  * @param key 文本
  */
 const copy_text = (key: string) => {
+	if (key == '' || key == undefined) {
+		Modal.error({
+			title: '复制失败',
+			zIndex: 99999999999,
+			content: '复制失败，内容为空',
+			maskClosable: true,
+		});
+		return;
+	}
 	// 检查 key 的长度，如果超过20个字符，则截断并添加省略号
 	const display_key = key.length > 40 ? key.substring(0, 40) + '...' : key;
-
+	console.log('copy', key);
 	Modal.success({
 		title: '复制文本',
-		content: `${display_key}`,
+		content: display_key,
 		okText: '复制',
 		cancelText: '取消',
 		maskClosable: true,
 		okCancel: true,
+		zIndex: 999999999,
 		onOk: () => {
 			// 复制文本到剪贴板
 			if (navigator.clipboard) {
@@ -1588,6 +1685,18 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.no-wrap-textarea .el-textarea__inner) {
+	overflow-x: auto; /* 水平方向上的滚动条 */
+	word-wrap: break-word; /* 允许在单词内换行 */
+}
+
+:deep(.no-wrap-textarea .el-textarea__inner:focus) {
+	box-shadow: grey !important;
+}
+
+:deep(.no-wrap-textarea .el-textarea__inner:hover) {
+	box-shadow: grey !important;
+}
 .visible-switch {
 	opacity: 0; /* 初始透明度为0，即完全透明 */
 	transform: translateX(20px); /* 初始位置向上偏移20px */

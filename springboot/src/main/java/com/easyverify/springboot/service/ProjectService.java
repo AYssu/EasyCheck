@@ -184,4 +184,12 @@ public interface ProjectService {
      * @return boolean
      */
     boolean delete_project_link(Integer id);
+
+    /**
+     * 添加项目卡密
+     *
+     * @param projectAddCardDTO 结构封装
+     * @return boolean
+     */
+    ReturnVo add_project_card(ProjectAddCardDTO projectAddCardDTO);
 }

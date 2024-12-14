@@ -1,5 +1,6 @@
 package com.easyverify.springboot.controller;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import com.easyverify.springboot.dto.OpenAPIDTO;
@@ -10,11 +11,17 @@ import com.easyverify.springboot.service.OpenAPIService;
 import com.easyverify.springboot.service.ProjectService;
 import com.easyverify.springboot.utils.Sutils;
 import com.easyverify.springboot.vo.ResponseResult;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +51,27 @@ public class OpenAPIController {
         return matcher.matches();
     }
 
+    @GetMapping("/open/export_txt")
+    public ResponseEntity<Resource> export_txt_file(HttpServletResponse response, @RequestParam String txt) {
+        try {
+            // 设置HTTP响应头
+            response.setContentType("text/plain");
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=export.txt");
+
+            // 要导出的字符串
+            String content = Base64.decodeStr(txt);
+
+            // 写入字符串到响应输出流
+            try (PrintWriter writer = response.getWriter()) {
+                writer.write(content);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok().build();
+    }
     /**
      * 发送注册验证码
      * @param email 邮箱地址
