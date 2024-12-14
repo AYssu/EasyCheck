@@ -59,7 +59,7 @@
 				</template>
 				<template #actions>
 					<!--          钥匙-->
-					<el-icon size="15px">
+					<el-icon size="15px" @click="add_card_open = true" style="width: 100%; height: 100%">
 						<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
 							<path
 								d="M671.43 608.04c-68.21 0-132.33-26.56-180.56-74.79s-74.79-112.35-74.79-180.56 26.56-132.33 74.79-180.56 112.35-74.79 180.56-74.79 132.33 26.56 180.56 74.79 74.79 112.35 74.79 180.56-26.56 132.33-74.79 180.56-112.35 74.79-180.56 74.79z m0-446.69c-105.51 0-191.35 85.84-191.35 191.35s85.84 191.35 191.35 191.35 191.35-85.84 191.35-191.35-85.84-191.35-191.35-191.35z"
@@ -595,6 +595,61 @@
 				</el-form-item>
 			</el-form>
 		</a-modal>
+
+		<a-modal :width="phone_bool ? '' : '60%'" :open="add_card_open" title="添加卡密" :closable="false" @cancel="add_card_open = false">
+			<template #footer>
+				<a-button :size="phone_bool ? 'small' : ''" key="submit" type="primary" :loading="loading" @click="">创建</a-button>
+			</template>
+			<el-form :size="phone_bool ? 'small' : ''" :label-position="phone_bool ? 'top' : 'left'">
+				<el-form-item style="margin-top: 20px" label="绑定程序">
+					<a-input :size="phone_bool ? 'small' : ''" :value="add_card_form.projectName" disabled />
+				</el-form-item>
+				<el-form-item label="卡密类型">
+					<el-select v-model="add_card_form.cardType" placeholder="请选择卡密类型">
+						<el-option label="天卡" :value="1" key="1" />
+						<el-option label="周卡" :value="2" key="2" />
+						<el-option label="月卡" :value="3" key="3" />
+						<el-option label="半年卡" :value="4" key="4" />
+						<el-option label="年卡" :value="5" key="5" />
+						<el-option label="永久卡" :value="6" key="5" />
+						<el-option label="自定义时间卡" :value="7" key="6" />
+					</el-select>
+				</el-form-item>
+				<el-form-item v-if="add_card_form.cardType <= 5" label="卡密倍数">
+					<a-input-number
+						:size="phone_bool ? 'small' : ''"
+						v-model:value="add_card_form.cardTime"
+						style="width: 100%"
+						type="number"
+						:min="1"
+						:max="9999"
+						:step="1"
+						:disabled="add_card_form.cardType == 7"
+					/>
+				</el-form-item>
+				<el-form-item v-if="add_card_form.cardType == 7" label="到期时间">
+					<a-date-picker :size="phone_bool ? 'small' : ''" @change="onChange" v-model:value="add_card_form.endTime" style="width: 100%">
+						<template #suffixIcon>
+							<SmileOutlined />
+						</template>
+					</a-date-picker>
+				</el-form-item>
+				<el-form-item label="制卡数量">
+					<a-input-number
+						:size="phone_bool ? 'small' : ''"
+						v-model:value="add_card_form.cardNum"
+						style="width: 100%"
+						type="number"
+						:min="1"
+						:max="9999"
+						:step="1"
+					/>
+				</el-form-item>
+				<el-form-item label="卡密备注">
+					<a-textarea :size="phone_bool ? 'small' : ''" placeholder="请输入备注,可用于快速查询卡密创建的批次" v-model="add_card_form.cardRemark" />
+				</el-form-item>
+			</el-form>
+		</a-modal>
 	</div>
 </template>
 
@@ -603,7 +658,7 @@ import type { CheckboxValueType } from 'element-plus';
 import { ComponentSize, ElMessage } from 'element-plus';
 import Codemirror, { CmComponentRef } from 'codemirror-editor-vue3';
 import { CirclePlusFilled, FolderAdd, Search } from '@element-plus/icons-vue';
-import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined } from '@ant-design/icons-vue';
+import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined, SmileOutlined } from '@ant-design/icons-vue';
 import { message, Modal } from 'ant-design-vue';
 import { computed, createVNode, onMounted, onUnmounted, reactive, ref, UnwrapRef, watch } from 'vue';
 import {
@@ -634,6 +689,7 @@ import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/json-lint';
 import 'codemirror/theme/base16-dark.css';
 
+const add_card_open = ref<boolean>(false);
 const url_visible = ref(false);
 const update_link_visible = ref(false);
 const update_link_loading = ref(false);
@@ -652,6 +708,15 @@ const update_link_form = ref<url_link>({
 	type: 1,
 });
 
+const add_card_form = ref({
+	projectId: 10000,
+	projectName: 'test',
+	cardType: 1,
+	cardTime: 1,
+	endTime: '',
+	cardNum: 1,
+	cardRemark: '',
+});
 const cities = ref<link_option[]>([
 	{
 		value: 1,
@@ -1556,11 +1621,11 @@ onMounted(() => {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 	gap: 10px;
+	align-items: center;
 }
 
 .box_card_list .ant-card {
-	width: calc(33.333% - 10px); /* 每行三张卡片，减去间距 */
-	margin: 5px; /* 卡片之间的间距 */
+	margin: 0 auto !important;
 	transition: transform 0.3s ease-in-out; /* 可选，为hover添加动画效果 */
 }
 

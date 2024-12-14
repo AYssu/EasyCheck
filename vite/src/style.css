@@ -5,6 +5,10 @@
 .ant-input-focused {
 	box-shadow: none;
 }
+.ant-picker-focused , .ant-input-number-focused{
+	box-shadow: none;
+}
+
 .el-input,
 .el-textarea {
 	--el-input-focus-border-color: #17926c !important;
@@ -12,7 +16,7 @@
 .el-select__wrapper.is-focused {
 	box-shadow: 0 0 0 1px #17926c inset !important;
 }
-.el-select-dropdown__item.is-selected {
+.el-select-dropdown__item.is-selected ,.ant-picker-today-btn  {
 	color: #17926c !important;
 }
 :root {

@@ -247,6 +247,93 @@
 	</div>
 </template>
 
+<script lang="ts" setup>
+import logo_view from '@/components/logo_view.vue';
+import top_bar from '@/components/top_bar.vue';
+import { useRouter } from 'vue-router';
+import { computed, onUnmounted, ref, watch } from 'vue';
+import { aside_status } from '@/stores/aside.ts';
+import icon_translate from '@/assets/icon.png';
+import tab_view from '@/components/tab_view.vue';
+import { tabs_status } from '@/stores/tabs/tabs.ts';
+import phone_size from '@/utils/phone_size.ts';
+
+const { phone_bool, remove_phone_size } = phone_size();
+const router = useRouter();
+const aside_data = aside_status();
+// 监听侧边栏状态
+const show_aside = ref(true);
+show_aside.value = aside_data.status;
+// 防止切换菜单时候状态会消失
+
+const show_aside_error = computed(() => {
+	return !show_aside.value;
+});
+
+// 缓存路由 判断哪些属于该缓存的页面
+const tabs_data = tabs_status();
+
+/**
+ * 获取当前路由
+ *@return 当前路由路径
+ */
+const active_menu = computed(() => {
+	console.log(router.currentRoute.value.path);
+	return router.currentRoute.value.path;
+});
+
+/**
+ * 缓存路由
+ * @return 路由名称数组
+ */
+const keep_alive_list = computed(() => {
+	return tabs_data.tab_list
+		.map((item) => {
+			const matched_route = router.getRoutes().find((r) => r.path === item.path);
+			if (matched_route && matched_route.name) {
+				return matched_route.name as string;
+			}
+			return null;
+		})
+		.filter((name) => name !== null); // 过滤掉 null 值
+});
+
+/**
+ * 菜单点击事件
+ * @param key
+ * @param keyPath
+ */
+const handle_open = (key: string, keyPath: string[]) => {
+	console.log(key, keyPath);
+};
+
+/**
+ * 菜单关闭事件
+ * @param key
+ * @param keyPath
+ */
+const handle_close = (key: string, keyPath: string[]) => {
+	console.log(key, keyPath);
+};
+
+watch(
+	() => aside_data.status,
+	(new_value: boolean) => {
+		if (!new_value) {
+			setTimeout(() => {
+				show_aside.value = false;
+			}, 200);
+		} else {
+			show_aside.value = true;
+		}
+	}
+);
+
+onUnmounted(() => {
+	remove_phone_size();
+});
+</script>
+
 <style lang="scss" scoped>
 :deep(.el-menu--collapse .el-sub-menu.is-active .el-sub-menu__title) {
 	color: #17926c;
@@ -342,88 +429,3 @@
 	}
 }
 </style>
-<script lang="ts" setup>
-import logo_view from '@/components/logo_view.vue';
-import top_bar from '@/components/top_bar.vue';
-import { useRouter } from 'vue-router';
-import { computed, onUnmounted, ref, watch } from 'vue';
-import { aside_status } from '@/stores/aside.ts';
-import icon_translate from '@/assets/icon.png';
-import tab_view from '@/components/tab_view.vue';
-import { tabs_status } from '@/stores/tabs/tabs.ts';
-import phone_size from '@/utils/phone_size.ts';
-
-const { phone_bool, remove_phone_size } = phone_size();
-const router = useRouter();
-const aside_data = aside_status();
-// 监听侧边栏状态
-const show_aside = ref(true);
-show_aside.value = aside_data.status;
-// 防止切换菜单时候状态会消失
-
-const show_aside_error = computed(() => {
-	return !show_aside.value;
-});
-
-// 缓存路由 判断哪些属于该缓存的页面
-const tabs_data = tabs_status();
-
-/**
- * 获取当前路由
- *@return 当前路由路径
- */
-const active_menu = computed(() => {
-	return router.currentRoute.value.path;
-});
-
-/**
- * 缓存路由
- * @return 路由名称数组
- */
-const keep_alive_list = computed(() => {
-	return tabs_data.tab_list
-		.map((item) => {
-			const matched_route = router.getRoutes().find((r) => r.path === item.path);
-			if (matched_route && matched_route.name) {
-				return matched_route.name as string;
-			}
-			return null;
-		})
-		.filter((name) => name !== null); // 过滤掉 null 值
-});
-
-/**
- * 菜单点击事件
- * @param key
- * @param keyPath
- */
-const handle_open = (key: string, keyPath: string[]) => {
-	console.log(key, keyPath);
-};
-
-/**
- * 菜单关闭事件
- * @param key
- * @param keyPath
- */
-const handle_close = (key: string, keyPath: string[]) => {
-	console.log(key, keyPath);
-};
-
-watch(
-	() => aside_data.status,
-	(new_value: boolean) => {
-		if (!new_value) {
-			setTimeout(() => {
-				show_aside.value = false;
-			}, 200);
-		} else {
-			show_aside.value = true;
-		}
-	}
-);
-
-onUnmounted(() => {
-	remove_phone_size();
-});
-</script>

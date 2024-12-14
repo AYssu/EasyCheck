@@ -2,6 +2,7 @@ package com.easyverify.springboot.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -118,5 +119,6 @@ public class EasyCard {
     /**
      * 逻辑删除
      */
+    @TableLogic(value = "0", delval = "1")
     private Integer delete;
 }
