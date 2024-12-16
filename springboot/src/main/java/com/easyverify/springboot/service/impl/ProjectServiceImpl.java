@@ -25,6 +25,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -645,6 +647,20 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ReturnVo add_project_card(ProjectAddCardDTO projectAddCardDTO) {
         EasyUser user = userService.get_user_by_jwt();
+        LocalDateTime localDateTime = null;
+        if (projectAddCardDTO.getCardType()==7)
+        {
+            try {
+                ZonedDateTime zonedDateTime = ZonedDateTime.parse(projectAddCardDTO.getEndTime());
+
+                // 转换为系统默认时区的LocalDateTime
+                localDateTime = zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+            }catch (Exception e){
+                log.info("时间格式错误：{}",e.getMessage());
+                throw new RuntimeException("时间格式错误");
+            }
+        }
+
         EasyProject project = get_project_by_id_with_uid(projectAddCardDTO.getProjectId(), user.getUserId());
         List<EasyCard> list = new ArrayList<>();
         for (int i = 0;i<projectAddCardDTO.getCardNum();i++)
@@ -657,6 +673,9 @@ public class ProjectServiceImpl implements ProjectService {
             card.setUid(user.getUserId());
             card.setCreateTime(LocalDateTime.now());
             card.setIntroduction(projectAddCardDTO.getCardRemark());
+            // 绑定时间 当用户创建卡密的时候选择的是自定义时间 即刻生效
+            if (projectAddCardDTO.getCardType()==7)
+                card.setEndTime(localDateTime);
             list.add(card);
         }
         cardService.saveBatch(list);

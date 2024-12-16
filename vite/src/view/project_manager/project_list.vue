@@ -45,7 +45,7 @@
 
 		<el-empty v-if="table_data.length === 0"></el-empty>
 
-		<div class="box_card_list">
+		<div class="box_card_list" v-loading="card_loading">
 			<a-card
 				v-for="(item, index) in table_data"
 				:key="index"
@@ -602,7 +602,7 @@
 			</template>
 			<el-form :size="phone_bool ? 'small' : ''" :label-position="phone_bool ? 'top' : 'left'">
 				<el-form-item style="margin-top: 20px" label="绑定程序">
-					<a-input :size="phone_bool ? 'small' : ''" :value="add_card_form.projectName" disabled />
+					<el-input :size="phone_bool ? 'small' : ''" :value="add_card_form.projectName" disabled />
 				</el-form-item>
 				<el-form-item label="卡密类型">
 					<div style="display: flex; width: 100%">
@@ -630,7 +630,7 @@
 					</div>
 				</el-form-item>
 				<el-form-item v-if="add_card_form.cardType == 7" label="到期时间">
-					<a-date-picker :size="phone_bool ? 'small' : ''" @change="onChange" v-model:value="add_card_form.endTime" style="width: 100%">
+					<a-date-picker format="YYYY年MM月DD日" :size="phone_bool ? 'small' : ''" v-model:value="add_card_form.endTime" style="width: 100%">
 						<template #suffixIcon>
 							<SmileOutlined />
 						</template>
@@ -659,9 +659,33 @@
 				<span style="font-size: 14px">卡密生成列表</span>
 			</template>
 			<template #footer>
-				<el-button :size="phone_bool ? 'small' : ''" type="warning" @click="export_text(card_list)">导出</el-button>
-				<el-button :size="phone_bool ? 'small' : ''" type="success" @click="copy_text(card_list)">复制</el-button>
-				<el-button :size="phone_bool ? 'small' : ''" type="primary" @click="card_list_show_open = false">确定</el-button>
+				<el-button :size="phone_bool ? 'small' : ''" type="warning" @click="export_text(card_list)">
+					<template #icon>
+						<el-icon>
+							<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+								<path
+									d="M516.394 102.699c10.469 0 19.289 3.592 26.453 10.744L728.91 299.506c7.164 7.164 10.744 15.98 10.744 26.452 0 10.668-3.537 19.532-10.6 26.6-7.072 7.076-15.938 10.608-26.598 10.608-10.475 0-19.299-3.584-26.459-10.748l-122.381-122.68v431.126c0 10.266-3.635 19.041-10.902 26.316-7.277 7.271-16.049 10.908-26.316 10.908-10.281 0-19.049-3.637-26.32-10.908-7.276-7.275-10.92-16.051-10.92-26.316V229.738l-122.364 122.68c-7.56 7.168-16.376 10.748-26.464 10.748-10.28 0-19.04-3.64-26.316-10.908-7.276-7.272-10.916-16.052-10.916-26.32 0-10.084 3.576-18.908 10.744-26.456l186.061-186.063c7.16-7.168 15.992-10.744 26.457-10.744l0.034 0.024z m367.71 520.935c10.264 0 19.045 3.639 26.309 10.912 7.268 7.275 10.912 16.051 10.912 26.328v148.818c0 31.018-10.748 57.277-32.264 78.793-21.896 21.889-48.064 32.84-78.492 32.84H214.303c-30.417 0-56.772-10.855-79.06-32.568-21.716-22.287-32.568-48.643-32.568-79.064V660.874c0-10.285 3.634-19.053 10.908-26.328 7.276-7.273 16.049-10.912 26.321-10.912 10.266 0 19.04 3.639 26.316 10.912 7.273 7.275 10.908 16.051 10.908 26.328v148.818c0 10.27 3.634 19.049 10.914 26.324 7.274 7.273 16.042 10.896 26.318 10.896h596.256c10.076 0 18.656-3.623 25.729-10.896 7.072-7.275 10.611-16.055 10.611-26.324V660.874c0-10.285 3.637-19.053 10.908-26.328 7.277-7.273 16.045-10.912 26.313-10.912h-0.073z"
+								></path>
+							</svg>
+						</el-icon>
+					</template>
+					导出
+				</el-button>
+				<el-button :size="phone_bool ? 'small' : ''" type="success" @click="copy_text(card_list)">
+					<template #icon>
+						<el-icon>
+							<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+								<path
+									d="M780.6 127.2H354.4c-63 0-113.8 50.7-113.8 113.8v426.2c0 63 50.7 113.8 113.8 113.8h426.2c63 0 113.8-50.7 113.8-113.8V241c0-63-50.7-113.8-113.8-113.8z m52.4 537c0 29.7-24.3 55.4-55.4 55.4H357.4c-29.7 0-55.4-24.3-55.4-55.4V244c0-29.7 24.3-55.4 55.4-55.4h420.2c29.7 0 55.4 24.3 55.4 55.4v420.2z"
+								></path>
+								<path
+									d="M155.6 279.3c-15.2 0-27 11.8-28.6 25.5v473.5c3.6 65.2 57 116.3 123.1 116.3h464.6c15.1 0 27.4-12.3 28.8-27.4 0-16.4-13.7-28.8-28.8-28.8l-463.1 0.1c-37 0-67.2-30.2-67.2-67.2V308.1c0-16.4-13.7-28.8-28.8-28.8z"
+								></path>
+							</svg>
+						</el-icon>
+					</template>
+					复制</el-button
+				>
 			</template>
 			<el-input :rows="20" type="textarea" v-model="card_list" class="no-wrap-textarea" readonly></el-input>
 		</el-dialog>
@@ -681,7 +705,6 @@ import {
 	add_project_link_services,
 	create_project_services,
 	delete_project_link_services,
-	export_text_services,
 	get_project_links_services,
 	get_project_list_services,
 	get_project_update_info_services,
@@ -707,6 +730,7 @@ import 'codemirror/addon/lint/json-lint';
 import 'codemirror/theme/base16-dark.css';
 import axios from 'axios';
 
+const card_loading = ref<boolean>(false);
 const card_list_show_open = ref<boolean>(false);
 const add_card_open = ref<boolean>(false);
 const url_visible = ref(false);
@@ -1354,18 +1378,23 @@ const on_click_open_show = (data: any) => {
  * @param value
  */
 const get_project_list = async (value: UnwrapRef<Search>) => {
+	card_loading.value = true;
 	const list_result = await get_project_list_services(value);
-	console.log(list_result);
-	table_data.value = list_result.data.data.items;
-	table_data.value = list_result.data.data.items.map((item: Project) => ({
-		...item,
-		tagType: random_type(),
-		projectIcon: 'https://www.loliapi.com/acg/pp/', // 随机头像 在线API 多久失效就难说了
-	}));
-	total.value = list_result.data.data.total;
-	restaurants.value = list_result.data.data.names.map((item: string) => ({
-		value: item,
-	}));
+	try {
+		table_data.value = list_result.data.data.items;
+		table_data.value = list_result.data.data.items.map((item: Project) => ({
+			...item,
+			tagType: random_type(),
+			projectIcon: 'https://www.loliapi.com/acg/pp/', // 随机头像 在线API 多久失效就难说了
+		}));
+		total.value = list_result.data.data.total;
+		restaurants.value = list_result.data.data.names.map((item: string) => ({
+			value: item,
+		}));
+	} catch (e) {
+		console.log(e);
+	}
+	card_loading.value = false;
 };
 
 /**
