@@ -2,7 +2,7 @@ spring:
   application:
     name: easy_verify_spring_boot
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/easy_verify?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3306/easy_verify?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&rewriteBatchedStatements=true
     username: root
     password: 123456
   data:

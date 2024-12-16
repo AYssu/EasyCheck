@@ -3,7 +3,6 @@ package com.easyverify.springboot.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.easyverify.springboot.dto.UserLoginDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;
-import com.easyverify.springboot.entity.EasyLink;
 import com.easyverify.springboot.entity.EasyUser;
 import com.easyverify.springboot.mapper.UserMapper;
 import com.easyverify.springboot.service.UserService;
@@ -129,7 +128,7 @@ public class UserServiceImpl implements UserService {
         }
         log.info("user {}",user);
         // 密码校验
-        if (Bcrypt.checkpw(userLoginDTO.getPassword(), user.getUserPassword())) {
+        if (Bcrypt.check_pw(userLoginDTO.getPassword(), user.getUserPassword())) {
             // 判断是否已登录
             String redis_token = (String) redisTemplate.opsForValue().get("easy_user_" + user.getUserId());
             Long expiration = redisTemplate.getExpire("easy_user_" + user.getUserId(), TimeUnit.SECONDS);

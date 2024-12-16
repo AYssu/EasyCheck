@@ -1,5 +1,6 @@
 package com.easyverify.springboot.controller;
 
+import cn.hutool.core.codec.Base64;
 import com.easyverify.springboot.dto.UserLoginDTO;
 import com.easyverify.springboot.dto.UserRegisterDTO;
 import com.easyverify.springboot.service.UserService;
@@ -7,13 +8,16 @@ import com.easyverify.springboot.utils.IpUtil;
 import com.easyverify.springboot.vo.ResponseResult;
 import com.easyverify.springboot.vo.UserLoginVO;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 @RestController
 @RequestMapping("user")

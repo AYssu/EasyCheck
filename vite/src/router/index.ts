@@ -1,9 +1,14 @@
-import { createWebHistory, createRouter } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
 	{
 		path: '/',
 		redirect: { name: 'about' },
+	},
+	{
+		path: '/unbind',
+		name: 'unbind',
+		component: () => import('@/view/UnbindView.vue'),
 	},
 	{
 		path: '/about',

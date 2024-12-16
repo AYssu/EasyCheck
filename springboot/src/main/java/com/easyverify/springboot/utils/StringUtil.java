@@ -2,32 +2,9 @@ package com.easyverify.springboot.utils;
 
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class StringUtil {
-
-    private static String str = "qwertyuiopasdfghjklzxcvbnm0987654321";
-
-    /**
-     * 获取一个UUID
-     * @return
-     */
-    public static String uuid(){
-        return UUID.randomUUID().toString();
-    }
-
-
-    /**
-     * 判断一个字符串是否为非空
-     * @param str
-     * @return
-     */
-    public static boolean isNotNul(String str){
-        return str != null && !"".equals(str);
-    }
 
     public static String generateRandomString(int length) {
         // 定义字符集，包括大写字母和数字
@@ -63,25 +40,29 @@ public class StringUtil {
         return new String(characters);
     }
 
-    /**
-     * 随机生成指定长度的字符串
-     * @param len
-     * @return
-     */
-    public static String randomStr(int len){
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < len; i++) {
-            int index = (int) (Math.random() * str.length());
-            stringBuilder.append(str.charAt(index));
-        }
-        return stringBuilder.toString();
-    }
+    public static String generateRandomKey() {
+        // 定义英文字母和数字
+        String letters = "ZXCVBNMLKJHG";
+        String numbers = "1234567890";
 
-    /**
-     * 获取当前时间的字符串类型
-     * @return
-     */
-    public static String getCurrentTime(){
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        // 将字母和数字合并到一个列表中
+        List<Character> chars = new ArrayList<>();
+        for (char c : letters.toCharArray()) {
+            chars.add(c);
+        }
+        for (char c : numbers.toCharArray()) {
+            chars.add(c);
+        }
+
+        // 随机排列列表中的元素
+        Collections.shuffle(chars);
+
+        // 将排列后的字符转换为字符串
+        StringBuilder password = new StringBuilder();
+        for (Character c : chars) {
+            password.append(c);
+        }
+
+        return password.toString();
     }
 }

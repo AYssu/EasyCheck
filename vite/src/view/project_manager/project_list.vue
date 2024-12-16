@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<!--    搜索框-->
 		<div style="margin-top: 10px">
 			<div v-if="phone_bool" style="display: flex; justify-content: space-between; margin-right: 10px">
 				<div style="display: flex; align-items: center; margin-left: 10px; margin-bottom: 20px">
@@ -15,7 +16,7 @@
 				<el-form-item :label="!phone_bool ? '' : '项目名称'">
 					<el-autocomplete
 						v-model="search_params.projectName"
-						:fetch-suggestions="querySearch"
+						:fetch-suggestions="query_search"
 						:size="phone_bool ? 'small' : ''"
 						clearable
 						placeholder="请输入项目名称"
@@ -42,24 +43,41 @@
 			</el-form>
 		</div>
 
-		<el-empty v-if="tableData.length === 0"></el-empty>
-		<div class="box_card_list">
-			<a-card v-for="(item, index) in tableData" :key="index" :style="phone_bool ? 'width: 180px' : 'width: 240px'" class="card-tran" hoverable>
+		<el-empty v-if="table_data.length === 0"></el-empty>
+
+		<div class="box_card_list" v-loading="card_loading">
+			<a-card
+				v-for="(item, index) in table_data"
+				:key="index"
+				:style="phone_bool ? 'width: 180px' : 'width: 240px'"
+				class="card-tran visible-card"
+				hoverable
+			>
 				<template #cover>
+					<!--          卡片背景图-->
 					<el-image :alt="item.projectName" :src="project_background" />
 				</template>
 				<template #actions>
-					<el-icon size="15px">
-						<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+					<!--          钥匙-->
+					<el-icon size="15px" @click="item_add_card_click(item)" style="width: 100%; height: 100%">
+						<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
 							<path
-								d="M711.04 32c-12.16 1.088-12.16 1.088-21.952 7.872l-54.784 49.472c-7.744 9.152-7.744 9.152-9.92 20.864l0.448 5.056c0.768 7.04 1.728 8.448 7.36 16.64l75.968 84.608-183.68 165.888 1.472 0.832a329.536 329.536 0 0 0-152.96-48.64 319.36 319.36 0 0 0-235.264 81.856A321.024 321.024 0 0 0 32.32 642.56c-7.68 181.12 132.288 337.216 312.768 348.48a319.36 319.36 0 0 0 235.264-81.856 321.024 321.024 0 0 0 105.408-226.176l0.256-17.536a332.8 332.8 0 0 0-30.4-135.552l-7.04-14.336 333.44-301.056 5.568-6.784c2.432-3.584 2.88-6.144 4.352-13.824-1.024-12.16-1.024-12.16-7.744-21.888l-81.344-90.624-5.888-4.864c-3.904-2.944-6.336-3.392-14.72-5.056l-5.12 0.384c-7.104 0.704-8.512 1.664-16.704 7.232l-52.672 47.488L731.712 41.984c-9.088-7.68-9.088-7.68-20.608-9.92z m-19.392 81.6l15.744-14.208 59.84 66.688c9.664 10.752 23.168 17.152 37.568 17.92l7.168-0.128a54.336 54.336 0 0 0 32-13.76l34.56-31.296 46.144 51.52L609.6 474.88a54.4 54.4 0 0 0-11.776 65.6c22.72 43.2 33.6 91.648 31.488 140.416a264.64 264.64 0 0 1-86.848 186.56 262.976 262.976 0 0 1-193.728 67.328c-149.888-9.344-266.368-139.264-260.032-289.856a264.64 264.64 0 0 1 86.912-186.56A262.976 262.976 0 0 1 369.28 390.912c45.056 2.816 88.64 16.64 126.912 40.384a54.208 54.208 0 0 0 64.832-5.888l186.496-168.32 4.736-4.864a54.4 54.4 0 0 0-0.64-71.808l-60.032-66.816z"
+								d="M671.43 608.04c-68.21 0-132.33-26.56-180.56-74.79s-74.79-112.35-74.79-180.56 26.56-132.33 74.79-180.56 112.35-74.79 180.56-74.79 132.33 26.56 180.56 74.79 74.79 112.35 74.79 180.56-26.56 132.33-74.79 180.56-112.35 74.79-180.56 74.79z m0-446.69c-105.51 0-191.35 85.84-191.35 191.35s85.84 191.35 191.35 191.35 191.35-85.84 191.35-191.35-85.84-191.35-191.35-191.35z"
 							></path>
 							<path
-								d="M374.144 467.584a189.312 189.312 0 0 0-138.816 48.064 188.352 188.352 0 0 0-62.336 132.864 195.2 195.2 0 0 0 182.528 202.24 189.248 189.248 0 0 0 138.752-48 188.352 188.352 0 0 0 62.336-132.864 195.136 195.136 0 0 0-182.4-202.24z m-4.16 63.872a131.2 131.2 0 0 1 122.688 135.808 124.416 124.416 0 0 1-41.152 87.872c-25.088 22.528-58.24 33.984-91.904 31.808a131.2 131.2 0 0 1-122.688-135.872c1.28-33.664 16.128-65.28 41.216-87.808 25.024-22.528 58.24-33.984 91.84-31.808z"
+								d="M155.37 900.63c-8.19 0-16.38-3.12-22.63-9.37-12.5-12.5-12.5-32.76 0-45.25l357.03-357.03c12.5-12.5 32.76-12.5 45.25 0 12.5 12.5 12.5 32.76 0 45.25L178 891.26a31.94 31.94 0 0 1-22.63 9.37z"
+							></path>
+							<path
+								d="M510.47 798.27c-8.19 0-16.38-3.12-22.63-9.37L361.47 662.53c-12.5-12.5-12.5-32.76 0-45.26s32.76-12.5 45.25 0L533.1 743.64c12.5 12.5 12.5 32.76 0 45.25-6.25 6.26-14.44 9.38-22.63 9.38z"
+							></path>
+							<path
+								d="M349.93 893.68c-8.19 0-16.38-3.12-22.63-9.37l-93.88-93.88c-12.5-12.5-12.5-32.76 0-45.25 12.5-12.5 32.76-12.5 45.25 0l93.88 93.88c12.5 12.5 12.5 32.76 0 45.25-6.24 6.25-14.43 9.37-22.62 9.37z"
 							></path>
 						</svg>
 					</el-icon>
+					<!--          项目详情-->
 					<edit-outlined @click="on_click_open_show(item)" />
+					<!--            更多...-->
 					<a-dropdown :trigger="['contextmenu', 'click']" placement="bottomLeft">
 						<ellipsis-outlined />
 						<template #overlay>
@@ -155,14 +173,19 @@
 					</a-dropdown>
 				</template>
 				<a-card-meta>
+					<!--            头像-->
 					<template #avatar>
 						<a-avatar :src="item.projectIcon" />
 					</template>
+					<!--          昵称/按钮-->
 					<template #title>
 						<div>
+							<!--              名字-->
 							<el-text>{{ item.projectName }}</el-text>
+							<!--              按钮-->
 							<el-switch
 								v-model="item.projectStatus"
+								class="visible-switch"
 								:active-value="0"
 								:disabled="true"
 								:inactive-value="1"
@@ -174,6 +197,7 @@
 							/>
 						</div>
 					</template>
+					<!--          时间-->
 					<template #description>
 						<div>
 							<el-text :style="phone_bool ? 'font-size: 0.7rem' : 'font-size: 0.9rem'" size="small" type="info">
@@ -185,6 +209,7 @@
 			</a-card>
 		</div>
 
+		<!--    分页-->
 		<el-pagination
 			v-model:current-page="search_params.currentPage"
 			v-model:page-size="search_params.pageSize"
@@ -195,14 +220,15 @@
 			:total="total"
 			layout=" prev, pager, next"
 			style="justify-content: flex-end; margin-right: 10px; margin-top: 10px"
-			@size-change="handleSizeChange"
-			@current-change="handleCurrentChange"
+			@size-change="handle_size_change"
+			@current-change="handle_current_change"
 		/>
 
-		<a-modal v-model:open="drawer" aria-hidden="false" title="创建程序" @ok="handleOk">
+		<!--		添加项目-->
+		<a-modal v-model:open="drawer" aria-hidden="false" title="创建程序" @ok="handle_ok">
 			<template #footer>
-				<a-button key="back" @click="handleCancel">取消</a-button>
-				<a-button key="submit" :loading="loading" type="primary" @click="handleOk">创建</a-button>
+				<a-button key="back" @click="handle_cancel">取消</a-button>
+				<a-button key="submit" :loading="loading" type="primary" @click="handle_ok">创建</a-button>
 			</template>
 			<el-form :label-position="'left'" :model="create_project_params" :rules="create_rules" style="margin: 20px 0 0 0">
 				<el-form-item label="项目名称" prop="projectName">
@@ -222,6 +248,7 @@
 			</el-form>
 		</a-modal>
 
+		<!--    项目详情-->
 		<a-drawer
 			:closable="false"
 			:open="a_drawer"
@@ -364,42 +391,7 @@
 			</a-form>
 		</a-drawer>
 
-		<a-modal v-model:open="show_notice" cancel-text="取消" ok-text="修改" title="修改程序公告" @ok="update_project_notice">
-			<a-form :model="show_project_info">
-				<a-form-item style="margin-top: 20px">
-					<el-input
-						v-model="show_project_info.projectNotice"
-						:autosize="{ maxRows: 20, minRows: 10 }"
-						maxlength="1024"
-						show-word-limit
-						placeholder="请输入公告内容"
-						type="textarea"
-					/>
-				</a-form-item>
-			</a-form>
-		</a-modal>
-
-		<a-modal v-model:open="json_show" :closable="true" :title="choose_project_variable.title" :width="phone_bool ? '' : '60%'">
-			<Codemirror ref="cmRef" v-model:value="code" :height="'400px'" style="border-radius: 7px" :options="cmOptions" @ready="onReady"> </Codemirror>
-
-			<template #footer>
-				<el-row justify="end">
-					<el-button :loading="format_loading" type="warning" @click="format_json">
-						<el-icon>
-							<svg class="icon" height="200" p-id="1585" t="1731564695662" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
-								<path
-									d="M607.456 302.88c13.024 8.672 18.24 21.44 13.696 33.44l-156.288 410.56c-4.576 12-18.208 21.44-35.808 24.768-17.6 3.328-36.416 0-49.44-8.64-13.024-8.704-18.24-21.44-13.696-33.472l156.288-410.56c4.576-12.032 18.24-21.44 35.808-24.8 17.6-3.296 36.448 0 49.44 8.704z m103.52-33.312a45.92 45.92 0 0 1 65.824 0.704l201.504 209.248c8.736 8.96 13.664 21.248 13.696 34.08 0 12.864-4.864 25.152-13.504 34.112l-201.6 210.88c-18.144 18.752-47.2 19.168-65.792 0.896a48.96 48.96 0 0 1-14.496-34.304 49.056 49.056 0 0 1 13.504-34.688l168.896-176.704-168.704-175.168a48.768 48.768 0 0 1-13.344-28.224l-0.32-6.464a48.96 48.96 0 0 1 14.336-34.368z m-463.808 0.704a45.888 45.888 0 0 1 65.856-0.704c9.024 8.928 14.24 21.312 14.368 34.368 0.128 13.056-4.832 25.6-13.664 34.624L144.96 513.792l168.896 176.704c7.36 7.616 11.936 17.6 13.184 28.256l0.32 6.464a48.96 48.96 0 0 1-14.464 34.272 45.92 45.92 0 0 1-65.856-0.96l-201.44-210.784A49.056 49.056 0 0 1 32 513.6c0-12.832 4.96-25.12 13.632-34.048z"
-									fill="#FFF"
-								></path>
-							</svg>
-						</el-icon>
-						<el-text style="color: white">格式化</el-text>
-					</el-button>
-					<el-button :loading="update_variable_loading" color="#17926c" type="primary" @click="update_variable"> 更新变量 </el-button>
-				</el-row>
-			</template>
-		</a-modal>
-
+		<!--    更新管理-->
 		<a-modal v-model:open="show_project_update" title="编辑项目更新">
 			<template #footer>
 				<a-button @click="show_project_update = false">取消</a-button>
@@ -432,6 +424,23 @@
 			</a-form>
 		</a-modal>
 
+		<!--    公告管理-->
+		<a-modal v-model:open="show_notice" cancel-text="取消" ok-text="修改" title="修改程序公告" @ok="update_project_notice">
+			<a-form :model="show_project_info">
+				<a-form-item style="margin-top: 20px">
+					<el-input
+						v-model="show_project_info.projectNotice"
+						:autosize="{ maxRows: 20, minRows: 10 }"
+						maxlength="1024"
+						show-word-limit
+						placeholder="请输入公告内容"
+						type="textarea"
+					/>
+				</a-form-item>
+			</a-form>
+		</a-modal>
+
+		<!--    接口管理-->
 		<a-modal :closable="false" :footer="null" :open="url_visible" :width="phone_bool ? '' : '60%'" @cancel="url_visible = false">
 			<template #title>
 				<div style="display: flex; justify-content: space-between">
@@ -451,10 +460,10 @@
 							<template #header>
 								<el-checkbox
 									style="--el-checkbox-checked-bg-color: #17926c; --el-checkbox-checked-text-color: #17926c"
-									v-model="checkAll"
+									v-model="check_all"
 									:indeterminate="indeterminate"
 									:size="phone_bool ? 'small' : ''"
-									@change="handleCheckAll"
+									@change="handle_check_all"
 								>
 									全选
 								</el-checkbox>
@@ -468,6 +477,7 @@
 				</div>
 			</template>
 
+			<!--      接口管理-->
 			<el-table :data="data" size="small">
 				<template #empty>
 					<el-empty :image-size="100" description="请先添加接口"></el-empty>
@@ -523,6 +533,29 @@
 			</el-table>
 		</a-modal>
 
+		<!--    变量管理-->
+		<a-modal v-model:open="json_show" :closable="true" :title="choose_project_variable.title" :width="phone_bool ? '' : '60%'">
+			<Codemirror ref="cmRef" v-model:value="code" :height="'400px'" style="border-radius: 7px" :options="cm_options" @ready="on_ready"> </Codemirror>
+
+			<template #footer>
+				<el-row justify="end">
+					<el-button :loading="format_loading" type="warning" @click="format_json">
+						<el-icon>
+							<svg class="icon" height="200" viewBox="0 0 1024 1024" width="200" xmlns="http://www.w3.org/2000/svg">
+								<path
+									d="M607.456 302.88c13.024 8.672 18.24 21.44 13.696 33.44l-156.288 410.56c-4.576 12-18.208 21.44-35.808 24.768-17.6 3.328-36.416 0-49.44-8.64-13.024-8.704-18.24-21.44-13.696-33.472l156.288-410.56c4.576-12.032 18.24-21.44 35.808-24.8 17.6-3.296 36.448 0 49.44 8.704z m103.52-33.312a45.92 45.92 0 0 1 65.824 0.704l201.504 209.248c8.736 8.96 13.664 21.248 13.696 34.08 0 12.864-4.864 25.152-13.504 34.112l-201.6 210.88c-18.144 18.752-47.2 19.168-65.792 0.896a48.96 48.96 0 0 1-14.496-34.304 49.056 49.056 0 0 1 13.504-34.688l168.896-176.704-168.704-175.168a48.768 48.768 0 0 1-13.344-28.224l-0.32-6.464a48.96 48.96 0 0 1 14.336-34.368z m-463.808 0.704a45.888 45.888 0 0 1 65.856-0.704c9.024 8.928 14.24 21.312 14.368 34.368 0.128 13.056-4.832 25.6-13.664 34.624L144.96 513.792l168.896 176.704c7.36 7.616 11.936 17.6 13.184 28.256l0.32 6.464a48.96 48.96 0 0 1-14.464 34.272 45.92 45.92 0 0 1-65.856-0.96l-201.44-210.784A49.056 49.056 0 0 1 32 513.6c0-12.832 4.96-25.12 13.632-34.048z"
+									fill="#FFF"
+								></path>
+							</svg>
+						</el-icon>
+						<el-text style="color: white">格式化</el-text>
+					</el-button>
+					<el-button :loading="update_variable_loading" color="#17926c" type="primary" @click="update_variable"> 更新变量 </el-button>
+				</el-row>
+			</template>
+		</a-modal>
+
+		<!--    编辑接口管理-->
 		<a-modal
 			:confirm-loading="update_link_loading"
 			:open="update_link_visible"
@@ -562,13 +595,113 @@
 				</el-form-item>
 			</el-form>
 		</a-modal>
+
+		<a-modal :width="phone_bool ? '' : '60%'" :open="add_card_open" title="添加卡密" :closable="false" @cancel="add_card_open = false">
+			<template #footer>
+				<a-button :size="phone_bool ? 'small' : ''" key="submit" type="primary" :loading="loading" @click="add_card_click">创建</a-button>
+			</template>
+			<el-form :size="phone_bool ? 'small' : ''" :label-position="phone_bool ? 'top' : 'left'">
+				<el-form-item style="margin-top: 20px" label="绑定程序">
+					<el-input :size="phone_bool ? 'small' : ''" :value="add_card_form.projectName" disabled />
+				</el-form-item>
+				<el-form-item label="卡密类型">
+					<div style="display: flex; width: 100%">
+						<el-select v-model="add_card_form.cardType" placeholder="请选择卡密类型">
+							<el-option label="天卡" :value="1" key="1" />
+							<el-option label="周卡" :value="2" key="2" />
+							<el-option label="月卡" :value="3" key="3" />
+							<el-option label="半年卡" :value="4" key="4" />
+							<el-option label="年卡" :value="5" key="5" />
+							<el-option label="永久卡" :value="6" key="5" />
+							<el-option label="自定义时间卡" :value="7" key="6" />
+						</el-select>
+
+						<el-input-number
+							v-if="add_card_form.cardType <= 5"
+							:size="phone_bool ? 'small' : ''"
+							v-model="add_card_form.cardTime"
+							style="width: 120px; margin-left: 5px"
+							controls-position="right"
+							:min="1"
+							:max="100"
+							:step="1"
+							:disabled="add_card_form.cardType == 7"
+						/>
+					</div>
+				</el-form-item>
+				<el-form-item v-if="add_card_form.cardType == 7" label="到期时间">
+					<a-date-picker format="YYYY年MM月DD日" :size="phone_bool ? 'small' : ''" v-model:value="add_card_form.endTime" style="width: 100%">
+						<template #suffixIcon>
+							<SmileOutlined />
+						</template>
+					</a-date-picker>
+				</el-form-item>
+				<el-form-item label="制卡数量">
+					<a-input-number
+						:size="phone_bool ? 'small' : ''"
+						v-model:value="add_card_form.cardNum"
+						style="width: 100%"
+						type="number"
+						:min="1"
+						:max="200"
+						:step="1"
+					>
+						<template #addonAfter> <el-text>张</el-text> </template>
+					</a-input-number>
+				</el-form-item>
+				<el-form-item label="卡密备注">
+					<a-textarea :size="phone_bool ? 'small' : ''" placeholder="请输入备注,可用于快速查询卡密创建的批次" v-model="add_card_form.cardRemark" />
+				</el-form-item>
+			</el-form>
+		</a-modal>
+		<el-dialog :title="null" :width="phone_bool ? '90%' : '80%'" style="min-height: 500px" v-model="card_list_show_open">
+			<template #header>
+				<span style="font-size: 14px">卡密生成列表</span>
+			</template>
+			<template #footer>
+				<el-button :size="phone_bool ? 'small' : ''" type="warning" @click="export_text(card_list)">
+					<template #icon>
+						<el-icon>
+							<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+								<path
+									d="M516.394 102.699c10.469 0 19.289 3.592 26.453 10.744L728.91 299.506c7.164 7.164 10.744 15.98 10.744 26.452 0 10.668-3.537 19.532-10.6 26.6-7.072 7.076-15.938 10.608-26.598 10.608-10.475 0-19.299-3.584-26.459-10.748l-122.381-122.68v431.126c0 10.266-3.635 19.041-10.902 26.316-7.277 7.271-16.049 10.908-26.316 10.908-10.281 0-19.049-3.637-26.32-10.908-7.276-7.275-10.92-16.051-10.92-26.316V229.738l-122.364 122.68c-7.56 7.168-16.376 10.748-26.464 10.748-10.28 0-19.04-3.64-26.316-10.908-7.276-7.272-10.916-16.052-10.916-26.32 0-10.084 3.576-18.908 10.744-26.456l186.061-186.063c7.16-7.168 15.992-10.744 26.457-10.744l0.034 0.024z m367.71 520.935c10.264 0 19.045 3.639 26.309 10.912 7.268 7.275 10.912 16.051 10.912 26.328v148.818c0 31.018-10.748 57.277-32.264 78.793-21.896 21.889-48.064 32.84-78.492 32.84H214.303c-30.417 0-56.772-10.855-79.06-32.568-21.716-22.287-32.568-48.643-32.568-79.064V660.874c0-10.285 3.634-19.053 10.908-26.328 7.276-7.273 16.049-10.912 26.321-10.912 10.266 0 19.04 3.639 26.316 10.912 7.273 7.275 10.908 16.051 10.908 26.328v148.818c0 10.27 3.634 19.049 10.914 26.324 7.274 7.273 16.042 10.896 26.318 10.896h596.256c10.076 0 18.656-3.623 25.729-10.896 7.072-7.275 10.611-16.055 10.611-26.324V660.874c0-10.285 3.637-19.053 10.908-26.328 7.277-7.273 16.045-10.912 26.313-10.912h-0.073z"
+								></path>
+							</svg>
+						</el-icon>
+					</template>
+					导出
+				</el-button>
+				<el-button :size="phone_bool ? 'small' : ''" type="success" @click="copy_text(card_list)">
+					<template #icon>
+						<el-icon>
+							<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+								<path
+									d="M780.6 127.2H354.4c-63 0-113.8 50.7-113.8 113.8v426.2c0 63 50.7 113.8 113.8 113.8h426.2c63 0 113.8-50.7 113.8-113.8V241c0-63-50.7-113.8-113.8-113.8z m52.4 537c0 29.7-24.3 55.4-55.4 55.4H357.4c-29.7 0-55.4-24.3-55.4-55.4V244c0-29.7 24.3-55.4 55.4-55.4h420.2c29.7 0 55.4 24.3 55.4 55.4v420.2z"
+								></path>
+								<path
+									d="M155.6 279.3c-15.2 0-27 11.8-28.6 25.5v473.5c3.6 65.2 57 116.3 123.1 116.3h464.6c15.1 0 27.4-12.3 28.8-27.4 0-16.4-13.7-28.8-28.8-28.8l-463.1 0.1c-37 0-67.2-30.2-67.2-67.2V308.1c0-16.4-13.7-28.8-28.8-28.8z"
+								></path>
+							</svg>
+						</el-icon>
+					</template>
+					复制</el-button
+				>
+			</template>
+			<el-input :rows="20" type="textarea" v-model="card_list" class="no-wrap-textarea" readonly></el-input>
+		</el-dialog>
 	</div>
 </template>
 
 <script lang="ts" setup>
+import type { CheckboxValueType } from 'element-plus';
+import { ComponentSize, ElMessage } from 'element-plus';
+import Codemirror, { CmComponentRef } from 'codemirror-editor-vue3';
 import { CirclePlusFilled, FolderAdd, Search } from '@element-plus/icons-vue';
+import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined, SmileOutlined } from '@ant-design/icons-vue';
+import { message, Modal } from 'ant-design-vue';
 import { computed, createVNode, onMounted, onUnmounted, reactive, ref, UnwrapRef, watch } from 'vue';
 import {
+	add_project_card_services,
 	add_project_link_services,
 	create_project_services,
 	delete_project_link_services,
@@ -585,39 +718,29 @@ import {
 	update_project_reset_key_services,
 	update_project_status_services,
 } from '@/api/project.ts';
-import type { CheckboxValueType } from 'element-plus';
-import { ComponentSize, ElMessage } from 'element-plus';
-
+import { theme_status } from '@/stores/theme.ts';
+import phone_size from '@/utils/phone_size.ts';
 import project_background from '@/assets/svg/project_background.svg';
-import { EditOutlined, EllipsisOutlined, ExclamationCircleOutlined, SettingOutlined } from '@ant-design/icons-vue';
-import { message, Modal } from 'ant-design-vue';
 import { Editor, EditorConfiguration } from 'codemirror';
-import Codemirror, { CmComponentRef } from 'codemirror-editor-vue3';
-
-import jsonlint from 'jsonlint-mod-fixed';
-// language json or js
+import jsonlint from 'jsonlint-mod-fixed'; // language json or js
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/addon/lint/lint.css';
 import 'codemirror/addon/lint/lint.js';
 import 'codemirror/addon/lint/json-lint';
 import 'codemirror/theme/base16-dark.css';
-import { theme_status } from '@/stores/theme.ts';
-import phone_size from '@/utils/phone_size.ts';
+import axios from 'axios';
 
-interface url_link {
-	aid: any;
-	code: any;
-	codeType: any;
-	link: any;
-	projectId: any;
-	returnTime: any;
-	safeType: any;
-	type: any;
-}
-
+const card_loading = ref<boolean>(false);
+const card_list_show_open = ref<boolean>(false);
+const add_card_open = ref<boolean>(false);
 const url_visible = ref(false);
-
 const update_link_visible = ref(false);
+const update_link_loading = ref(false);
+const check_all = ref(false);
+const indeterminate = ref(false);
+const value = ref<CheckboxValueType[]>([]);
+const cities_filter = ref<link_option[]>();
+const card_list = ref();
 const update_link_form = ref<url_link>({
 	aid: 1,
 	code: 200,
@@ -629,101 +752,15 @@ const update_link_form = ref<url_link>({
 	type: 1,
 });
 
-const update_link_loading = ref(false);
-
-// 更新接口
-const update_link_from_info = async () => {
-	update_link_loading.value = true;
-	const params = {
-		code: update_link_form.value.code,
-		codeType: update_link_form.value.codeType,
-		projectId: update_link_form.value.projectId,
-		returnTime: update_link_form.value.returnTime,
-		safeType: update_link_form.value.safeType,
-		type: [update_link_form.value.type],
-	};
-	const result = await update_project_link_services(params);
-	try {
-		if (result.data.code == 200) {
-			ElMessage.success('修改成功');
-			update_link_visible.value = false;
-			url_visible.value = false;
-		} else {
-			ElMessage.error(result.data.message);
-		}
-	} catch (e) {
-		update_link_loading.value = false;
-		console.log(e);
-	}
-	update_link_loading.value = false;
-};
-
-// 获取接口
-const open_url_controller = async (pid: number) => {
-	data.value = [];
-	value.value = [];
-	url_visible.value = true;
-	const result = await get_project_links_services(pid);
-	try {
-		if (result.data.code == 200) {
-			const links: any = result.data.data;
-			console.log(result.data);
-			if (links != null) {
-				cities_filter.value = cities.value.filter((item: link_option) => {
-					return !links.some((link: any) => link.type === item.value);
-				});
-			} else {
-				cities_filter.value = cities.value;
-			}
-			data.value = links;
-		}
-	} catch (e) {
-		ElMessage.error('获取接口失败');
-		console.log(e);
-	}
-};
-
-// 删除接口
-const link_delete_click = async (row: url_link) => {
-	Modal.confirm({
-		title: '提示',
-		content: '是否删除该接口?',
-		onOk: async () => {
-			const result = await delete_project_link_services(row.aid);
-			try {
-				if (result.data.code == 200) {
-					ElMessage.success('删除成功');
-					url_visible.value = false;
-				} else {
-					ElMessage.error(result.data.message);
-				}
-			} catch (e) {
-				console.log(e);
-			}
-		},
-	});
-};
-
-const checkAll = ref(false);
-const indeterminate = ref(false);
-const value = ref<CheckboxValueType[]>([]);
-
-interface link_option {
-	value: number;
-	label: string;
-	checked?: boolean;
-}
-
-const get_url_name = (type: number) => {
-	if (type === undefined) {
-		return ''; // 返回空字符串或其他默认值
-	}
-	const item = cities.value.find((item) => item.value === type);
-	if (item) {
-		return item.label;
-	}
-	return ''; // 如果没有找到匹配项，返回空字符串或其他默认值
-};
+const add_card_form = ref({
+	projectId: 10000,
+	projectName: 'test',
+	cardType: 1,
+	cardTime: 1,
+	endTime: '',
+	cardNum: 1,
+	cardRemark: '',
+});
 const cities = ref<link_option[]>([
 	{
 		value: 1,
@@ -758,33 +795,9 @@ const cities = ref<link_option[]>([
 		label: '用户心跳',
 	},
 ]);
-const cities_filter = ref<link_option[]>();
-watch(value, (val) => {
-	if (val.length === 0) {
-		checkAll.value = false;
-		indeterminate.value = false;
-	} else if (cities_filter.value != undefined && val.length === cities_filter.value.length) {
-		checkAll.value = true;
-		indeterminate.value = false;
-	} else {
-		indeterminate.value = true;
-	}
-});
-
-const handleCheckAll = (val: CheckboxValueType) => {
-	indeterminate.value = false;
-	if (cities_filter.value == undefined) return;
-	if (val) {
-		value.value = cities_filter.value.map((_) => _.value);
-	} else {
-		value.value = [];
-	}
-};
 const data = ref<url_link[]>();
-
 const drawer = ref<boolean>(false);
 const a_drawer = ref<boolean>(false);
-
 const total = ref(0);
 const size = ref<ComponentSize>('default');
 const background = ref(false);
@@ -810,9 +823,7 @@ const show_project_info = ref<Project>({
 	bindKey: '',
 });
 const show_project_update = ref(false);
-
 const theme_store = theme_status();
-
 const codemirror_theme = computed(() => {
 	return theme_store.dark ? 'base16-dark' : 'default';
 });
@@ -824,24 +835,15 @@ const project_update_info = ref({
 	updateUrl: 'https://example.com',
 	updateVersion: '1000',
 });
-
 const cmRef = ref<CmComponentRef>();
 (window as any).jsonlint = jsonlint;
-
 const json_show = ref<boolean>(false);
-
 const code = ref();
-
-interface Project_Variable {
-	pid: number;
-	title: string;
-}
-
-const choose_project_variable = ref<Project_Variable>({
+const choose_project_variable = ref<project_variable>({
 	pid: 0,
 	title: '',
 });
-const cmOptions: EditorConfiguration = reactive({
+const cm_options: EditorConfiguration = reactive({
 	mode: 'application/json',
 	lineNumbers: true,
 	lineWiseCopyCut: true,
@@ -850,18 +852,245 @@ const cmOptions: EditorConfiguration = reactive({
 	lint: true,
 	theme: codemirror_theme,
 });
-
 const cm_instance = ref<Editor | null>(null);
-const onReady = (cm: Editor) => {
+const format_loading = ref(false);
+const update_variable_loading = ref(false);
+const loading = ref<boolean>(false);
+const project_update_info_loading = ref(false);
+const table_data = ref<Project[]>([]);
+const { phone_bool, remove_phone_size } = phone_size();
+const restaurants = ref<RestaurantItem[]>([]);
+const project_update_loading = ref(false);
+const create_rules = ref({
+	projectName: [
+		{ required: true, message: '请输入项目名称', trigger: 'blur' },
+		{ min: 2, max: 5, message: '长度在 2 到 10 个字符', trigger: 'blur' },
+	],
+	projectMessage: [
+		{ required: true, message: '请输入项目简介', trigger: 'blur' },
+		{ min: 2, max: 255, message: '长度在 2 到 255 个字符', trigger: 'blur' },
+	],
+});
+const search_params = ref<Search>({
+	currentPage: 1,
+	pageSize: 10,
+	projectName: null,
+});
+const create_project_params = ref<Project_from>({
+	projectName: '',
+	projectMessage: '',
+});
+
+interface url_link {
+	aid: any;
+	code: any;
+	codeType: any;
+	link: any;
+	projectId: any;
+	returnTime: any;
+	safeType: any;
+	type: any;
+}
+interface link_option {
+	value: number;
+	label: string;
+	checked?: boolean;
+}
+interface project_variable {
+	pid: number;
+	title: string;
+}
+// 创建程序的参数
+interface Project_from {
+	projectName: string;
+	projectMessage: string;
+}
+interface Search {
+	currentPage: number;
+	pageSize: number;
+	projectName: string | null;
+}
+interface RestaurantItem {
+	value: string;
+}
+// 重置密钥返回结构体
+interface reset_data {
+	success: boolean;
+	projectBase64: string;
+	projectKey: string;
+}
+
+export interface Project {
+	projectId: number;
+	projectCreateTime: string;
+	projectKey: string;
+	projectName: string;
+	projectMessage: string;
+	projectNotice: string;
+	tagType: string;
+	projectStatus: number;
+	projectIcon: string;
+	projectBase64: string;
+	projectModel: number;
+	returnUpdate: number;
+	returnVerify: number;
+	projectEncryption: number;
+	projectRsaPrivate: string;
+	projectRsaPublic: string;
+	bindKey: string;
+}
+
+/**
+ * 点击创建卡密弹窗
+ * @param item
+ */
+const item_add_card_click = (item: any) => {
+	add_card_open.value = true;
+	add_card_form.value.projectId = item.projectId;
+	add_card_form.value.projectName = item.projectName;
+};
+/**
+ * 创建卡密
+ */
+const add_card_click = async () => {
+	loading.value = true;
+	const result = await add_project_card_services(add_card_form.value);
+	try {
+		if (result.data.code == 200) {
+			message.success('创建成功');
+			card_list.value = result.data.data.message;
+			add_card_open.value = false;
+			card_list_show_open.value = true;
+		} else {
+			message.error(result.data.message);
+		}
+	} catch (e) {
+		console.log(e);
+	}
+	loading.value = false;
+};
+/**
+ * 修改接口
+ */
+const update_link_from_info = async () => {
+	update_link_loading.value = true;
+	const params = {
+		code: update_link_form.value.code,
+		codeType: update_link_form.value.codeType,
+		projectId: update_link_form.value.projectId,
+		returnTime: update_link_form.value.returnTime,
+		safeType: update_link_form.value.safeType,
+		type: [update_link_form.value.type],
+	};
+	const result = await update_project_link_services(params);
+	try {
+		if (result.data.code == 200) {
+			ElMessage.success('修改成功');
+			update_link_visible.value = false;
+			url_visible.value = false;
+		} else {
+			ElMessage.error(result.data.message);
+		}
+	} catch (e) {
+		update_link_loading.value = false;
+		console.log(e);
+	}
+	update_link_loading.value = false;
+};
+
+/**
+ * 打开接口 根据pid
+ * @param pid
+ */
+const open_url_controller = async (pid: number) => {
+	data.value = [];
+	value.value = [];
+	url_visible.value = true;
+	const result = await get_project_links_services(pid);
+	try {
+		if (result.data.code == 200) {
+			const links: any = result.data.data;
+			console.log(result.data);
+			if (links != null) {
+				cities_filter.value = cities.value.filter((item: link_option) => {
+					return !links.some((link: any) => link.type === item.value);
+				});
+			} else {
+				cities_filter.value = cities.value;
+			}
+			data.value = links;
+		}
+	} catch (e) {
+		ElMessage.error('获取接口失败');
+		console.log(e);
+	}
+};
+
+/**
+ * 删除接口
+ * @param row
+ */
+const link_delete_click = async (row: url_link) => {
+	Modal.confirm({
+		title: '提示',
+		content: '是否删除该接口?',
+		onOk: async () => {
+			const result = await delete_project_link_services(row.aid);
+			try {
+				if (result.data.code == 200) {
+					ElMessage.success('删除成功');
+					url_visible.value = false;
+				} else {
+					ElMessage.error(result.data.message);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		},
+	});
+};
+
+/**
+ * 获取接口名称
+ * @param type
+ * @return string
+ */
+const get_url_name = (type: number) => {
+	if (type == undefined) {
+		return ''; // 返回空字符串或其他默认值
+	}
+	const item = cities.value.find((item) => item.value === type);
+	if (item) {
+		return item.label;
+	}
+	return ''; // 如果没有找到匹配项，返回空字符串或其他默认值
+};
+
+/**
+ * 全选
+ * @param val
+ */
+const handle_check_all = (val: CheckboxValueType) => {
+	indeterminate.value = false;
+	if (cities_filter.value == undefined) return;
+	if (val) {
+		value.value = cities_filter.value.map((_) => _.value);
+	} else {
+		value.value = [];
+	}
+};
+
+/**
+ * 编辑器加载完毕
+ * @param cm
+ */
+const on_ready = (cm: Editor) => {
 	cm_instance.value = cm;
 };
 
-defineExpose({
-	setTheme: (theme: string) => {
-		cm_instance.value?.setOption('theme', theme);
-	},
-});
-
+/**
+ * 更新项目公告
+ */
 const update_project_notice = async () => {
 	// 更新项目公告
 	const result = await set_project_notice_services({
@@ -882,6 +1111,10 @@ const update_project_notice = async () => {
 	}
 };
 
+/**
+ * 更新项目信息
+ * @param pid
+ */
 const on_click_update_project = async (pid: number) => {
 	const result = await get_project_update_info_services(pid);
 	try {
@@ -919,7 +1152,9 @@ const on_click_update_project = async (pid: number) => {
 	}
 };
 
-const project_update_loading = ref(false);
+/**
+ * 更新项目更新信息
+ */
 const update_project_update_info = async () => {
 	project_update_loading.value = true;
 	const result = await set_project_update_info_services(project_update_info.value);
@@ -939,6 +1174,12 @@ const update_project_update_info = async () => {
 		console.log(e);
 	}
 };
+
+/**
+ * 编辑变量
+ * @param pid
+ * @param title
+ */
 const handle_edit_variable = async (pid: number, title: string) => {
 	const result = await get_project_variable_services(pid);
 	choose_project_variable.value.pid = pid;
@@ -966,8 +1207,9 @@ const handle_edit_variable = async (pid: number, title: string) => {
 	}
 };
 
-const format_loading = ref(false);
-
+/**
+ * 格式化JSON
+ */
 const format_json = async () => {
 	try {
 		format_loading.value = true;
@@ -983,8 +1225,10 @@ const format_json = async () => {
 		format_loading.value = false;
 	}
 };
-const update_variable_loading = ref(false);
 
+/**
+ * 更新变量
+ */
 const update_variable = async () => {
 	update_variable_loading.value = true;
 	try {
@@ -1007,51 +1251,25 @@ const update_variable = async () => {
 	}
 };
 
-export interface Project {
-	projectId: number;
-	projectCreateTime: string;
-	projectKey: string;
-	projectName: string;
-	projectMessage: string;
-	projectNotice: string;
-	tagType: string;
-	projectStatus: number;
-	projectIcon: string;
-	projectBase64: string;
-	projectModel: number;
-	returnUpdate: number;
-	returnVerify: number;
-	projectEncryption: number;
-
-	projectRsaPrivate: string;
-	projectRsaPublic: string;
-	bindKey: string;
-}
-
-// 创建程序的参数
-interface Project_from {
-	projectName: string;
-	projectMessage: string;
-}
-
-interface Search {
-	currentPage: number;
-	pageSize: number;
-	projectName: string | null;
-}
-
-const loading = ref<boolean>(false);
-
-const handleOk = async () => {
+/**
+ *确定事件
+ */
+const handle_ok = async () => {
 	loading.value = true;
 	await create_project_click();
 	loading.value = false;
 };
 
-const handleCancel = () => {
+/**
+ * 取消事件
+ */
+const handle_cancel = () => {
 	drawer.value = false;
 };
 
+/**
+ * 添加接口
+ */
 const add_url = async () => {
 	if (value.value.length == 0) {
 		message.warn('添加链接为空');
@@ -1069,16 +1287,16 @@ const add_url = async () => {
 	try {
 		if (result.data.code === 200) {
 			url_visible.value = false;
-			const contentString = result.data.data.replace(/\\n/g, '\n');
+			const content_string = result.data.data.replace(/\\n/g, '\n');
 
 			const contentVNode = createVNode(
 				'div',
 				{},
-				contentString
+				content_string
 					.split('\n')
 					.map(function (line: any, index: any) {
 						// 为每一行创建一个 span 元素
-						return createVNode('span', {}, line + (index < contentString.split('\n').length - 1 ? '\n' : ''));
+						return createVNode('span', {}, line + (index < content_string.split('\n').length - 1 ? '\n' : ''));
 					})
 					.flatMap((node: any) => {
 						// 如果不是最后一行，添加一个 br 元素
@@ -1106,7 +1324,9 @@ const add_url = async () => {
 	}
 };
 
-const project_update_info_loading = ref(false);
+/**
+ * 更新项目
+ */
 const on_update_project = async () => {
 	const params = {
 		projectId: show_project_info.value.projectId,
@@ -1137,6 +1357,10 @@ const on_update_project = async () => {
 	}
 };
 
+/**
+ * 打开项目详情
+ * @param data
+ */
 const on_click_open_show = (data: any) => {
 	// 这样就不会修改原本的table_data咯
 	show_project_info.value = JSON.parse(JSON.stringify(data));
@@ -1148,50 +1372,80 @@ const on_click_open_show = (data: any) => {
 		content: '请妥善保管项目的配置信息,请勿泄露,泄露后传输就不安全了,请格式化程序key或替换密钥!',
 	});
 };
-const create_rules = ref({
-	projectName: [
-		{ required: true, message: '请输入项目名称', trigger: 'blur' },
-		{ min: 2, max: 5, message: '长度在 2 到 10 个字符', trigger: 'blur' },
-	],
-	projectMessage: [
-		{ required: true, message: '请输入项目简介', trigger: 'blur' },
-		{ min: 2, max: 255, message: '长度在 2 到 255 个字符', trigger: 'blur' },
-	],
-});
-const search_params = ref<Search>({
-	currentPage: 1,
-	pageSize: 10,
-	projectName: null,
-});
 
-const create_project_params = ref<Project_from>({
-	projectName: '',
-	projectMessage: '',
-});
-
-const tableData = ref<Project[]>([]);
-
-// 初始化数据
+/**
+ * 获取项目列表
+ * @param value
+ */
 const get_project_list = async (value: UnwrapRef<Search>) => {
+	card_loading.value = true;
 	const list_result = await get_project_list_services(value);
-	console.log(list_result);
-	tableData.value = list_result.data.data.items;
-	tableData.value = list_result.data.data.items.map((item: Project) => ({
-		...item,
-		tagType: randomType(),
-		projectIcon: 'https://www.loliapi.com/acg/pp/', // 随机头像 在线API 多久失效就难说了
-	}));
-	total.value = list_result.data.data.total;
-	restaurants.value = list_result.data.data.names.map((item: string) => ({
-		value: item,
-	}));
+	try {
+		table_data.value = list_result.data.data.items;
+		table_data.value = list_result.data.data.items.map((item: Project) => ({
+			...item,
+			tagType: random_type(),
+			projectIcon: 'https://www.loliapi.com/acg/pp/', // 随机头像 在线API 多久失效就难说了
+		}));
+		total.value = list_result.data.data.total;
+		restaurants.value = list_result.data.data.names.map((item: string) => ({
+			value: item,
+		}));
+	} catch (e) {
+		console.log(e);
+	}
+	card_loading.value = false;
 };
 
-const randomType = () => {
+/**
+ * 随机类型
+ */
+const random_type = () => {
 	const types = ['info', 'success', 'warning', 'danger'];
 	return types[Math.floor(Math.random() * 4)];
 };
 
+/**
+ * 导出文本
+ * @param text
+ */
+const export_text = async (text: any) => {
+	const encoder = new TextEncoder();
+	const uint8r_array = encoder.encode(text);
+
+	// 将Uint8Array转换为二进制字符串
+	const binary_string = String.fromCharCode.apply(null, uint8r_array);
+
+	// 使用btoa函数将二进制字符串编码为Base64
+	const base64 = btoa(binary_string);
+
+	const response = await axios.get('/api/open//export_txt?txt=' + base64, {
+		responseType: 'blob', // 重要：设置响应类型为blob
+	});
+
+	console.log(response);
+	// 从响应中获取Blob对象
+	const blob = response.data;
+
+	// 创建一个链接，指向Blob对象
+	const url = window.URL.createObjectURL(blob);
+	const link = document.createElement('a');
+	link.href = url;
+	link.download = 'export.txt'; // 设置下载文件名
+
+	// 将链接添加到DOM中并模拟点击
+	document.body.appendChild(link);
+	link.click();
+
+	// 从DOM中移除链接
+	document.body.removeChild(link);
+
+	// 释放创建的URL对象
+	window.URL.revokeObjectURL(url);
+};
+/**
+ * 创建项目
+ */
 const create_project_click = async () => {
 	const crate_success = await create_project_services(create_project_params.value);
 	if (crate_success.data.code === 200) {
@@ -1207,22 +1461,30 @@ const create_project_click = async () => {
 	}
 };
 
-const handleSizeChange = (val: number) => {
+/**
+ * 分页 当前页数改变
+ * @param val
+ */
+const handle_size_change = (val: number) => {
 	console.log(`${val} items per page`);
 	search_params.value.pageSize = val;
 	get_project_list(search_params.value);
 };
-const handleCurrentChange = (val: number) => {
+
+/**
+ * 当前页 当前页数改变
+ * @param val
+ */
+const handle_current_change = (val: number) => {
 	console.log(`current page: ${val}`);
 	search_params.value.currentPage = val;
 	get_project_list(search_params.value);
 };
 
-const { phone_bool, remove_phone_size } = phone_size();
-
-onUnmounted(() => {
-	remove_phone_size();
-});
+/**
+ * 更新程序的状态
+ * @param row
+ */
 const update_project_status = (row: Project) => {
 	if (row.projectStatus == 0) {
 		Modal.confirm({
@@ -1270,7 +1532,10 @@ const update_project_status = (row: Project) => {
 	}
 };
 
-// 复制文本 在不支持复制的浏览器上，使用此方法
+/**
+ * 旧版复制 某些浏览器对新版本的复制支持不咋好 比如手机端的某ia
+ * @param text
+ */
 const old_copy = (text: string) => {
 	const textArea = document.createElement('textarea');
 	textArea.value = text;
@@ -1294,18 +1559,32 @@ const old_copy = (text: string) => {
 
 	document.body.removeChild(textArea);
 };
-// 复制项目key
-const copy_text = (key: string) => {
-	// 检查 key 的长度，如果超过20个字符，则截断并添加省略号
-	const displayKey = key.length > 40 ? key.substring(0, 40) + '...' : key;
 
+/**
+ * 复制文本
+ * @param key 文本
+ */
+const copy_text = (key: string) => {
+	if (key == '' || key == undefined) {
+		Modal.error({
+			title: '复制失败',
+			zIndex: 99999999999,
+			content: '复制失败，内容为空',
+			maskClosable: true,
+		});
+		return;
+	}
+	// 检查 key 的长度，如果超过20个字符，则截断并添加省略号
+	const display_key = key.length > 40 ? key.substring(0, 40) + '...' : key;
+	console.log('copy', key);
 	Modal.success({
 		title: '复制文本',
-		content: `${displayKey}`,
+		content: display_key,
 		okText: '复制',
 		cancelText: '取消',
 		maskClosable: true,
 		okCancel: true,
+		zIndex: 999999999,
 		onOk: () => {
 			// 复制文本到剪贴板
 			if (navigator.clipboard) {
@@ -1326,31 +1605,31 @@ const copy_text = (key: string) => {
 	});
 };
 
-interface RestaurantItem {
-	value: string;
-}
-
-const restaurants = ref<RestaurantItem[]>([]);
-
-const querySearch = (queryString: string, cb: any) => {
-	const results = queryString ? restaurants.value.filter(createFilter(queryString)) : restaurants.value;
+/**
+ * 搜索
+ * @param queryString 查询字符串
+ * @param cb 回调函数
+ */
+const query_search = (queryString: string, cb: any) => {
+	const results = queryString ? restaurants.value.filter(create_filter(queryString)) : restaurants.value;
 	// call callback function to return suggestions
 	cb(results);
 };
 
-const createFilter = (queryString: string) => {
+/**
+ * 创建过滤器 搜索
+ * @param queryString
+ */
+const create_filter = (queryString: string) => {
 	return (restaurant: RestaurantItem) => {
 		return restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0;
 	};
 };
 
-// 重置密钥返回结构体
-interface reset_data {
-	success: boolean;
-	projectBase64: string;
-	projectKey: string;
-}
-
+/**
+ * 重置项目key
+ * @param pid
+ */
 const click_reset_key = async (pid: number) => {
 	Modal.warning({
 		title: '重置项目key',
@@ -1381,6 +1660,9 @@ const click_reset_key = async (pid: number) => {
 	});
 };
 
+/**
+ * 显示帮助信息
+ */
 const help_show = () => {
 	const contentVNode = createVNode('div', {}, [
 		'1.该密钥程序创建就已决定，无法改变',
@@ -1402,6 +1684,29 @@ const help_show = () => {
 	});
 };
 
+// 监听 checkbox 状态
+watch(value, (val) => {
+	if (val.length === 0) {
+		check_all.value = false;
+		indeterminate.value = false;
+	} else if (cities_filter.value != undefined && val.length === cities_filter.value.length) {
+		check_all.value = true;
+		indeterminate.value = false;
+	} else {
+		indeterminate.value = true;
+	}
+});
+
+defineExpose({
+	setTheme: (theme: string) => {
+		cm_instance.value?.setOption('theme', theme);
+	},
+});
+// 销毁事件
+onUnmounted(() => {
+	remove_phone_size();
+});
+// 初始化数据
 onMounted(() => {
 	// 初始化数据
 	get_project_list(search_params.value);
@@ -1409,6 +1714,34 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.no-wrap-textarea .el-textarea__inner) {
+	overflow-x: auto; /* 水平方向上的滚动条 */
+	word-wrap: break-word; /* 允许在单词内换行 */
+}
+
+:deep(.no-wrap-textarea .el-textarea__inner:focus) {
+	box-shadow: grey !important;
+}
+
+:deep(.no-wrap-textarea .el-textarea__inner:hover) {
+	box-shadow: grey !important;
+}
+.visible-switch {
+	opacity: 0; /* 初始透明度为0，即完全透明 */
+	transform: translateX(20px); /* 初始位置向上偏移20px */
+	transition:
+		opacity 0.2s ease-out,
+		transform 0.5s ease-out; /* 只对opacity和transform应用过渡效果 */
+	pointer-events: none; /* 防止悬停在隐藏元素上 */
+}
+
+.visible-card:hover {
+	.visible-switch {
+		opacity: 1; /* 最终透明度为1，即完全不透明 */
+		transform: translateX(0); /* 最终位置回到原位 */
+		pointer-events: auto; /* 恢复悬停事件 */
+	}
+}
 :where(.ant-card-meta-detail > div:not(:last-child)) {
 	margin-bottom: 0 !important;
 }
@@ -1416,7 +1749,7 @@ onMounted(() => {
 :deep(.el-drawer__header) {
 	box-sizing: border-box;
 	margin-bottom: 15px;
-	padding: 10px 0px 0 5px;
+	padding: 10px 0 0 5px;
 }
 :deep(.ant-card-cover) {
 	margin: 0;
@@ -1426,11 +1759,11 @@ onMounted(() => {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
 	gap: 10px;
+	align-items: center;
 }
 
 .box_card_list .ant-card {
-	width: calc(33.333% - 10px); /* 每行三张卡片，减去间距 */
-	margin: 5px; /* 卡片之间的间距 */
+	margin: 0 auto !important;
 	transition: transform 0.3s ease-in-out; /* 可选，为hover添加动画效果 */
 }
 

@@ -1,14 +1,11 @@
 <template>
-	<!--  主题色-->
 	<a-config-provider
 		:theme="{
 			token: {
 				colorPrimary: '#17926c',
 			},
 		}"
-	>
-	</a-config-provider>
-
+	/>
 	<!-- 手机端 汉堡菜单-->
 	<el-collapse-transition class="transition-box">
 		<div v-show="show" class="transition-box-list">

@@ -7,8 +7,7 @@
 				colorPrimary: '#17926c',
 			},
 		}"
-	>
-	</a-config-provider>
+	/>
 	<div class="toolbar">
 		<!--    顶部左 面包菜单-->
 		<div class="bread_menu">
@@ -20,7 +19,12 @@
 		</div>
 		<!--    顶部右 用户信息-->
 		<div class="user_info">
-			<el-badge :show-zero="true" :value="12" style="margin: 0 15px; text-align: center; display: flex; align-items: center; justify-content: center">
+			<el-badge
+				:show-zero="true"
+				:value="12"
+				:offset="[2, 1]"
+				style="margin: 0 15px; text-align: center; display: flex; align-items: center; justify-content: center"
+			>
 				<el-icon size="20">
 					<svg class="icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200">
 						<path

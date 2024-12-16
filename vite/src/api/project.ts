@@ -147,3 +147,11 @@ export const update_project_link_services = (params: any) => {
 export const delete_project_link_services = (aid: number) => {
 	return request.get('/project/project_link_delete?aid=' + aid);
 };
+
+/**
+ * 新增卡密
+ * @param params
+ */
+export const add_project_card_services = (params: any) => {
+	return request.post('/project/project_add_card', params);
+};
