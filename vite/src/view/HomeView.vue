@@ -266,6 +266,7 @@ const show_aside = ref(true);
 show_aside.value = aside_data.status;
 // 防止切换菜单时候状态会消失
 
+const active_change = ref<boolean>(false);
 const show_aside_error = computed(() => {
 	return !show_aside.value;
 });
@@ -278,7 +279,6 @@ const tabs_data = tabs_status();
  *@return 当前路由路径
  */
 const active_menu = computed(() => {
-	console.log(router.currentRoute.value.path);
 	return router.currentRoute.value.path;
 });
 
@@ -328,7 +328,15 @@ watch(
 		}
 	}
 );
-
+// 监听路由变化 点击其他路由后关闭侧边栏 手机生效
+watch(
+	() => router.currentRoute.value.path,
+	() => {
+		if (phone_bool.value) {
+			show_aside.value = true;
+		}
+	}
+);
 onUnmounted(() => {
 	remove_phone_size();
 });

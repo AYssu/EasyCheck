@@ -2,8 +2,9 @@
 	z-index: 100000 !important;
 }
 .ant-input:focus,
-.ant-input-focused {
-	box-shadow: none;
+.ant-input-focused ,
+.ant-select-selector {
+	box-shadow: none !important;
 }
 .ant-picker-focused , .ant-input-number-focused{
 	box-shadow: none;

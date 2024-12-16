@@ -155,11 +155,3 @@ export const delete_project_link_services = (aid: number) => {
 export const add_project_card_services = (params: any) => {
 	return request.post('/project/project_add_card', params);
 };
-
-/**
- * 导出文本
- * @param params
- */
-export const export_text_services = (params: any) => {
-	return request.get('/project/export_txt?txt=' + params);
-};

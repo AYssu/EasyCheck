@@ -1,8 +1,5 @@
-package com.easyverify.springboot.entity;
+package com.easyverify.springboot.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EasyCard {
-    /**
-     * 卡密ID
-     */
-    @TableId(type = IdType.AUTO)
+public class CardVo {
     private Integer cid;
 
     /**
@@ -24,6 +17,10 @@ public class EasyCard {
      */
     private Integer pid;
 
+    /**
+     * 程序名称
+     */
+    private String projectName;
     /**
      * 创建用户ID
      */
@@ -125,8 +122,7 @@ public class EasyCard {
     private Integer state;
 
     /**
-     * 逻辑删除
+     * 卡密状态 1.未使用 2.未到期 3.已到期
      */
-    @TableLogic(value = "0", delval = "1")
-        private Integer deleted;
+    private Integer cardStatus;
 }
